@@ -1,0 +1,43 @@
+﻿@import "tailwindcss";
+
+:root {
+  --background: #FBE9BB;
+  --foreground: #0F0F0F;
+}
+
+/* stylelint-disable-next-line at-rule-no-unknown */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-grotesk: var(--font-space-grotesk);
+  --font-mono: var(--font-space-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-space-grotesk), sans-serif;
+}
+
+/* Reset border radius globally */
+* {
+  border-radius: 0px !important;
+}
+
+/* Slasher cut-corner effect utility */
+.slasher {
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%);
+}
+
+/* Blend multiply for Pokemon images */
+.blend-multiply {
+  mix-blend-mode: multiply;
+}
+
+/* Rich Tan / Heavy Cardboard with noise texture */
+.bg-heavy {
+  background-color: #F6E7BF !important; /* Rich Tan / Wet Sand */
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.1'/%3E%3C/svg%3E");
+  color: #0F0F0F !important; /* Black Text for readability */
+  border: 2px solid #0F0F0F;
+}
