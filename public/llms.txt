@@ -1,0 +1,45 @@
+# Random Pokemon Generator
+
+> A free web tool to generate random Pokemon for team building, Nuzlocke challenges, and draft leagues.
+
+## About
+Random Pokemon Generator (www.randompokemon.co) is a free online tool that helps Pokemon trainers generate random Pokemon for various purposes including team building, Nuzlocke challenges, Soul Link runs, and draft leagues. The tool supports all Pokemon from generations 1-9, including the latest Pokemon from Scarlet and Violet.
+
+## Features
+- Generate random Pokemon from all 9 generations (Gen 1-9)
+- Filter by Pokemon type (Fire, Water, Grass, Electric, etc.)
+- Filter by generation/region (Kanto, Johto, Hoenn, Sinnoh, Unova, Kalos, Alola, Galar, Paldea)
+- Include or exclude legendary and mythical Pokemon
+- Build complete teams of up to 6 Pokemon
+- Shiny Pokemon toggle for rare variants
+- View detailed Pokemon stats and information
+- Mobile-friendly responsive design
+
+## Use Cases
+- **Nuzlocke Challenges**: Generate random encounters for your Nuzlocke runs
+- **Soul Link Challenges**: Coordinate random Pokemon with a partner
+- **Draft Leagues**: Randomize draft pools for competitive leagues
+- **Team Building**: Create unique and unexpected team compositions
+- **Pokemon Scarlet/Violet**: Build random teams for the latest games
+- **Casual Play**: Discover new Pokemon to try in any game
+
+## How to Use
+1. Visit https://www.randompokemon.co
+2. Set your filters (type, generation, legendary toggle) - optional
+3. Click the Generate button
+4. View your random Pokemon with stats and details
+5. Save your team or regenerate as needed
+
+## Pages
+- Homepage: https://www.randompokemon.co - Main generator tool
+- Pokedex: https://www.randompokemon.co/pokedex - Browse all Pokemon
+- Pokemon Details: https://www.randompokemon.co/pokemon/[name] - Individual Pokemon pages
+
+## Technical Details
+- Built with Next.js and React
+- Uses PokeAPI for Pokemon data
+- Fully responsive design
+- Fast loading with optimized images
+
+## Contact
+Visit https://www.randompokemon.co for the full experience.
