@@ -1,0 +1,337 @@
+{
+  "metadata": {
+    "title": "랜덤 포켓몬 생성기 | 팀 만들기 (1-9세대)",
+    "description": "랜덤 포켓몬 팀을 즉시 생성하세요. 스칼렛, 바이올렛 및 모든 세대를 위한 최고의 녹턴 도구와 팀 빌더. 타입, 지역, 희귀도로 필터링.",
+    "pokedexTitle": "포켓몬 도감 - 완전한 포켓몬 데이터베이스 | 전 1025 포켓몬",
+    "pokedexDescription": "1-9세대의 전 1025 포켓몬을 탐색하세요. 타입, 스탯, 특성, 스프라이트가 포함된 완전한 도감."
+  },
+  "home": {
+    "title": "랜덤 포켓몰 생성기",
+    "subtitle": "9세대 전체에서 드림팀을 만들어보세요",
+    "generateButton": "팀 생성",
+    "generating": "생성 중...",
+    "generateMore": "더 생성",
+    "clearTeam": "팀 초기화",
+    "teamSize": "팀 크기",
+    "yourTeam": "나의 팀",
+    "emptyTeam": "생성을 클릭하여 팀을 만드세요!",
+    "totalBaseStats": "총 종족값",
+    "searchPlaceholder": "데이터베이스_검색...",
+    "loadingTeam": "팀 로딩 중...",
+    "data": "데이터",
+    "pokedexButton": "도감",
+    "helpDesk": "도움말",
+    "faqTitle": "자주 묻는 질문",
+    "aboutUs": "소개",
+    "aboutTitle": "우리의 이야기",
+    "legalInfo": "법적 정보",
+    "disclaimerTitle": "면책 조항",
+    "privacyInfo": "개인정보",
+    "privacyTitle": "개인정보 보호정책"
+  },
+  "about": {
+    "ourMission": {
+      "title": "우리의 미션",
+      "content": "랜덤 포켓몬 생성기는 트레이너가 새로운 팀 조합을 발견하고 랜덤화를 통해 경쟁 배틀을 더 쉽게 접근할 수 있도록 도와줍니다."
+    },
+    "whatWeOffer": {
+      "title": "제공 서비스",
+      "content": "세대, 타입, 희귀도, 진화 단계별 고급 필터링. 녹턴 챌린지를 계획하든 다음 플레이스루에 영감을 찾든, 우리 도구는 무한한 가능성을 제공합니다."
+    },
+    "perfectFor": {
+      "title": "이런 분께 완벽",
+      "content": "녹턴 런 • 소울 링크 챌린지 • 랜덤 팀 배틀 • 콘텐츠 크리에이터 • 포켓몬을 그리는 아티스트 • 경쟁 팀 빌딩 연습"
+    }
+  },
+  "disclaimer": {
+    "copyrightNotice": {
+      "title": "저작권 고지",
+      "content": "포켓몬 및 관련된 모든 이름, 캐릭터, 식별 가능한 외관은 닌텐도, 주식회사 포켓몬, 게임프리크의 상표입니다. 이 웹사이트는 닌텐도, 주식회사 포켓몬 또는 게임프리크와 제휴, 승인 또는 연결되어 있지 않습니다."
+    },
+    "fanProject": {
+      "title": "팬 프로젝트 상태",
+      "content": "이것은 교육 및 오락 목적으로 만들어진 비상업적 팬 프로젝트입니다. 포켓몬 지적 재산권의 소유권을 주장하지 않습니다."
+    },
+    "dataSources": {
+      "title": "데이터 출처",
+      "content": "포켓몬 데이터는 오픈 소스 RESTful 포켓몬 API인 PokeAPI(pokeapi.co)에서 가져옵니다. 공식 아트워크와 스프라이트는 각각의 저작권 소유자에게 귀속됩니다."
+    },
+    "fairUse": {
+      "title": "공정 사용",
+      "content": "이 프로젝트는 공정 사용 원칙에 따라 운영됩니다. 모든 포켓몬 관련 콘텐츠는 정보 제공 및 변형적 목적으로 사용됩니다. 권리 보유자이시고 우려 사항이 있으시면 연락해 주세요."
+    }
+  },
+  "privacy": {
+    "intro": "우리는 귀하의 개인정보를 존중하며 GDPR 및 국제 개인정보 보호 규정에 따라 귀하의 개인 데이터를 보호하기 위해 최선을 다하고 있습니다.",
+    "dataCollection": {
+      "title": "데이터 수집",
+      "content": "Google Analytics를 통해 페이지 조회수, 세션 시간, 일반 위치(국가 수준만)를 포함한 최소한의 익명 사용 데이터를 수집합니다. 개인 식별 정보는 수집하지 않습니다."
+    },
+    "cookies": {
+      "title": "쿠키",
+      "content": "사이트 기능을 위한 필수 쿠키와 성능 모니터링을 위한 분석 쿠키를 사용합니다. 언제든지 브라우저 설정에서 쿠키를 비활성화할 수 있습니다."
+    },
+    "localStorage": {
+      "title": "로컬 스토리지",
+      "content": "생성된 팀과 설정은 브라우저에 로컬로 저장됩니다. 이 데이터는 기기를 떠나지 않으며 서버로 전송되지 않습니다."
+    },
+    "thirdParty": {
+      "title": "제3자 서비스",
+      "content": "호스팅에 Vercel을, CDN 서비스에 Cloudflare를 사용합니다. 이러한 제공업체는 각자의 개인정보 보호정책에 명시된 대로 표준 서버 로그(IP 주소, 브라우저 유형)를 수집할 수 있습니다."
+    },
+    "yourRights": {
+      "title": "귀하의 권리",
+      "content": "GDPR에 따라 귀하는 개인 데이터에 대한 접근, 수정 또는 삭제할 권리가 있습니다. 최소한의 데이터만 수집하므로 대부분의 정보는 이미 익명화되어 있습니다. 질문이 있으시면 GitHub를 통해 연락해 주세요."
+    },
+    "updates": {
+      "title": "업데이트",
+      "content": "이 개인정보 보호정책은 2025년 1월에 마지막으로 업데이트되었습니다. 이 정책은 주기적으로 업데이트될 수 있습니다. 사이트의 계속적인 사용은 모든 변경 사항에 대한 동의를 의미합니다."
+    }
+  },
+  "faq": {
+    "q1": {
+      "question": "랜덤 포켓몬 팀은 어떻게 생성하나요?",
+      "answer": "'팀 생성' 버튼을 클릭하기만 하면 됩니다. 우리 도구는 1세대부터 9세대까지 6마리의 고유한 포켓몬을 즉시 선택하여 녹턴이나 창작 드로잉 챌린지에 적합한 균형 잡힌 팀을 만들어줍니다."
+    },
+    "q2": {
+      "question": "전설의 포켓몬을 제외할 수 있나요?",
+      "answer": "네. 생성기 위의 '희귀도' 필터를 사용하여 표준 플레이스루 경험을 위해 전설, 환상 또는 울트라비스트를 제외할 수 있습니다."
+    },
+    "q3": {
+      "question": "포켓몬 스칼렛과 바이올렛에 업데이트되어 있나요?",
+      "answer": "네. 우리 데이터베이스에는 완전한 팔데아 도감이 포함되어 있으며 새로운 DLC 확장팩에 맞춰 정기적으로 업데이트됩니다."
+    },
+    "q4": {
+      "question": "이 도구로 포켓몬 카드를 생성할 수 있나요?",
+      "answer": "네! 생성된 각 포켓몬은 스탯, 타입, 공식 아트워크가 포함된 스타일리시한 카드로 표시됩니다. 수집가, TCG 팬 또는 커스텀 카드 컬렉션 제작에 완벽합니다."
+    },
+    "q5": {
+      "question": "포켓몬 도감 데이터베이스란 무엇인가요?",
+      "answer": "우리의 종합적인 도감에는 모든 세대의 전 1025 포켓몬에 대한 상세 정보가 포함되어 있습니다. 모든 포켓몬의 스탯, 타입, 특성, 진화 체인, 도감 설명을 탐색할 수 있습니다."
+    }
+  },
+  "pokedex": {
+    "title": "글로벌 데이터베이스",
+    "subtitle": "등록된 {count}종의 포켓몬 완전 색인. 검색, 탐색하고 상세 사양에 접근하세요.",
+    "searchPlaceholder": "포켓몬 이름으로 검색...",
+    "results": "{count}개의 결과",
+    "loadMore": "더 불러오기 ({count}개 남음)",
+    "noResults": "\"{query}\"와 일치하는 포켓몬이 없습니다",
+    "displayingAll": "전체 {count}개의 포켓몬 표시 중",
+    "viewDetails": "상세 보기",
+    "backToGenerator": "생성기로 돌아가기",
+    "indexOnline": "인덱스: 온라인",
+    "loading": "포켓몬 상세정보 로딩 중..."
+  },
+  "pokemon": {
+    "visualData": "시각 데이터",
+    "physicalData": "물리 데이터",
+    "combatStatistics": "전투 통계",
+    "abilities": "특성",
+    "pokedexEntry": "도감 설명",
+    "trainerIntel": "트레이너 정보",
+    "evolutionChain": "진화 체인",
+    "exploreByType": "타입별 탐색",
+    "allTypesPokemon": "모든 {type} 포켓몬 →",
+    "baseForm": "기본 형태 • 진화 가능",
+    "middleEvolution": "중간 진화",
+    "finalEvolution": "최종 진화",
+    "about": "{name} 소개",
+    "height": "키",
+    "weight": "몸무게",
+    "classification": "분류",
+    "habitat": "서식지",
+    "totalBaseStats": "총 종족값",
+    "noEntry": "설명이 없습니다.",
+    "share": "공유",
+    "explorePokedex": "도감 탐색"
+  },
+  "stats": {
+    "hp": "HP",
+    "attack": "공격",
+    "defense": "방어",
+    "specialAttack": "특수공격",
+    "specialDefense": "특수방어",
+    "speed": "스피드"
+  },
+  "types": {
+    "normal": "노말",
+    "fire": "불꽃",
+    "water": "물",
+    "electric": "전기",
+    "grass": "풀",
+    "ice": "얼음",
+    "fighting": "격투",
+    "poison": "독",
+    "ground": "땅",
+    "flying": "비행",
+    "psychic": "에스퍼",
+    "bug": "벌레",
+    "rock": "바위",
+    "ghost": "고스트",
+    "dragon": "드래곤",
+    "dark": "악",
+    "steel": "강철",
+    "fairy": "페어리"
+  },
+  "filters": {
+    "type": "타입",
+    "generation": "세대",
+    "allTypes": "모든 타입",
+    "allGenerations": "모든 세대",
+    "includeLegendary": "전설 포함",
+    "includeMythical": "환상 포함",
+    "shinyMode": "이로치 모드",
+    "team": "팀",
+    "region": "지역",
+    "rarity": "희귀도",
+    "stage": "단계",
+    "evolved": "진화",
+    "gender": "성별",
+    "nature": "성격",
+    "forms": "폼",
+    "display": "표시",
+    "reset": "초기화",
+    "resetFilters": "필터 초기화",
+    "advancedFilters": "고급 필터",
+    "closeFilters": "필터 닫기",
+    "gen1": "1세대 (관동)",
+    "gen2": "2세대 (성도)",
+    "gen3": "3세대 (호연)",
+    "gen4": "4세대 (신오)",
+    "gen5": "5세대 (하나)",
+    "gen6": "6세대 (칼로스)",
+    "gen7": "7세대 (알로라)",
+    "gen8": "8세대 (가라르)",
+    "gen9": "9세대 (팔데아)"
+  },
+  "common": {
+    "loading": "로딩 중...",
+    "error": "오류가 발생했습니다",
+    "retry": "다시 시도",
+    "back": "뒤로",
+    "close": "닫기",
+    "share": "공유",
+    "copy": "복사",
+    "copied": "복사됨!",
+    "download": "다운로드",
+    "pokemon": "포켓몰",
+    "language": "언어",
+    "noImage": "이미지 없음",
+    "status": "상태",
+    "go": "검색",
+    "search": "검색..."
+  },
+  "seo": {
+    "lookingFor": "{name}에 대한 정보를 찾고 계신가요?",
+    "typeIntro": "이 {types} 타입 포켓몬은 {generation}에 처음 등장했습니다.",
+    "knownAs": "{genus}로 알려져 있습니다.",
+    "evolutionLine": "{name}은(는) {chain} 진화 라인의 일부입니다.",
+    "battleStrategy": "배틀 전략 측면에서, {name}의 총 종족값은 {total}입니다.",
+    "highestStat": "가장 높은 스탯은 {stat} ({value})이며, {role}을 원하는 트레이너에게 훌륭한 선택입니다.",
+    "physicalDescription": "키 {height}미터, 몸무게 {weight}kg인 {name}은(는) {size} 포켓몬입니다",
+    "habitatInfo": "일반적으로 {habitat} 환경에서 발견됩니다",
+    "conclusion": "경쟁 팀을 구성하든 도감을 완성하든, {name}은(는) 고려할 가치가 있는 독특한 강점을 제공합니다.",
+    "relatedPokemon": "관련 포켓몬에 대해 알고 싶으신가요? 확인해보세요"
+  },
+  "cardShowcase": {
+    "newFeature": "새 기능",
+    "export": "내보내기",
+    "tradingCards": "트레이딩 카드",
+    "description": "포켓몬 팀을 아름다운 트레이딩 카드로 다운로드하세요. 소셜 미디어에 공유하거나 기념품으로 저장하기에 완벽합니다.",
+    "hdDownload": "HD 다운로드",
+    "instantShare": "즉시 공유"
+  },
+  "seoContent": {
+    "protocol": {
+      "badge": "프로토콜 V1.0",
+      "title": "고급 포켓몬 생성기",
+      "subtitle": "랜덤 포켓몬 선택을 위한 최고의 동반자",
+      "paragraph1": "균형 잡힌 팀 구성, 새로운 즐겨찾기 탐색, 또는 다음 게임에 행운의 요소를 추가하든, 저희 생성기는 다음 포켓몬 동반자를 쉽게 발견할 수 있게 해줍니다.",
+      "paragraph2": "너즈락 도전, 소울링크 토너먼트, 또는 단순히 독특한 팀 조합을 실험하며 즐기는 데 사용하세요."
+    },
+    "instructions": {
+      "badge": "사용 방법",
+      "title": "랜덤 포켓몬 생성기 사용법",
+      "subtitle": "이 간단한 단계를 따라 랜덤 포켓몬 팀을 생성하세요",
+      "step1": {
+        "title": "1단계: 팀 규모 선택",
+        "description": "생성할 포켓몬 수를 선택하세요 - 풀팀의 경우 1에서 6까지. 빠른 결정을 위해 단일 포켓몬도 선택할 수 있습니다."
+      },
+      "step2": {
+        "title": "2단계: 필터 적용 (선택 사항)",
+        "description": "포켓몬 타입, 세대 또는 전설 상태로 필터링하여 선택을 구체화하세요. 이를 통해 특정 도전에 맞는 맞춤형 팀을 얻을 수 있습니다."
+      },
+      "step3": {
+        "title": "3단계: 팀 생성",
+        "description": "생성 버튼을 누르고 랜덤 포켓몬이 나타나는 것을 지켜보세요. 각 포켓몬은 타입, 특성, 기본 스탯 등의 세부 정보와 함께 제공됩니다."
+      },
+      "step4": {
+        "title": "4단계: 각 포켓몬에 대해 알아보기",
+        "description": "생성된 포켓몬을 클릭하여 기술, 진화 라인 등의 자세한 정보를 확인하세요."
+      },
+      "step5": {
+        "title": "5단계: 재생성 또는 저장",
+        "description": "결과가 마음에 들지 않으세요? 간단히 재생성하세요. 또는 나중에 참조할 수 있도록 팀을 저장하세요."
+      },
+      "step6": {
+        "title": "6단계: 팀 공유",
+        "description": "소셜 미디어나 직접 링크를 통해 생성된 팀을 친구들과 공유하세요."
+      }
+    },
+    "nuzlocke": {
+      "badge": "너즈락 유틸리티",
+      "title": "포켓몬 너즈락 도전 도구",
+      "subtitle": "랜덤 포켓몬 생성기로 너즈락 게임 경험을 강화하세요",
+      "intro": "너즈락 런은 포켓몬 게임을 즐기는 가장 스릴 넘치는 방법 중 하나입니다. 전투에 실제 결과를 추가하는 규칙으로, 모든 결정이 중요합니다. 저희 생성기가 도와드립니다:",
+      "challenge1": {
+        "title": "소울링크 도전",
+        "description": "협동 도전을 위해 랜덤으로 생성된 포켓몬을 파트너와 짝지으세요."
+      },
+      "challenge2": {
+        "title": "원더락 도전",
+        "description": "완전히 랜덤한 선택으로 서프라이즈 교환 만남을 시뮬레이션하세요."
+      },
+      "challenge3": {
+        "title": "모노타입 도전",
+        "description": "가장 어려운 모노타입 런을 위해 단일 타입 팀을 생성하세요."
+      },
+      "challenge4": {
+        "title": "스타터 선택",
+        "description": "스타터를 결정할 수 없나요? 생성기가 초기 동반자를 선택하게 하세요."
+      },
+      "challenge5": {
+        "title": "랜덤마이저 런",
+        "description": "예측할 수 없는 팀 계획을 위해 ROM 랜덤마이저와 결합하세요."
+      }
+    },
+    "capabilities": {
+      "badge": "핵심 기능",
+      "title": "랜덤 생성기 기능",
+      "subtitle": "저희 포켓몬 생성기의 독특한 특징을 발견하세요",
+      "feature1": {
+        "title": "완전한 포켓몬 도감",
+        "description": "모든 지역 형태와 변형을 포함한 1000마리 이상의 포켓몬에 접근하세요."
+      },
+      "feature2": {
+        "title": "스마트 필터링",
+        "description": "타입, 세대, 희귀도 등에 대한 고급 필터."
+      },
+      "feature3": {
+        "title": "상세 정보",
+        "description": "각 포켓몬의 스탯, 기술, 특성, 진화 라인에 대한 종합 정보."
+      },
+      "feature4": {
+        "title": "소셜 공유",
+        "description": "생성된 팀을 소셜 미디어 플랫폼에 쉽게 공유하거나 이미지로 저장하세요."
+      }
+    },
+    "whyChoose": {
+      "badge": "왜 이 도구를 선택해야 할까요?",
+      "title": "최고의 온라인 랜덤 포켓몬 생성기",
+      "subtitle": "트레이너들이 저희 랜덤 포켓몬 생성기를 신뢰하는 이유는?",
+      "paragraph1": "캐주얼 플레이어와 하드코어 스피드러너 모두를 염두에 두고 이 생성기를 만들었습니다. 경쟁 플레이스루를 위한 균형 잡힌 팀을 찾든, 단순히 랜덤한 재미를 원하든, 저희에게 적합한 도구가 있습니다.",
+      "paragraph2": "저희 생성기는 최신 포켓몬 데이터로 정기적으로 업데이트되며 모든 장치에서 원활한 경험을 제공합니다."
+    }
+  }
+}

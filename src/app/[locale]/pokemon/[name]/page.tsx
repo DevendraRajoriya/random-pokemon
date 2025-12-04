@@ -1,5 +1,7 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { getTranslations } from "next-intl/server";
+import { locales, Locale } from "@/i18n/routing";
 import PokemonDetailClient from "./PokemonDetailClient";
 
 // ============ TYPES ============
@@ -28,9 +30,12 @@ interface Pokemon {
   height: number;
   weight: number;
   sprites: {
+    front_default: string;
+    front_shiny: string;
     other: {
       "official-artwork": {
         front_default: string;
+        front_shiny: string;
       };
     };
   };
@@ -100,12 +105,16 @@ function extractEvolutionChain(chain: EvolutionChainLink): string[] {
   return names;
 }
 
+// Total number of Pokemon (Gen 1-9)
+const TOTAL_POKEMON = 1025;
+
 async function getPokemon(name: string): Promise<PokemonWithSpecies | null> {
   try {
     // Fetch Pokemon data and Species data in parallel
+    // Using force-cache for optimal build performance (data rarely changes)
     const [pokemonRes, speciesRes] = await Promise.all([
-      fetch(`https://pokeapi.co/api/v2/pokemon/${name}`, { next: { revalidate: 86400 } }),
-      fetch(`https://pokeapi.co/api/v2/pokemon-species/${name}`, { next: { revalidate: 86400 } }),
+      fetch(`https://pokeapi.co/api/v2/pokemon/${name}`, { cache: 'force-cache' }),
+      fetch(`https://pokeapi.co/api/v2/pokemon-species/${name}`, { cache: 'force-cache' }),
     ]);
 
     if (!pokemonRes.ok) return null;
@@ -155,7 +164,7 @@ async function getPokemon(name: string): Promise<PokemonWithSpecies | null> {
       let evolutionChain: string[] = [];
       if (species.evolution_chain?.url) {
         try {
-          const evoRes = await fetch(species.evolution_chain.url, { next: { revalidate: 86400 } });
+          const evoRes = await fetch(species.evolution_chain.url, { cache: 'force-cache' });
           if (evoRes.ok) {
             const evoData: EvolutionChain = await evoRes.json();
             evolutionChain = extractEvolutionChain(evoData.chain);
@@ -180,12 +189,59 @@ async function getPokemon(name: string): Promise<PokemonWithSpecies | null> {
 
 // ============ METADATA ============
 type Props = {
-  params: Promise<{ name: string }>;
+  params: Promise<{ name: string; locale: Locale }>;
 };
 
+// Generate static params for ALL 1025+ Pokemon across all locales
+// This is crucial for SEO - we pre-render every Pokemon page at build time
+export async function generateStaticParams() {
+  try {
+    // Fetch the complete Pokemon list from PokeAPI
+    const response = await fetch(
+      `https://pokeapi.co/api/v2/pokemon?limit=${TOTAL_POKEMON}`,
+      { cache: 'force-cache' }
+    );
+    
+    if (!response.ok) {
+      console.error('Failed to fetch Pokemon list for static generation');
+      // Fallback to popular Pokemon if API fails
+      const fallbackPokemon = [
+        'pikachu', 'charizard', 'mewtwo', 'eevee', 'gengar', 'dragonite',
+        'bulbasaur', 'charmander', 'squirtle', 'lucario', 'garchomp'
+      ];
+      return locales.flatMap(locale => 
+        fallbackPokemon.map(name => ({ locale, name }))
+      );
+    }
+
+    const data = await response.json();
+    const allPokemonNames: string[] = data.results.map(
+      (pokemon: { name: string }) => pokemon.name
+    );
+
+    // Generate params for all locale + pokemon combinations
+    // This creates ~7000+ static pages (1025 Pokemon × 7 locales)
+    const params: { locale: string; name: string }[] = [];
+    
+    for (const locale of locales) {
+      for (const name of allPokemonNames) {
+        params.push({ locale, name });
+      }
+    }
+
+    console.log(`📦 Generating ${params.length} static Pokemon pages...`);
+    return params;
+  } catch (error) {
+    console.error('Error in generateStaticParams:', error);
+    // Return minimal fallback
+    return locales.map(locale => ({ locale, name: 'pikachu' }));
+  }
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { name } = await params;
+  const { name, locale } = await params;
   const pokemon = await getPokemon(name);
+  const t = await getTranslations({ locale, namespace: 'pokemon' });
 
   if (!pokemon) {
     return {
@@ -207,6 +263,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   
   const uniqueDescription = `${formattedName} (#${pokemon.id}) is a ${typesCapitalized}-type ${pokemon.species.genus} from ${pokemon.species.generation}. Base stats total: ${totalStats}. Height: ${(pokemon.height / 10).toFixed(1)}m, Weight: ${(pokemon.weight / 10).toFixed(1)}kg.${evolutionInfo}`;
 
+  // Generate hreflang alternates for all locales
+  const languages: Record<string, string> = {};
+  for (const loc of locales) {
+    const prefix = loc === 'en' ? '' : `/${loc}`;
+    languages[loc] = `https://www.randompokemon.co${prefix}/pokemon/${pokemon.name.toLowerCase()}`;
+  }
+  // Add x-default pointing to English version
+  languages['x-default'] = `https://www.randompokemon.co/pokemon/${pokemon.name.toLowerCase()}`;
+
   return {
     title: `${formattedName} (#${pokemon.id}) - Stats, Evolution & Type | Pokemon Database`,
     description: uniqueDescription,
@@ -220,7 +285,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       pokemon.species.generation.toLowerCase(),
     ],
     alternates: {
-      canonical: `/pokemon/${pokemon.name.toLowerCase()}`,
+      canonical: locale === 'en' 
+        ? `/pokemon/${pokemon.name.toLowerCase()}`
+        : `/${locale}/pokemon/${pokemon.name.toLowerCase()}`,
+      languages,
     },
     openGraph: {
       title: `${formattedName} (#${pokemon.id}) - ${typesCapitalized} Type | Pokemon Database`,
@@ -234,6 +302,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
           alt: `${formattedName} official artwork - ${typesCapitalized} type Pokemon`,
         },
       ],
+      locale: locale,
+      alternateLocale: locales.filter(l => l !== locale),
     },
     twitter: {
       card: "summary_large_image",
@@ -246,7 +316,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 // ============ PAGE COMPONENT ============
 export default async function PokemonDetailPage({ params }: Props) {
-  const { name } = await params;
+  const { name, locale } = await params;
   const pokemon = await getPokemon(name);
 
   if (!pokemon) {

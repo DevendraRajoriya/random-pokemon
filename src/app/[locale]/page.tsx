@@ -3,8 +3,9 @@
 import { useState, useMemo, useCallback, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2, Zap, Database, ChevronDown, X, Search, Share2, BookOpen } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import SeoContent from "@/components/SeoContent";
 import ShareModal from "@/components/ShareModal";
 import CardShowcase from "@/components/CardShowcase";
@@ -301,9 +302,17 @@ const ActiveFilterChips = ({ filters, onRemoveFilter }: ActiveFilterChipsProps) 
 
 export default function Home() {
   const router = useRouter();
+  const t = useTranslations('home');
+  const tCommon = useTranslations('common');
+  const tFilters = useTranslations('filters');
+  const tTypes = useTranslations('types');
+  const tAbout = useTranslations('about');
+  const tDisclaimer = useTranslations('disclaimer');
+  const tPrivacy = useTranslations('privacy');
+  const tFaq = useTranslations('faq');
   const [team, setTeam] = useState<Pokemon[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [terminalStatus, setTerminalStatus] = useState("IDLE");
+  const [loading, setLoading] = useState(true); // Start as loading to avoid hydration mismatch
+  const [terminalStatus, setTerminalStatus] = useState("INITIALIZING");
   const [searchQuery, setSearchQuery] = useState("");
   const [allPokemon, setAllPokemon] = useState<{ name: string; id: number }[]>([]);
   const [suggestions, setSuggestions] = useState<{ name: string; id: number }[]>([]);
@@ -326,7 +335,7 @@ export default function Home() {
   const [natureSearch, setNatureSearch] = useState("");
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [sharePokemon, setSharePokemon] = useState<Pokemon | null>(null);
-  const [isClient, setIsClient] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   // Track if initial team has been generated
   const hasGeneratedInitialTeam = useRef(false);
@@ -334,9 +343,9 @@ export default function Home() {
   // Ref for scrolling to team grid
   const teamGridRef = useRef<HTMLDivElement>(null);
 
-  // Mark as client-side after mount
+  // Mark as mounted after hydration is complete
   useEffect(() => {
-    setIsClient(true);
+    setIsMounted(true);
   }, []);
 
   // Fetch all Pokemon names on mount for autocomplete
@@ -361,7 +370,7 @@ export default function Home() {
 
   // Auto-generate team on initial page load for zero-click value
   useEffect(() => {
-    if (isClient && !hasGeneratedInitialTeam.current) {
+    if (isMounted && !hasGeneratedInitialTeam.current) {
       hasGeneratedInitialTeam.current = true;
       
       // Inline auto-generate to ensure it runs on page load/refresh
@@ -398,7 +407,7 @@ export default function Home() {
       
       autoGenerateTeam();
     }
-  }, [isClient]);
+  }, [isMounted]);
 
   // Handle click outside to close suggestions
   useEffect(() => {
@@ -744,7 +753,7 @@ export default function Home() {
   };
 
   // Guard clause: Show loading spinner until mounted (prevents hydration mismatch)
-  if (!isClient) {
+  if (!isMounted) {
     return (
       <main className="min-h-screen bg-cream p-4 md:p-8 relative">
         <div className="flex justify-center items-center py-20">
@@ -768,12 +777,12 @@ export default function Home() {
         {/* Hero Section */}
         <div className="mb-8 md:mb-12 text-center relative z-[60]">
           <h1 className={`font-grotesk font-bold text-3xl sm:text-4xl md:text-5xl lg:text-7xl text-black mb-3 md:mb-4 tracking-tight transition-all px-2 ${showSuggestions && suggestions.length > 0 ? 'opacity-30 blur-[2px]' : ''}`}>
-            RANDOM POKEMON GENERATOR
+            {t('title')}
           </h1>
           {/* Status Box - bg-black with white text for better visibility */}
           <div className={`inline-block bg-black px-4 md:px-6 py-2 md:py-3 slasher mb-6 md:mb-8 transition-all ${showSuggestions && suggestions.length > 0 ? 'opacity-30 blur-[2px]' : ''}`}>
             <p className="font-mono text-xs md:text-sm font-semibold text-white">
-              STATUS: {terminalStatus}
+              {tCommon('status')}: {terminalStatus}
             </p>
           </div>
 
@@ -784,7 +793,7 @@ export default function Home() {
                 <Search className="absolute left-3 md:left-4 top-1/2 -translate-y-1/2 text-black/40 w-4 h-4 md:w-5 md:h-5 z-10" />
                 <input
                   type="text"
-                  placeholder="SEARCH_DATABASE..."
+                  placeholder={t('searchPlaceholder')}
                   value={searchQuery}
                   onChange={(e) => handleSearchInput(e.target.value)}
                   onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
@@ -795,7 +804,7 @@ export default function Home() {
                 type="submit"
                 className="bg-black text-white px-4 md:px-6 font-mono text-xs md:text-sm font-bold hover:bg-charcoal transition-colors border-2 border-black border-l-0"
               >
-                GO
+                {tCommon('go')}
               </button>
             </form>
 
@@ -838,7 +847,7 @@ export default function Home() {
               {/* 1. TEAM (Ghost Select Style) */}
               <div className="relative h-12 w-full bg-cream border-2 border-black font-mono text-xs md:text-sm text-black flex items-center hover:bg-charcoal hover:text-cream transition-colors group">
                 <div className="flex items-center gap-2 px-3 md:px-4 w-full h-full pointer-events-none">
-                  <span className="font-semibold group-hover:text-cream">Team:</span>
+                  <span className="font-semibold group-hover:text-cream">{tFilters('team')}:</span>
                   <span className="font-normal group-hover:text-cream flex-1">{filters.teamSize}</span>
                   <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="flex-shrink-0 group-hover:text-cream"><path d="m6 9 6 6 6-6"/></svg>
                 </div>
@@ -863,7 +872,7 @@ export default function Home() {
 
               {/* 2. REGION */}
               <CompactFilterDropdown
-                label="Region"
+                label={tFilters('region')}
                 value={getFilterDisplayValue("regions")}
                 isOpen={openDropdown === "regions"}
                 onToggle={() => toggleDropdown("regions")}
@@ -879,7 +888,7 @@ export default function Home() {
 
               {/* 3. TYPE */}
               <CompactFilterDropdown
-                label="Type"
+                label={tFilters('type')}
                 value={getFilterDisplayValue("types")}
                 isOpen={openDropdown === "types"}
                 onToggle={() => toggleDropdown("types")}
@@ -904,7 +913,7 @@ export default function Home() {
 
               {/* 4. RARITY */}
               <CompactFilterDropdown
-                label="Rarity"
+                label={tFilters('rarity')}
                 value={getFilterDisplayValue("legendaryStatus")}
                 isOpen={openDropdown === "legendary"}
                 onToggle={() => toggleDropdown("legendary")}
@@ -926,13 +935,13 @@ export default function Home() {
                 onClick={() => setShowAdvanced(!showAdvanced)}
                 className="col-span-2 md:hidden h-12 border-2 border-black bg-marigold text-black font-mono uppercase text-xs font-bold hover:brightness-110 transition-all flex items-center justify-center gap-2"
               >
-                <span>{showAdvanced ? '[-] CLOSE FILTERS' : '[+] ADVANCED FILTERS'}</span>
+                <span>{showAdvanced ? `[-] ${tFilters('closeFilters')}` : `[+] ${tFilters('advancedFilters')}`}</span>
               </button>
 
               {/* 5. STAGE - Hidden on mobile unless toggled, always visible on desktop */}
               <div className={`${showAdvanced ? '' : 'hidden md:block'}`}>
                 <CompactFilterDropdown
-                  label="Stage"
+                  label={tFilters('stage')}
                   value={getFilterDisplayValue("evolutionStage")}
                   isOpen={openDropdown === "evolution"}
                   onToggle={() => toggleDropdown("evolution")}
@@ -952,7 +961,7 @@ export default function Home() {
               {/* 6. EVOLVED */}
               <div className={`${showAdvanced ? '' : 'hidden md:block'}`}>
                 <CompactFilterDropdown
-                  label="Evolved"
+                  label={tFilters('evolved')}
                   value={getFilterDisplayValue("fullyEvolved")}
                   isOpen={openDropdown === "fullyEvolved"}
                   onToggle={() => toggleDropdown("fullyEvolved")}
@@ -972,7 +981,7 @@ export default function Home() {
               {/* 7. GENDER */}
               <div className={`${showAdvanced ? '' : 'hidden md:block'}`}>
                 <CompactFilterDropdown
-                  label="Gender"
+                  label={tFilters('gender')}
                   value={getFilterDisplayValue("genders")}
                   isOpen={openDropdown === "gender"}
                   onToggle={() => toggleDropdown("gender")}
@@ -990,7 +999,7 @@ export default function Home() {
               {/* 8. NATURE */}
               <div className={`${showAdvanced ? '' : 'hidden md:block'}`}>
                 <CompactFilterDropdown
-                  label="Nature"
+                  label={tFilters('nature')}
                   value={getFilterDisplayValue("natures")}
                   isOpen={openDropdown === "nature"}
                   onToggle={() => toggleDropdown("nature")}
@@ -1001,7 +1010,7 @@ export default function Home() {
                       <Search size={14} className="absolute left-2 top-2.5 text-charcoal" />
                       <input
                         type="text"
-                        placeholder="Search..."
+                        placeholder={tCommon('search')}
                         value={natureSearch}
                         onChange={(e) => setNatureSearch(e.target.value)}
                         className="w-full bg-cream border-2 border-black px-2 py-2 pl-8 font-mono text-xs text-black placeholder-charcoal"
@@ -1020,7 +1029,7 @@ export default function Home() {
               {/* 9. FORMS */}
               <div className={`${showAdvanced ? '' : 'hidden md:block'}`}>
                 <CompactFilterDropdown
-                  label="Forms"
+                  label={tFilters('forms')}
                   value={getFilterDisplayValue("forms")}
                   isOpen={openDropdown === "forms"}
                   onToggle={() => toggleDropdown("forms")}
@@ -1038,7 +1047,7 @@ export default function Home() {
               {/* 10. DISPLAY */}
               <div className={`${showAdvanced ? '' : 'hidden md:block'}`}>
                 <CompactFilterDropdown
-                  label="Display"
+                  label={tFilters('display')}
                   value={getFilterDisplayValue("displayFormat")}
                   isOpen={openDropdown === "display"}
                   onToggle={() => toggleDropdown("display")}
@@ -1090,7 +1099,7 @@ export default function Home() {
                   className="hidden md:flex h-12 px-4 bg-marigold text-black hover:bg-marigold-hover font-mono text-xs md:text-sm font-semibold border-2 border-black transition-colors duration-200 items-center justify-center"
                   aria-label="Reset all filters"
                 >
-                  RESET
+                  {tFilters('reset')}
                 </button>
               )}
             </div>
@@ -1102,7 +1111,7 @@ export default function Home() {
                 className="md:hidden w-full mt-2 h-12 bg-marigold text-black hover:bg-marigold-hover font-mono text-xs font-semibold border-2 border-black transition-colors duration-200 flex items-center justify-center"
                 aria-label="Reset all filters"
               >
-                RESET FILTERS
+                {tFilters('resetFilters')}
               </button>
             )}
           </div>
@@ -1118,33 +1127,26 @@ export default function Home() {
             {loading ? (
               <span className="flex items-center justify-center gap-3">
                 <Loader2 className="animate-spin" size={20} />
-                GENERATING...
+                {t('generating')}
               </span>
             ) : (
               <span className="flex items-center justify-center gap-3">
                 <Zap size={20} className="animate-pulse text-[#FFEA00] fill-[#FFEA00]" />
-                GENERATE TEAM
+                {t('generateButton')}
               </span>
             )}
           </button>
         </div>
 
         {/* Loading State */}
-        {isClient && loading && (
-          <div className="flex justify-center items-center py-20">
-            <Loader2 className="animate-spin text-indigo" size={64} />
-          </div>
-        )}
-
-        {/* Initial Loading Placeholder - shown before client hydration */}
-        {!isClient && (
+        {loading && (
           <div className="flex justify-center items-center py-20">
             <Loader2 className="animate-spin text-indigo" size={64} />
           </div>
         )}
 
         {/* Pokemon Grid */}
-        {isClient && !loading && team.length > 0 && (
+        {!loading && team.length > 0 && (
           <div ref={teamGridRef} className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
             {team.map((pokemon) => (
               <div
@@ -1204,7 +1206,7 @@ export default function Home() {
                       className="font-mono text-[10px] md:text-xs px-1.5 md:px-3 py-0.5 md:py-1 text-white uppercase border border-black"
                       style={{ backgroundColor: getTypeColor(typeInfo.type.name) }}
                     >
-                      {typeInfo.type.name}
+                      {tTypes(typeInfo.type.name)}
                     </span>
                   ))}
                 </div>
@@ -1217,7 +1219,7 @@ export default function Home() {
                   >
                     <span className="flex items-center justify-center gap-1 md:gap-2">
                       <Database size={12} className="md:w-4 md:h-4" />
-                      DATA
+                      {t('data')}
                     </span>
                   </Link>
                   <Link
@@ -1226,7 +1228,7 @@ export default function Home() {
                   >
                     <span className="flex items-center justify-center gap-1 md:gap-2">
                       <BookOpen size={12} className="md:w-4 md:h-4" />
-                      POKEDEX
+                      {t('pokedexButton')}
                     </span>
                   </Link>
                 </div>
@@ -1235,12 +1237,12 @@ export default function Home() {
           </div>
         )}
 
-        {/* Empty State - only show after client hydration if still no team */}
-        {isClient && !loading && team.length === 0 && (
+        {/* Empty State - only show if loading finished and still no team */}
+        {!loading && team.length === 0 && (
           <div className="text-center py-20">
             <div className="inline-block border-4 border-charcoal p-8 slasher">
               <p className="font-mono text-charcoal text-lg">
-                Loading your team...
+                {t('loadingTeam')}
               </p>
             </div>
           </div>
@@ -1257,23 +1259,20 @@ export default function Home() {
         {/* About Section */}
         <section id="about" className="mt-12 md:mt-16 mb-8 bg-cream border-2 border-black p-6 md:p-12 slasher">
           <div className="inline-block bg-black px-4 py-1 slasher border border-black mb-4">
-            <span className="font-mono text-xs font-bold text-white uppercase tracking-widest">ABOUT US</span>
+            <span className="font-mono text-xs font-bold text-white uppercase tracking-widest">{t('aboutUs')}</span>
           </div>
           <h2 className="font-sans font-bold text-4xl md:text-5xl lg:text-6xl text-black leading-[0.9] mb-8 uppercase">
-            GLOBAL POKEMON <br/>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-black to-charcoal">
-              DATABASE
-            </span>
+            {t('aboutTitle')}
           </h2>
           
           {/* About Item 1 */}
           <div>
             <div className="bg-black text-white p-4 slasher">
-              <h3 className="font-sans font-bold text-lg md:text-xl">Our Mission</h3>
+              <h3 className="font-sans font-bold text-lg md:text-xl">{tAbout('ourMission.title')}</h3>
             </div>
             <div className="border-2 border-black border-t-0 p-4 bg-white">
               <p className="font-mono text-sm md:text-base text-charcoal leading-relaxed">
-                Random Pokemon Generator is the world&apos;s leading free Pokemon database and team builder, designed to help trainers globally create random teams for gameplay challenges, competitive battles, and creative adventures. Our global database contains complete data for all 1,025+ Pokemon across 9 generations.
+                {tAbout('ourMission.content')}
               </p>
             </div>
           </div>
@@ -1281,11 +1280,11 @@ export default function Home() {
           {/* About Item 2 */}
           <div className="mt-4">
             <div className="bg-black text-white p-4 slasher">
-              <h3 className="font-sans font-bold text-lg md:text-xl">What We Offer</h3>
+              <h3 className="font-sans font-bold text-lg md:text-xl">{tAbout('whatWeOffer.title')}</h3>
             </div>
             <div className="border-2 border-black border-t-0 p-4 bg-white">
               <p className="font-mono text-sm md:text-base text-charcoal leading-relaxed">
-                Instant team generation, comprehensive Pokedex data, smart filtering by type/generation/rarity, detailed Pokemon stats and abilities, easy team sharing, and 24/7 worldwide availability. Whether you&apos;re planning a Nuzlocke run, organizing a draft league, or discovering new favorites — we&apos;ve got you covered.
+                {tAbout('whatWeOffer.content')}
               </p>
             </div>
           </div>
@@ -1293,11 +1292,11 @@ export default function Home() {
           {/* About Item 3 */}
           <div className="mt-4">
             <div className="bg-black text-white p-4 slasher">
-              <h3 className="font-sans font-bold text-lg md:text-xl">Perfect For</h3>
+              <h3 className="font-sans font-bold text-lg md:text-xl">{tAbout('perfectFor.title')}</h3>
             </div>
             <div className="border-2 border-black border-t-0 p-4 bg-white">
               <p className="font-mono text-sm md:text-base text-charcoal leading-relaxed">
-                Nuzlocke Runs, Soul Link challenges, Draft Leagues, Randomizer playthroughs, casual fun, and content creation. Built with love by fans, for fans worldwide. We believe in making Pokemon team building accessible, fun, and completely free for everyone, everywhere.
+                {tAbout('perfectFor.content')}
               </p>
             </div>
           </div>
@@ -1306,23 +1305,20 @@ export default function Home() {
         {/* Disclaimer Section */}
         <section id="disclaimer" className="mt-12 md:mt-16 mb-8 bg-cream border-2 border-black p-6 md:p-12 slasher">
           <div className="inline-block bg-black px-4 py-1 slasher border border-black mb-4">
-            <span className="font-mono text-xs font-bold text-white uppercase tracking-widest">IMPORTANT</span>
+            <span className="font-mono text-xs font-bold text-white uppercase tracking-widest">{t('legalInfo')}</span>
           </div>
           <h2 className="font-sans font-bold text-4xl md:text-5xl lg:text-6xl text-black leading-[0.9] mb-8 uppercase">
-            LEGAL <br/>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-black to-charcoal">
-              DISCLAIMER
-            </span>
+            {t('disclaimerTitle')}
           </h2>
           
           {/* Disclaimer Item 1 */}
           <div>
             <div className="bg-black text-white p-4 slasher">
-              <h3 className="font-sans font-bold text-lg md:text-xl">Copyright Notice</h3>
+              <h3 className="font-sans font-bold text-lg md:text-xl">{tDisclaimer('copyrightNotice.title')}</h3>
             </div>
             <div className="border-2 border-black border-t-0 p-4 bg-white">
               <p className="font-mono text-sm md:text-base text-charcoal leading-relaxed">
-                Pokémon and all related content including character names, images, and trademarks are © 1995-2025 Nintendo / Creatures Inc. / GAME FREAK inc. TM, ® and character names are trademarks of Nintendo.
+                {tDisclaimer('copyrightNotice.content')}
               </p>
             </div>
           </div>
@@ -1330,11 +1326,11 @@ export default function Home() {
           {/* Disclaimer Item 2 */}
           <div className="mt-4">
             <div className="bg-black text-white p-4 slasher">
-              <h3 className="font-sans font-bold text-lg md:text-xl">Fan Project Status</h3>
+              <h3 className="font-sans font-bold text-lg md:text-xl">{tDisclaimer('fanProject.title')}</h3>
             </div>
             <div className="border-2 border-black border-t-0 p-4 bg-white">
               <p className="font-mono text-sm md:text-base text-charcoal leading-relaxed">
-                This website is a fan-made, non-commercial project. We are NOT affiliated with, endorsed by, or sponsored by Nintendo, The Pokémon Company, Creatures Inc., GAME FREAK inc., or any of their subsidiaries or related companies.
+                {tDisclaimer('fanProject.content')}
               </p>
             </div>
           </div>
@@ -1342,11 +1338,11 @@ export default function Home() {
           {/* Disclaimer Item 3 */}
           <div className="mt-4">
             <div className="bg-black text-white p-4 slasher">
-              <h3 className="font-sans font-bold text-lg md:text-xl">Data Sources</h3>
+              <h3 className="font-sans font-bold text-lg md:text-xl">{tDisclaimer('dataSources.title')}</h3>
             </div>
             <div className="border-2 border-black border-t-0 p-4 bg-white">
               <p className="font-mono text-sm md:text-base text-charcoal leading-relaxed">
-                All Pokemon data and images are sourced from PokeAPI (pokeapi.co), a free and open Pokemon database maintained by the community. We do not claim ownership of any Pokemon-related intellectual property.
+                {tDisclaimer('dataSources.content')}
               </p>
             </div>
           </div>
@@ -1354,11 +1350,11 @@ export default function Home() {
           {/* Disclaimer Item 4 */}
           <div className="mt-4">
             <div className="bg-black text-white p-4 slasher">
-              <h3 className="font-sans font-bold text-lg md:text-xl">Fair Use</h3>
+              <h3 className="font-sans font-bold text-lg md:text-xl">{tDisclaimer('fairUse.title')}</h3>
             </div>
             <div className="border-2 border-black border-t-0 p-4 bg-white">
               <p className="font-mono text-sm md:text-base text-charcoal leading-relaxed">
-                This tool is provided for entertainment and educational purposes only. We believe our use falls under fair use as we are non-commercial, provide a transformative utility tool, cause no market harm, and help fans learn about Pokemon. If you are a rights holder with concerns, please contact us immediately.
+                {tDisclaimer('fairUse.content')}
               </p>
             </div>
           </div>
@@ -1368,23 +1364,24 @@ export default function Home() {
         {/* All section badges use bg-black with text-white for consistency */}
         <section id="privacy-policy" className="mt-12 md:mt-16 mb-8 bg-cream border-2 border-black p-6 md:p-12 slasher">
           <div className="inline-block bg-black px-4 py-1 slasher border border-black mb-4">
-            <span className="font-mono text-xs font-bold text-white uppercase tracking-widest">GDPR COMPLIANT</span>
+            <span className="font-mono text-xs font-bold text-white uppercase tracking-widest">{t('privacyInfo')}</span>
           </div>
           <h2 className="font-sans font-bold text-4xl md:text-5xl lg:text-6xl text-black leading-[0.9] mb-8 uppercase">
-            PRIVACY <br/>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-black to-charcoal">
-              POLICY
-            </span>
+            {t('privacyTitle')}
           </h2>
+
+          <p className="font-mono text-sm md:text-base text-charcoal leading-relaxed mb-6">
+            {tPrivacy('intro')}
+          </p>
           
           {/* Policy Item 1 */}
           <div>
             <div className="bg-black text-white p-4 slasher">
-              <h3 className="font-sans font-bold text-lg md:text-xl">Data Collection & Legal Basis</h3>
+              <h3 className="font-sans font-bold text-lg md:text-xl">{tPrivacy('dataCollection.title')}</h3>
             </div>
             <div className="border-2 border-black border-t-0 p-4 bg-white">
               <p className="font-mono text-sm md:text-base text-charcoal leading-relaxed">
-                This website does not collect, store, or process any personal data as defined under GDPR (Article 4). We do not use cookies for tracking, profiling, or advertising purposes. The Random Pokemon Generator operates entirely client-side—all data processing happens locally in your browser. No personal information is transmitted to our servers.
+                {tPrivacy('dataCollection.content')}
               </p>
             </div>
           </div>
@@ -1392,11 +1389,11 @@ export default function Home() {
           {/* Policy Item 2 */}
           <div className="mt-4">
             <div className="bg-black text-white p-4 slasher">
-              <h3 className="font-sans font-bold text-lg md:text-xl">Third-Party Services</h3>
+              <h3 className="font-sans font-bold text-lg md:text-xl">{tPrivacy('cookies.title')}</h3>
             </div>
             <div className="border-2 border-black border-t-0 p-4 bg-white">
               <p className="font-mono text-sm md:text-base text-charcoal leading-relaxed">
-                We use PokeAPI (pokeapi.co) to fetch Pokemon data. This third-party service may log IP addresses per their own privacy policy. We recommend reviewing their privacy practices. No external redirects, third-party commerce sites, or advertising networks are involved. We do not share any data with third parties for marketing purposes.
+                {tPrivacy('cookies.content')}
               </p>
             </div>
           </div>
@@ -1404,11 +1401,11 @@ export default function Home() {
           {/* Policy Item 3 */}
           <div className="mt-4">
             <div className="bg-black text-white p-4 slasher">
-              <h3 className="font-sans font-bold text-lg md:text-xl">Your Rights Under GDPR</h3>
+              <h3 className="font-sans font-bold text-lg md:text-xl">{tPrivacy('localStorage.title')}</h3>
             </div>
             <div className="border-2 border-black border-t-0 p-4 bg-white">
               <p className="font-mono text-sm md:text-base text-charcoal leading-relaxed">
-                As an EU/EEA resident, you have rights under GDPR including: Right to Access (Article 15), Right to Rectification (Article 16), Right to Erasure (Article 17), Right to Data Portability (Article 20), and Right to Object (Article 21). Since we do not collect personal data, these rights are automatically respected. If you believe we hold any data about you, contact us for verification.
+                {tPrivacy('localStorage.content')}
               </p>
             </div>
           </div>
@@ -1416,11 +1413,11 @@ export default function Home() {
           {/* Policy Item 4 */}
           <div className="mt-4">
             <div className="bg-black text-white p-4 slasher">
-              <h3 className="font-sans font-bold text-lg md:text-xl">Analytics & Cookies</h3>
+              <h3 className="font-sans font-bold text-lg md:text-xl">{tPrivacy('thirdParty.title')}</h3>
             </div>
             <div className="border-2 border-black border-t-0 p-4 bg-white">
               <p className="font-mono text-sm md:text-base text-charcoal leading-relaxed">
-                We may use privacy-respecting, cookie-free analytics (such as Plausible or similar) to understand general usage patterns. These tools do not use cookies, do not track users across sites, and do not collect personally identifiable information. No consent banner is required as no tracking cookies are used.
+                {tPrivacy('thirdParty.content')}
               </p>
             </div>
           </div>
@@ -1428,11 +1425,11 @@ export default function Home() {
           {/* Policy Item 5 */}
           <div className="mt-4">
             <div className="bg-black text-white p-4 slasher">
-              <h3 className="font-sans font-bold text-lg md:text-xl">Data Retention & Security</h3>
+              <h3 className="font-sans font-bold text-lg md:text-xl">{tPrivacy('yourRights.title')}</h3>
             </div>
             <div className="border-2 border-black border-t-0 p-4 bg-white">
               <p className="font-mono text-sm md:text-base text-charcoal leading-relaxed">
-                Since no personal data is collected, there is no data retention period. Your generated teams and preferences are stored only in your browser&apos;s local storage (if applicable) and can be cleared at any time through your browser settings. We implement industry-standard security measures including HTTPS encryption for all connections.
+                {tPrivacy('yourRights.content')}
               </p>
             </div>
           </div>
@@ -1440,11 +1437,11 @@ export default function Home() {
           {/* Policy Item 6 */}
           <div className="mt-4">
             <div className="bg-black text-white p-4 slasher">
-              <h3 className="font-sans font-bold text-lg md:text-xl">Data Controller & Contact</h3>
+              <h3 className="font-sans font-bold text-lg md:text-xl">{tPrivacy('updates.title')}</h3>
             </div>
             <div className="border-2 border-black border-t-0 p-4 bg-white">
               <p className="font-mono text-sm md:text-base text-charcoal leading-relaxed">
-                Data Controller: Random Pokemon Generator. For any privacy-related questions, GDPR requests, or concerns, please contact us at shadowrajoriya@gmail.com. We will respond to all legitimate requests within 30 days as required by GDPR (Article 12). This privacy policy was last updated on November 30, 2025.
+                {tPrivacy('updates.content')}
               </p>
             </div>
           </div>
@@ -1453,25 +1450,22 @@ export default function Home() {
         {/* FAQ Section */}
         <section id="faq" className="mt-12 md:mt-16 mb-8 bg-cream border-2 border-black p-6 md:p-12 slasher">
             <div className="inline-block bg-black px-4 py-1 slasher border border-black mb-4">
-              <span className="font-mono text-xs font-bold text-white uppercase tracking-widest">HELP DESK</span>
+              <span className="font-mono text-xs font-bold text-white uppercase tracking-widest">{t('helpDesk')}</span>
             </div>
             <h2 className="font-sans font-bold text-4xl md:text-5xl lg:text-6xl text-black leading-[0.9] mb-8 uppercase">
-              FREQUENTLY <br/>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-black to-charcoal">
-                ASKED
-              </span>
+              {t('faqTitle')}
             </h2>
             <div className="space-y-0">
               {/* FAQ Item 1 */}
               <div>
                 <div className="bg-black text-white p-4 slasher">
                   <h3 className="font-sans font-bold text-lg md:text-xl">
-                    How do I generate a random Pokemon team?
+                    {tFaq('q1.question')}
                   </h3>
                 </div>
                 <div className="border-2 border-black border-t-0 p-4 bg-white">
                   <p className="font-mono text-sm md:text-base text-charcoal leading-relaxed">
-                    Simply click the &apos;GENERATE TEAM&apos; button. Our tool instantly selects 6 unique Pokemon from Gen 1 to Gen 9, creating a balanced team for Nuzlockes or creative drawing challenges.
+                    {tFaq('q1.answer')}
                   </p>
                 </div>
               </div>
@@ -1479,12 +1473,12 @@ export default function Home() {
               <div className="mt-4">
                 <div className="bg-black text-white p-4 slasher">
                   <h3 className="font-sans font-bold text-lg md:text-xl">
-                    Can I exclude Legendary Pokemon?
+                    {tFaq('q2.question')}
                   </h3>
                 </div>
                 <div className="border-2 border-black border-t-0 p-4 bg-white">
                   <p className="font-mono text-sm md:text-base text-charcoal leading-relaxed">
-                    Yes. Use the &apos;Rarity&apos; filter above the generator to exclude Legendaries, Mythicals, or Ultra Beasts for a standard playthrough experience.
+                    {tFaq('q2.answer')}
                   </p>
                 </div>
               </div>
@@ -1492,12 +1486,12 @@ export default function Home() {
               <div className="mt-4">
                 <div className="bg-black text-white p-4 slasher">
                   <h3 className="font-sans font-bold text-lg md:text-xl">
-                    Is this updated for Pokemon Scarlet and Violet?
+                    {tFaq('q3.question')}
                   </h3>
                 </div>
                 <div className="border-2 border-black border-t-0 p-4 bg-white">
                   <p className="font-mono text-sm md:text-base text-charcoal leading-relaxed">
-                    Yes. Our database includes the complete Paldea Pokédex and is updated regularly for new DLC expansions.
+                    {tFaq('q3.answer')}
                   </p>
                 </div>
               </div>
@@ -1505,12 +1499,12 @@ export default function Home() {
               <div className="mt-4">
                 <div className="bg-black text-white p-4 slasher">
                   <h3 className="font-sans font-bold text-lg md:text-xl">
-                    Can I generate Pokemon cards with this tool?
+                    {tFaq('q4.question')}
                   </h3>
                 </div>
                 <div className="border-2 border-black border-t-0 p-4 bg-white">
                   <p className="font-mono text-sm md:text-base text-charcoal leading-relaxed">
-                    Yes! Each generated Pokemon displays as a stylized card with stats, types, and official artwork. Perfect for collectors, TCG fans, or creating custom card collections.
+                    {tFaq('q4.answer')}
                   </p>
                 </div>
               </div>
@@ -1518,12 +1512,12 @@ export default function Home() {
               <div className="mt-4">
                 <div className="bg-black text-white p-4 slasher">
                   <h3 className="font-sans font-bold text-lg md:text-xl">
-                    What is the Pokedex database?
+                    {tFaq('q5.question')}
                   </h3>
                 </div>
                 <div className="border-2 border-black border-t-0 p-4 bg-white">
                   <p className="font-mono text-sm md:text-base text-charcoal leading-relaxed">
-                    Our comprehensive Pokedex contains detailed information on all 1025 Pokemon across every generation. Browse stats, types, abilities, evolution chains, and Pokedex entries for any Pokemon.
+                    {tFaq('q5.answer')}
                   </p>
                 </div>
               </div>

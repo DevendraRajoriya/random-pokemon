@@ -1,15 +1,17 @@
 ﻿"use client";
 
 import { Mail } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 /**
  * Footer Component
  * 
- * Note: This component is static with no dynamic content to prevent hydration mismatches.
- * All links are hardcoded and do not depend on browser-only variables.
+ * Note: This component uses next-intl for localized navigation.
  */
 export default function Footer() {
+  const t = useTranslations('common');
   return (
     <footer className="border-t-4 border-black bg-cream mt-12" suppressHydrationWarning>
       {/* Main Footer Content */}
@@ -30,7 +32,7 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Column 2: Navigation - Static links only, no dynamic content */}
+          {/* Column 2: Navigation */}
           <div className="space-y-4">
             <h4 className="font-sans font-bold text-sm text-black uppercase tracking-wider border-b-2 border-black pb-2">
               NAVIGATION
@@ -48,25 +50,13 @@ export default function Footer() {
               >
                 Pokedex Database
               </Link>
-              <Link 
-                href="/#about" 
-                className="block font-mono text-sm text-charcoal px-2 py-1.5 -mx-2 hover:bg-marigold hover:text-black transition-colors"
-              >
-                About
-              </Link>
-              <Link 
-                href="/#disclaimer" 
-                className="block font-mono text-sm text-charcoal px-2 py-1.5 -mx-2 hover:bg-marigold hover:text-black transition-colors"
-              >
-                Disclaimer
-              </Link>
-              <Link 
-                href="/#privacy-policy" 
-                className="block font-mono text-sm text-charcoal px-2 py-1.5 -mx-2 hover:bg-marigold hover:text-black transition-colors"
-              >
-                Privacy Policy
-              </Link>
             </nav>
+            
+            {/* Language Switcher */}
+            <div className="pt-4 border-t border-black/20">
+              <div className="font-mono text-xs text-charcoal uppercase mb-2">{t('language')}</div>
+              <LanguageSwitcher variant="compact" />
+            </div>
           </div>
 
           {/* Column 3: Communication */}

@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { ArrowLeft, Database, Share2, Zap } from "lucide-react";
+import { Link } from "@/i18n/navigation";
+import { ArrowLeft, Database, Share2, Zap, Shuffle, Sparkles } from "lucide-react";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import ShareModal from "@/components/ShareModal";
 import { PokemonWithSpecies } from "./page";
 
@@ -33,18 +34,37 @@ const TYPE_COLORS: Record<string, string> = {
   fairy: "#EE99AC",
 };
 
+// Total Pokemon count for random generation (Gen 1-9)
+const TOTAL_POKEMON = 1025;
+
 export default function PokemonDetailClient({ pokemon }: Props) {
   const router = useRouter();
   const [showShareModal, setShowShareModal] = useState(false);
+  const [showShiny, setShowShiny] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const t = useTranslations('pokemon');
+  const tStats = useTranslations('stats');
+  const tCommon = useTranslations('common');
+  const tSeo = useTranslations('seo');
+
+  // Generate Random Pokemon - navigates to a random pre-built Pokemon page
+  const generateRandomPokemon = () => {
+    setIsGenerating(true);
+    const randomId = Math.floor(Math.random() * TOTAL_POKEMON) + 1;
+    // Small delay for visual feedback, then navigate to pre-rendered page
+    setTimeout(() => {
+      router.push(`/pokemon/${randomId}`);
+    }, 300);
+  };
 
   const formatStatName = (name: string): string => {
     const statNames: Record<string, string> = {
-      "hp": "HP",
-      "attack": "ATK",
-      "defense": "DEF",
-      "special-attack": "SP.ATK",
-      "special-defense": "SP.DEF",
-      "speed": "SPEED",
+      "hp": tStats('hp'),
+      "attack": tStats('attack'),
+      "defense": tStats('defense'),
+      "special-attack": tStats('specialAttack'),
+      "special-defense": tStats('specialDefense'),
+      "speed": tStats('speed'),
     };
     return statNames[name] || name.toUpperCase();
   };
@@ -187,21 +207,33 @@ export default function PokemonDetailClient({ pokemon }: Props) {
         <div className="max-w-6xl mx-auto px-4 md:px-8 py-6 md:py-12">
           
           {/* Top Navigation */}
-          <div className="flex justify-between items-center mb-6 md:mb-8">
-            <button
-              onClick={() => router.push("/")}
-              className="flex items-center gap-2 bg-black text-white font-mono text-xs px-4 py-2 slasher hover:bg-charcoal transition-colors"
-            >
-              <ArrowLeft size={14} />
-              BACK TO GENERATOR
-            </button>
+          <div className="flex flex-wrap justify-between items-center gap-3 mb-6 md:mb-8">
+            <div className="flex gap-2">
+              <button
+                onClick={() => router.push("/")}
+                className="flex items-center gap-2 bg-black text-white font-mono text-xs px-4 py-2 slasher hover:bg-charcoal transition-colors"
+              >
+                <ArrowLeft size={14} />
+                {tCommon('back').toUpperCase()}
+              </button>
+              
+              {/* Generate Random Pokemon Button */}
+              <button
+                onClick={generateRandomPokemon}
+                disabled={isGenerating}
+                className="flex items-center gap-2 bg-marigold text-black font-mono text-xs font-bold px-4 py-2 slasher border-2 border-black hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <Shuffle size={14} className={isGenerating ? 'animate-spin' : ''} />
+                {isGenerating ? t('generating') : t('randomPokemon')}
+              </button>
+            </div>
             
             <button
               onClick={() => setShowShareModal(true)}
               className="flex items-center gap-2 bg-sky-400 text-black font-mono text-xs font-bold px-4 py-2 slasher border-2 border-black hover:brightness-110 transition-all"
             >
               <Share2 size={14} />
-              SHARE
+              {t('share')}
             </button>
           </div>
 
@@ -234,17 +266,44 @@ export default function PokemonDetailClient({ pokemon }: Props) {
               
               {/* Artwork Box */}
               <div className="bg-white border-4 border-black slasher p-6 md:p-8">
-                <div className="inline-block bg-black px-3 py-1 mb-4">
-                  <span className="font-mono text-xs font-bold text-white uppercase tracking-wider">
-                    VISUAL DATA
-                  </span>
+                <div className="flex items-center justify-between mb-4">
+                  <div className="inline-block bg-black px-3 py-1">
+                    <span className="font-mono text-xs font-bold text-white uppercase tracking-wider">
+                      {t('visualData')}
+                    </span>
+                  </div>
+                  
+                  {/* Shiny Toggle Button */}
+                  <button
+                    onClick={() => setShowShiny(!showShiny)}
+                    className={`flex items-center gap-2 font-mono text-xs font-bold px-3 py-1.5 border-2 border-black transition-all ${
+                      showShiny 
+                        ? 'bg-gradient-to-r from-purple-400 via-pink-400 to-yellow-400 text-black' 
+                        : 'bg-cream text-black hover:bg-marigold'
+                    }`}
+                  >
+                    <Sparkles size={14} className={showShiny ? 'animate-pulse' : ''} />
+                    {showShiny ? t('shiny') : t('normal')}
+                  </button>
                 </div>
+                
                 <div className="relative w-full aspect-square bg-cream/50 flex items-center justify-center">
+                  {/* Shiny sparkle effect overlay */}
+                  {showShiny && (
+                    <div className="absolute inset-0 pointer-events-none z-20">
+                      <div className="absolute top-4 left-8 w-2 h-2 bg-yellow-300 rounded-full animate-ping" />
+                      <div className="absolute top-12 right-12 w-1.5 h-1.5 bg-pink-300 rounded-full animate-ping delay-100" />
+                      <div className="absolute bottom-16 left-16 w-2 h-2 bg-purple-300 rounded-full animate-ping delay-200" />
+                    </div>
+                  )}
                   <Image
-                    src={pokemon.sprites.other["official-artwork"].front_default}
-                    alt={`${capitalizedName} official artwork - ${typesDisplay} type Pokemon from ${pokemon.species.generation}`}
+                    src={showShiny 
+                      ? (pokemon.sprites.other["official-artwork"].front_shiny || pokemon.sprites.front_shiny || pokemon.sprites.other["official-artwork"].front_default)
+                      : pokemon.sprites.other["official-artwork"].front_default
+                    }
+                    alt={`${capitalizedName} ${showShiny ? 'shiny ' : ''}official artwork - ${typesDisplay} type Pokemon from ${pokemon.species.generation}`}
                     fill
-                    className="object-contain p-4 mix-blend-multiply"
+                    className={`object-contain p-4 mix-blend-multiply transition-all duration-300 ${showShiny ? 'drop-shadow-[0_0_15px_rgba(255,215,0,0.5)]' : ''}`}
                     priority
                     unoptimized
                   />
@@ -271,31 +330,31 @@ export default function PokemonDetailClient({ pokemon }: Props) {
               <div className="bg-white border-4 border-black slasher p-6">
                 <div className="inline-block bg-black px-3 py-1 mb-4">
                   <span className="font-mono text-xs font-bold text-white uppercase tracking-wider">
-                    PHYSICAL DATA
+                    {t('physicalData')}
                   </span>
                 </div>
                 <div className="space-y-0">
                   <div className="flex justify-between items-center py-3 border-b-2 border-black/10">
-                    <span className="font-mono text-sm text-charcoal uppercase">Height</span>
+                    <span className="font-mono text-sm text-charcoal uppercase">{t('height')}</span>
                     <span className="font-mono text-sm text-black font-bold">
                       {(pokemon.height / 10).toFixed(1)} m
                     </span>
                   </div>
                   <div className="flex justify-between items-center py-3 border-b-2 border-black/10">
-                    <span className="font-mono text-sm text-charcoal uppercase">Weight</span>
+                    <span className="font-mono text-sm text-charcoal uppercase">{t('weight')}</span>
                     <span className="font-mono text-sm text-black font-bold">
                       {(pokemon.weight / 10).toFixed(1)} kg
                     </span>
                   </div>
                   <div className="flex justify-between items-center py-3 border-b-2 border-black/10">
-                    <span className="font-mono text-sm text-charcoal uppercase">Classification</span>
+                    <span className="font-mono text-sm text-charcoal uppercase">{t('classification')}</span>
                     <span className="font-mono text-sm text-black font-bold">
                       {pokemon.species.genus}
                     </span>
                   </div>
                   {pokemon.species.habitat && (
                     <div className="flex justify-between items-center py-3">
-                      <span className="font-mono text-sm text-charcoal uppercase">Habitat</span>
+                      <span className="font-mono text-sm text-charcoal uppercase">{t('habitat')}</span>
                       <span className="font-mono text-sm text-black font-bold uppercase">
                         {pokemon.species.habitat}
                       </span>
@@ -308,7 +367,7 @@ export default function PokemonDetailClient({ pokemon }: Props) {
               <div className="bg-white border-4 border-black slasher p-6">
                 <div className="inline-block bg-black px-3 py-1 mb-4">
                   <span className="font-mono text-xs font-bold text-white uppercase tracking-wider">
-                    ABILITIES
+                    {t('abilities')}
                   </span>
                 </div>
                 <div className="flex flex-wrap gap-2">
@@ -334,7 +393,7 @@ export default function PokemonDetailClient({ pokemon }: Props) {
                 <div className="flex items-center gap-3 mb-6">
                   <div className="inline-block bg-black px-3 py-1">
                     <span className="font-mono text-xs font-bold text-white uppercase tracking-wider">
-                      COMBAT STATISTICS
+                      {t('combatStatistics')}
                     </span>
                   </div>
                   <Zap className="text-marigold" size={20} fill="currentColor" />
@@ -371,7 +430,7 @@ export default function PokemonDetailClient({ pokemon }: Props) {
                   <div className="pt-4 mt-4 border-t-4 border-black">
                     <div className="flex justify-between items-center">
                       <span className="font-mono text-sm font-bold text-black uppercase">
-                        Total Base Stats
+                        {t('totalBaseStats')}
                       </span>
                       <span className="font-mono text-xl font-bold text-black">
                         {totalStats}
@@ -385,7 +444,7 @@ export default function PokemonDetailClient({ pokemon }: Props) {
               <div className="bg-white border-4 border-black slasher p-6">
                 <div className="inline-block bg-black px-3 py-1 mb-4">
                   <span className="font-mono text-xs font-bold text-white uppercase tracking-wider">
-                    POKEDEX ENTRY
+                    {t('pokedexEntry')}
                   </span>
                 </div>
                 {pokemon.species.flavorText ? (
@@ -394,7 +453,7 @@ export default function PokemonDetailClient({ pokemon }: Props) {
                   </p>
                 ) : (
                   <p className="font-mono text-sm text-charcoal/50">
-                    No entry available.
+                    {t('noEntry')}
                   </p>
                 )}
               </div>
@@ -406,7 +465,7 @@ export default function PokemonDetailClient({ pokemon }: Props) {
                   className="bg-purple-300 hover:brightness-110 text-black font-mono font-bold text-sm px-6 py-4 text-center border-4 border-black transition-all duration-200 slasher flex items-center justify-center gap-2"
                 >
                   <Database size={18} />
-                  EXPLORE POKEDEX
+                  {t('explorePokedex')}
                 </Link>
               </div>
 
@@ -415,7 +474,7 @@ export default function PokemonDetailClient({ pokemon }: Props) {
                 <div className="bg-white border-4 border-black slasher p-6">
                   <div className="inline-block bg-black px-3 py-1 mb-4">
                     <span className="font-mono text-xs font-bold text-white uppercase tracking-wider">
-                      EVOLUTION CHAIN
+                      {t('evolutionChain')}
                     </span>
                   </div>
                   <div className="flex flex-wrap items-center justify-center gap-2">
@@ -448,9 +507,9 @@ export default function PokemonDetailClient({ pokemon }: Props) {
                   </div>
                   {currentEvoIndex >= 0 && (
                     <p className="font-mono text-xs text-charcoal text-center mt-3">
-                      {currentEvoIndex === 0 && evolutionChain.length > 1 && "Base form • Can evolve"}
-                      {currentEvoIndex > 0 && currentEvoIndex < evolutionChain.length - 1 && "Middle evolution"}
-                      {currentEvoIndex === evolutionChain.length - 1 && evolutionChain.length > 1 && "Final evolution"}
+                      {currentEvoIndex === 0 && evolutionChain.length > 1 && t('baseForm')}
+                      {currentEvoIndex > 0 && currentEvoIndex < evolutionChain.length - 1 && t('middleEvolution')}
+                      {currentEvoIndex === evolutionChain.length - 1 && evolutionChain.length > 1 && t('finalEvolution')}
                     </p>
                   )}
                 </div>
@@ -460,7 +519,7 @@ export default function PokemonDetailClient({ pokemon }: Props) {
               <div className="bg-white border-4 border-black slasher p-6">
                 <div className="inline-block bg-black px-3 py-1 mb-4">
                   <span className="font-mono text-xs font-bold text-white uppercase tracking-wider">
-                    EXPLORE BY TYPE
+                    {t('exploreByType')}
                   </span>
                 </div>
                 <p className="font-mono text-xs text-charcoal mb-3">
@@ -477,7 +536,7 @@ export default function PokemonDetailClient({ pokemon }: Props) {
                         color: ['electric', 'normal', 'ground', 'fairy', 'ice'].includes(typeInfo.type.name) ? '#000' : '#fff'
                       }}
                     >
-                      All {typeInfo.type.name} Pokemon →
+                      {t('allTypesPokemon', { type: typeInfo.type.name })}
                     </Link>
                   ))}
                 </div>
@@ -489,12 +548,12 @@ export default function PokemonDetailClient({ pokemon }: Props) {
           <article className="mt-8 md:mt-12 bg-white border-4 border-black slasher p-6 md:p-8">
             <div className="inline-block bg-black px-3 py-1 mb-6">
               <span className="font-mono text-xs font-bold text-white uppercase tracking-wider">
-                TRAINER INTEL
+                {t('trainerIntel')}
               </span>
             </div>
             
             <h2 className="font-sans font-bold text-2xl md:text-3xl mb-6 text-black uppercase">
-              About {capitalizedName}
+              {t('about', { name: capitalizedName })}
             </h2>
             
             <div className="space-y-4">

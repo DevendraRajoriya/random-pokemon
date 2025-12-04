@@ -1,0 +1,337 @@
+{
+  "metadata": {
+    "title": "Gerador de Pokémon Aleatório | Monte sua equipe (Gen 1-9)",
+    "description": "Gere equipes Pokémon aleatórias instantaneamente. A ferramenta definitiva para Nuzlocke e criação de equipes para Escarlate, Violeta e todas as gerações. Filtre por tipo, região e raridade.",
+    "pokedexTitle": "Pokédex - Banco de dados Pokémon completo | Todos os 1025 Pokémon",
+    "pokedexDescription": "Navegue por todos os 1025 Pokémon das gerações 1-9. Pokédex completa com tipos, estatísticas, habilidades e sprites."
+  },
+  "home": {
+    "title": "GERADOR DE POKÉMON ALEATÓRIO",
+    "subtitle": "Monte sua equipe dos sonhos de todas as 9 gerações",
+    "generateButton": "GERAR EQUIPE",
+    "generating": "GERANDO...",
+    "generateMore": "GERAR MAIS",
+    "clearTeam": "LIMPAR EQUIPE",
+    "teamSize": "Tamanho da equipe",
+    "yourTeam": "Sua equipe",
+    "emptyTeam": "Clique em gerar para montar sua equipe!",
+    "totalBaseStats": "Status base totais",
+    "searchPlaceholder": "PESQUISAR_BANCO_DADOS...",
+    "loadingTeam": "Carregando sua equipe...",
+    "data": "DADOS",
+    "pokedexButton": "POKÉDEX",
+    "helpDesk": "AJUDA",
+    "faqTitle": "PERGUNTAS FREQUENTES",
+    "aboutUs": "SOBRE NÓS",
+    "aboutTitle": "NOSSA HISTÓRIA",
+    "legalInfo": "INFO LEGAL",
+    "disclaimerTitle": "AVISO LEGAL",
+    "privacyInfo": "PRIVACIDADE",
+    "privacyTitle": "POLÍTICA DE PRIVACIDADE"
+  },
+  "about": {
+    "ourMission": {
+      "title": "Nossa Missão",
+      "content": "O Gerador de Pokémon Aleatório ajuda treinadores a descobrir novas combinações de equipes e torna as batalhas competitivas mais acessíveis através da randomização."
+    },
+    "whatWeOffer": {
+      "title": "O que oferecemos",
+      "content": "Filtragem avançada por geração, tipo, raridade e estágio de evolução. Seja planejando um desafio Nuzlocke ou buscando inspiração para sua próxima jogatina, nossa ferramenta oferece possibilidades infinitas."
+    },
+    "perfectFor": {
+      "title": "Perfeito para",
+      "content": "Runs Nuzlocke • Desafios Soul Link • Batalhas de equipes aleatórias • Criadores de conteúdo • Artistas buscando temas Pokémon • Prática de construção de equipes competitivas"
+    }
+  },
+  "disclaimer": {
+    "copyrightNotice": {
+      "title": "Aviso de direitos autorais",
+      "content": "Pokémon e todos os nomes, personagens e aparências distintivas relacionados são marcas registradas da Nintendo, The Pokémon Company e Game Freak. Este site não é afiliado, endossado ou conectado à Nintendo, The Pokémon Company ou Game Freak."
+    },
+    "fanProject": {
+      "title": "Status do projeto fan",
+      "content": "Este é um projeto fan não comercial criado para fins educacionais e de entretenimento. Não reivindicamos propriedade de qualquer propriedade intelectual Pokémon."
+    },
+    "dataSources": {
+      "title": "Fontes de dados",
+      "content": "Os dados de Pokémon são provenientes da PokeAPI (pokeapi.co), uma API Pokémon RESTful de código aberto. Artes oficiais e sprites pertencem aos seus respectivos detentores de direitos autorais."
+    },
+    "fairUse": {
+      "title": "Uso justo",
+      "content": "Este projeto opera sob os princípios de uso justo. Todo o conteúdo relacionado a Pokémon é usado para fins informativos e transformadores. Se você é detentor de direitos e tem preocupações, por favor entre em contato conosco."
+    }
+  },
+  "privacy": {
+    "intro": "Respeitamos sua privacidade e estamos comprometidos em proteger seus dados pessoais sob a LGPD/GDPR e regulamentações internacionais de privacidade.",
+    "dataCollection": {
+      "title": "Coleta de dados",
+      "content": "Coletamos dados de uso anônimos mínimos através do Google Analytics, incluindo visualizações de página, duração da sessão e localização geral (apenas nível de país). Nenhuma informação de identificação pessoal é coletada."
+    },
+    "cookies": {
+      "title": "Cookies",
+      "content": "Usamos cookies essenciais para funcionalidade do site e cookies de análise para monitoramento de desempenho. Você pode desativar cookies nas configurações do seu navegador a qualquer momento."
+    },
+    "localStorage": {
+      "title": "Armazenamento local",
+      "content": "Suas equipes geradas e preferências são armazenadas localmente no seu navegador. Esses dados nunca saem do seu dispositivo e não são transmitidos aos nossos servidores."
+    },
+    "thirdParty": {
+      "title": "Serviços de terceiros",
+      "content": "Usamos Vercel para hospedagem e Cloudflare para serviços CDN. Esses provedores podem coletar logs de servidor padrão (endereços IP, tipo de navegador) conforme descrito em suas respectivas políticas de privacidade."
+    },
+    "yourRights": {
+      "title": "Seus direitos",
+      "content": "Sob a LGPD/GDPR, você tem o direito de acessar, retificar ou excluir seus dados pessoais. Como coletamos dados mínimos, a maioria das informações já está anonimizada. Para dúvidas, entre em contato conosco via GitHub."
+    },
+    "updates": {
+      "title": "Atualizações",
+      "content": "Esta política de privacidade foi atualizada pela última vez em janeiro de 2025. Podemos atualizar esta política periodicamente. O uso contínuo do site constitui aceitação de quaisquer alterações."
+    }
+  },
+  "faq": {
+    "q1": {
+      "question": "Como gero uma equipe Pokémon aleatória?",
+      "answer": "Basta clicar no botão 'GERAR EQUIPE'. Nossa ferramenta seleciona instantaneamente 6 Pokémon únicos da Gen 1 à Gen 9, criando uma equipe equilibrada para Nuzlockes ou desafios de desenho criativo."
+    },
+    "q2": {
+      "question": "Posso excluir Pokémon Lendários?",
+      "answer": "Sim. Use o filtro 'Raridade' acima do gerador para excluir Lendários, Míticos ou Ultracriaturas para uma experiência de jogo padrão."
+    },
+    "q3": {
+      "question": "Está atualizado para Pokémon Escarlate e Violeta?",
+      "answer": "Sim. Nosso banco de dados inclui a Pokédex completa de Paldea e é atualizado regularmente para novas expansões DLC."
+    },
+    "q4": {
+      "question": "Posso gerar cartas Pokémon com esta ferramenta?",
+      "answer": "Sim! Cada Pokémon gerado é exibido como uma carta estilizada com estatísticas, tipos e arte oficial. Perfeito para colecionadores, fãs de TCG ou criação de coleções de cartas personalizadas."
+    },
+    "q5": {
+      "question": "O que é o banco de dados Pokédex?",
+      "answer": "Nossa Pokédex abrangente contém informações detalhadas sobre todos os 1025 Pokémon de todas as gerações. Navegue por estatísticas, tipos, habilidades, cadeias de evolução e entradas Pokédex de qualquer Pokémon."
+    }
+  },
+  "pokedex": {
+    "title": "BANCO DE DADOS GLOBAL",
+    "subtitle": "Índice completo de {count} espécies de Pokémon registradas. Pesquise, navegue e acesse especificações detalhadas.",
+    "searchPlaceholder": "Pesquisar Pokémon por nome...",
+    "results": "{count} resultados",
+    "loadMore": "CARREGAR MAIS ({count} restantes)",
+    "noResults": "Nenhum Pokémon encontrado correspondendo a \"{query}\"",
+    "displayingAll": "Exibindo todos os {count} Pokémon",
+    "viewDetails": "VER DETALHES",
+    "backToGenerator": "VOLTAR AO GERADOR",
+    "indexOnline": "ÍNDICE: ONLINE",
+    "loading": "Carregando detalhes do Pokémon..."
+  },
+  "pokemon": {
+    "visualData": "DADOS VISUAIS",
+    "physicalData": "DADOS FÍSICOS",
+    "combatStatistics": "ESTATÍSTICAS DE COMBATE",
+    "abilities": "HABILIDADES",
+    "pokedexEntry": "ENTRADA POKÉDEX",
+    "trainerIntel": "INFO DO TREINADOR",
+    "evolutionChain": "CADEIA DE EVOLUÇÃO",
+    "exploreByType": "EXPLORAR POR TIPO",
+    "allTypesPokemon": "Todos os Pokémon {type} →",
+    "baseForm": "Forma base • Pode evoluir",
+    "middleEvolution": "Evolução intermediária",
+    "finalEvolution": "Evolução final",
+    "about": "Sobre {name}",
+    "height": "Altura",
+    "weight": "Peso",
+    "classification": "Classificação",
+    "habitat": "Habitat",
+    "totalBaseStats": "Status base totais",
+    "noEntry": "Nenhuma entrada disponível.",
+    "share": "COMPARTILHAR",
+    "explorePokedex": "EXPLORAR POKÉDEX"
+  },
+  "stats": {
+    "hp": "PS",
+    "attack": "ATQ",
+    "defense": "DEF",
+    "specialAttack": "ATQ.ESP",
+    "specialDefense": "DEF.ESP",
+    "speed": "VEL"
+  },
+  "types": {
+    "normal": "Normal",
+    "fire": "Fogo",
+    "water": "Água",
+    "electric": "Elétrico",
+    "grass": "Planta",
+    "ice": "Gelo",
+    "fighting": "Lutador",
+    "poison": "Venenoso",
+    "ground": "Terrestre",
+    "flying": "Voador",
+    "psychic": "Psíquico",
+    "bug": "Inseto",
+    "rock": "Pedra",
+    "ghost": "Fantasma",
+    "dragon": "Dragão",
+    "dark": "Sombrio",
+    "steel": "Metálico",
+    "fairy": "Fada"
+  },
+  "filters": {
+    "type": "Tipo",
+    "generation": "Geração",
+    "allTypes": "Todos os tipos",
+    "allGenerations": "Todas as gerações",
+    "includeLegendary": "Incluir lendários",
+    "includeMythical": "Incluir míticos",
+    "shinyMode": "Modo brilhante",
+    "team": "Equipe",
+    "region": "Região",
+    "rarity": "Raridade",
+    "stage": "Estágio",
+    "evolved": "Evoluído",
+    "gender": "Gênero",
+    "nature": "Natureza",
+    "forms": "Formas",
+    "display": "Exibição",
+    "reset": "REDEFINIR",
+    "resetFilters": "REDEFINIR FILTROS",
+    "advancedFilters": "FILTROS AVANÇADOS",
+    "closeFilters": "FECHAR FILTROS",
+    "gen1": "Gen 1 (Kanto)",
+    "gen2": "Gen 2 (Johto)",
+    "gen3": "Gen 3 (Hoenn)",
+    "gen4": "Gen 4 (Sinnoh)",
+    "gen5": "Gen 5 (Unova)",
+    "gen6": "Gen 6 (Kalos)",
+    "gen7": "Gen 7 (Alola)",
+    "gen8": "Gen 8 (Galar)",
+    "gen9": "Gen 9 (Paldea)"
+  },
+  "common": {
+    "loading": "Carregando...",
+    "error": "Ocorreu um erro",
+    "retry": "TENTAR NOVAMENTE",
+    "back": "Voltar",
+    "close": "Fechar",
+    "share": "Compartilhar",
+    "copy": "Copiar",
+    "copied": "Copiado!",
+    "download": "Baixar",
+    "pokemon": "Pokémon",
+    "language": "Idioma",
+    "noImage": "Sem imagem",
+    "status": "STATUS",
+    "go": "IR",
+    "search": "Pesquisar..."
+  },
+  "seo": {
+    "lookingFor": "Procurando detalhes sobre {name}?",
+    "typeIntro": "Este Pokémon do tipo {types} foi introduzido na {generation}.",
+    "knownAs": "É conhecido como o {genus}.",
+    "evolutionLine": "{name} faz parte da linha evolutiva de {chain}.",
+    "battleStrategy": "Em termos de estratégia de batalha, {name} tem um total de status base de {total}.",
+    "highestStat": "Seu atributo mais alto é {stat} ({value}), tornando-o uma ótima escolha para treinadores que buscam {role}.",
+    "physicalDescription": "Com {height} metros de altura e pesando {weight} kg, {name} é um Pokémon {size}",
+    "habitatInfo": "tipicamente encontrado em ambientes de {habitat}",
+    "conclusion": "Seja construindo uma equipe competitiva ou completando sua Pokédex, {name} oferece forças únicas que valem a pena considerar.",
+    "relatedPokemon": "Quer conhecer Pokémon relacionados? Confira"
+  },
+  "cardShowcase": {
+    "newFeature": "Nova Funcionalidade",
+    "export": "EXPORTAR",
+    "tradingCards": "CARTAS COLECIONÁVEIS",
+    "description": "Baixe sua equipe de Pokémon como lindas cartas colecionáveis. Perfeitas para compartilhar nas redes sociais ou guardar como lembrança.",
+    "hdDownload": "Download HD",
+    "instantShare": "Compartilhar Instantâneo"
+  },
+  "seoContent": {
+    "protocol": {
+      "badge": "PROTOCOLO V1.0",
+      "title": "GERADOR AVANÇADO DE POKÉMON",
+      "subtitle": "Seu Companheiro Definitivo para Seleção Aleatória de Pokémon",
+      "paragraph1": "Seja construindo uma equipe equilibrada, explorando novos favoritos, ou adicionando um toque de sorte ao seu próximo jogo, nosso gerador facilita descobrir seu próximo companheiro Pokémon.",
+      "paragraph2": "Use-o para desafios Nuzlocke, torneios Soul Link, ou simplesmente para se divertir experimentando combinações únicas de equipe."
+    },
+    "instructions": {
+      "badge": "INSTRUÇÕES DE USO",
+      "title": "Como Usar Nosso Gerador Aleatório de Pokémon",
+      "subtitle": "Siga estes passos simples para gerar sua equipe aleatória de Pokémon",
+      "step1": {
+        "title": "Passo 1: Escolha o Tamanho da Equipe",
+        "description": "Selecione quantos Pokémon você quer gerar - de 1 a 6 para uma equipe completa. Você também pode optar por um único Pokémon para decisões rápidas."
+      },
+      "step2": {
+        "title": "Passo 2: Aplicar Filtros (Opcional)",
+        "description": "Refine sua seleção filtrando por tipo de Pokémon, geração ou status de lendário. Isso ajuda você a obter equipes mais personalizadas para desafios específicos."
+      },
+      "step3": {
+        "title": "Passo 3: Gerar Sua Equipe",
+        "description": "Pressione o botão gerar e observe seus Pokémon aleatórios aparecerem. Cada Pokémon vem com seus detalhes, incluindo tipos, habilidades e stats base."
+      },
+      "step4": {
+        "title": "Passo 4: Aprender Sobre Cada Pokémon",
+        "description": "Clique em qualquer Pokémon gerado para ver informações detalhadas incluindo movimentos, linhas evolutivas e muito mais."
+      },
+      "step5": {
+        "title": "Passo 5: Regenerar ou Salvar",
+        "description": "Não está satisfeito com os resultados? Simplesmente regenere. Ou salve sua equipe para referência futura."
+      },
+      "step6": {
+        "title": "Passo 6: Compartilhe Sua Equipe",
+        "description": "Compartilhe sua equipe gerada com amigos através de redes sociais ou link direto."
+      }
+    },
+    "nuzlocke": {
+      "badge": "UTILIDADES NUZLOCKE",
+      "title": "Ferramentas para Desafios Nuzlocke de Pokémon",
+      "subtitle": "Potencialize sua experiência de jogo Nuzlocke com nosso gerador aleatório de Pokémon",
+      "intro": "Corridas Nuzlocke são uma das formas mais emocionantes de jogar jogos de Pokémon. Com regras que adicionam consequências reais ao combate, cada decisão importa. Nosso gerador ajuda você a:",
+      "challenge1": {
+        "title": "Desafio Soul Link",
+        "description": "Emparelhe Pokémon gerados aleatoriamente com um parceiro para um desafio cooperativo."
+      },
+      "challenge2": {
+        "title": "Desafio Wonderlocke",
+        "description": "Simule encontros de troca surpresa com seleções completamente aleatórias."
+      },
+      "challenge3": {
+        "title": "Desafio Monotype",
+        "description": "Gere equipes de um único tipo para as corridas monotype mais desafiadoras."
+      },
+      "challenge4": {
+        "title": "Seleção de Inicial",
+        "description": "Não consegue decidir seu inicial? Deixe o gerador escolher seu companheiro inicial."
+      },
+      "challenge5": {
+        "title": "Corrida Randomizer",
+        "description": "Combine com ROM randomizers para planejamento de equipes imprevisíveis."
+      }
+    },
+    "capabilities": {
+      "badge": "CAPACIDADES PRINCIPAIS",
+      "title": "Recursos do Gerador Aleatório",
+      "subtitle": "Descubra o que torna nosso gerador de Pokémon único",
+      "feature1": {
+        "title": "Pokédex Completa",
+        "description": "Acesso a todos os 1000+ Pokémon incluindo todas as formas regionais e variantes."
+      },
+      "feature2": {
+        "title": "Filtragem Inteligente",
+        "description": "Filtros avançados para tipo, geração, raridade e mais."
+      },
+      "feature3": {
+        "title": "Informações Detalhadas",
+        "description": "Informações completas sobre stats, movimentos, habilidades e linhas evolutivas para cada Pokémon."
+      },
+      "feature4": {
+        "title": "Compartilhamento Social",
+        "description": "Compartilhe facilmente sua equipe gerada em plataformas de redes sociais ou salve como imagem."
+      }
+    },
+    "whyChoose": {
+      "badge": "POR QUE ESCOLHER ESTA FERRAMENTA?",
+      "title": "O Melhor Gerador Aleatório de Pokémon Online",
+      "subtitle": "Por que os treinadores confiam em nosso gerador aleatório de Pokémon?",
+      "paragraph1": "Construímos este gerador pensando tanto em jogadores casuais quanto em speedrunners hardcore. Seja procurando uma equipe equilibrada para playthroughs competitivos ou apenas querendo um pouco de diversão aleatória, temos as ferramentas certas.",
+      "paragraph2": "Nosso gerador é atualizado regularmente com os dados mais recentes de Pokémon e oferece uma experiência fluida em todos os dispositivos."
+    }
+  }
+}

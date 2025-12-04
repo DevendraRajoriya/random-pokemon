@@ -1,5 +1,6 @@
 'use client';
 import { Share2, Download } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 /**
  * CardShowcase Component - Export Trading Cards Feature
@@ -10,32 +11,34 @@ import { Share2, Download } from 'lucide-react';
  * - Slasher cut applied to section container
  */
 export default function CardShowcase() {
+  const t = useTranslations('cardShowcase');
+  
   return (
     <section className="mt-12 md:mt-16 mb-8 bg-cream border-2 border-black p-6 md:p-12 slasher">
       <div className="flex flex-col lg:flex-row gap-12 items-center">
         {/* LEFT: Text Content */}
         <div className="flex-1 space-y-8">
           <div className="inline-block bg-black px-4 py-1 slasher border border-black">
-            <span className="font-mono text-xs font-bold text-white uppercase tracking-widest">New Feature</span>
+            <span className="font-mono text-xs font-bold text-white uppercase tracking-widest">{t('newFeature')}</span>
           </div>
           <h2 className="font-sans font-bold text-4xl md:text-5xl lg:text-6xl text-black leading-[0.9]">
-            EXPORT <br/>
+            {t('export')} <br/>
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-black to-charcoal">
-              TRADING CARDS
+              {t('tradingCards')}
             </span>
           </h2>
           <p className="font-mono text-charcoal text-base md:text-lg leading-relaxed border-l-4 border-black pl-6">
-            Turn any generated Pokémon into a high-resolution collectible card. Perfect for sharing your Nuzlocke encounters or dream team on social media.
+            {t('description')}
           </p>
           
           <div className="grid grid-cols-2 gap-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-white border-2 border-black flex items-center justify-center text-black"><Download size={20} /></div>
-              <span className="font-mono text-sm font-bold text-black">HD Download</span>
+              <span className="font-mono text-sm font-bold text-black">{t('hdDownload')}</span>
             </div>
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-white border-2 border-black flex items-center justify-center text-black"><Share2 size={20} /></div>
-              <span className="font-mono text-sm font-bold text-black">Instant Share</span>
+              <span className="font-mono text-sm font-bold text-black">{t('instantShare')}</span>
             </div>
           </div>
         </div>

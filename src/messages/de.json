@@ -1,0 +1,307 @@
+{
+  "metadata": {
+    "title": "Zufälliger Pokémon Generator | Baue dein Team (Gen 1-9)",
+    "description": "Generiere sofort zufällige Pokémon-Teams. Das ultimative Nuzlocke-Tool und Team-Builder für Karmesin, Purpur und alle Generationen. Filtere nach Typ, Region und Seltenheit.",
+    "pokedexTitle": "Pokédex - Vollständige Pokémon-Datenbank | Alle 1025 Pokémon",
+    "pokedexDescription": "Durchsuche alle 1025 Pokémon der Generationen 1-9. Vollständiger Pokédex mit Typen, Statuswerten, Fähigkeiten und Sprites."
+  },
+  "home": {
+    "title": "ZUFÄLLIGER POKÉMON GENERATOR",
+    "subtitle": "Baue dein Traumteam aus allen 9 Generationen",
+    "generateButton": "TEAM GENERIEREN",
+    "generating": "GENERIERE...",
+    "generateMore": "MEHR GENERIEREN",
+    "clearTeam": "TEAM LÖSCHEN",
+    "teamSize": "Teamgröße",
+    "yourTeam": "Dein Team",
+    "emptyTeam": "Klicke auf Generieren, um dein Team zu erstellen!",
+    "totalBaseStats": "Gesamte Basiswerte",
+    "searchPlaceholder": "DATENBANK_DURCHSUCHEN...",
+    "loadingTeam": "Lade dein Team...",
+    "data": "DATEN",
+    "pokedexButton": "POKÉDEX",
+    "helpDesk": "HILFE",
+    "faqTitle": "HÄUFIG GESTELLTE FRAGEN",
+    "aboutUs": "ÜBER UNS",
+    "aboutTitle": "UNSERE GESCHICHTE",
+    "legalInfo": "RECHTLICHE INFO",
+    "disclaimerTitle": "HAFTUNGSAUSSCHLUSS",
+    "privacyInfo": "DATENSCHUTZ",
+    "privacyTitle": "DATENSCHUTZRICHTLINIE"
+  },
+  "about": {
+    "ourMission": {
+      "title": "Unsere Mission",
+      "content": "Der Zufällige Pokémon Generator hilft Trainern, neue Teamkombinationen zu entdecken und macht kompetitive Kämpfe durch Randomisierung zugänglicher."
+    },
+    "whatWeOffer": {
+      "title": "Was wir bieten",
+      "content": "Erweiterte Filterung nach Generation, Typ, Seltenheit und Entwicklungsstufe. Ob du eine Nuzlocke-Herausforderung planst oder Inspiration für deinen nächsten Durchgang suchst, unser Tool bietet endlose Möglichkeiten."
+    },
+    "perfectFor": {
+      "title": "Perfekt für",
+      "content": "Nuzlocke-Runs • Soul Link-Herausforderungen • Zufällige Team-Kämpfe • Content-Ersteller • Künstler auf der Suche nach Pokémon-Motiven • Übung im kompetitiven Teamaufbau"
+    }
+  },
+  "disclaimer": {
+    "copyrightNotice": {
+      "title": "Urheberrechtshinweis",
+      "content": "Pokémon und alle zugehörigen Namen, Charaktere und markanten Erscheinungsbilder sind Marken von Nintendo, The Pokémon Company und Game Freak. Diese Website ist nicht mit Nintendo, The Pokémon Company oder Game Freak verbunden, wird nicht von ihnen unterstützt oder ist mit ihnen verbunden."
+    },
+    "fanProject": {
+      "title": "Fan-Projekt-Status",
+      "content": "Dies ist ein nichtkommerzielles Fan-Projekt, das zu Bildungs- und Unterhaltungszwecken erstellt wurde. Wir erheben keinen Anspruch auf geistiges Eigentum von Pokémon."
+    },
+    "dataSources": {
+      "title": "Datenquellen",
+      "content": "Pokémon-Daten stammen von der PokeAPI (pokeapi.co), einer Open-Source RESTful Pokémon-API. Offizielle Grafiken und Sprites gehören ihren jeweiligen Rechteinhabern."
+    },
+    "fairUse": {
+      "title": "Fair Use",
+      "content": "Dieses Projekt arbeitet nach Fair-Use-Prinzipien. Alle Pokémon-bezogenen Inhalte werden zu informativen und transformativen Zwecken verwendet. Wenn Sie Rechteinhaber sind und Bedenken haben, kontaktieren Sie uns bitte."
+    }
+  },
+  "privacy": {
+    "intro": "Wir respektieren Ihre Privatsphäre und verpflichten uns, Ihre personenbezogenen Daten gemäß der DSGVO und internationalen Datenschutzbestimmungen zu schützen.",
+    "dataCollection": {
+      "title": "Datenerfassung",
+      "content": "Wir erfassen minimale anonyme Nutzungsdaten über Google Analytics, einschließlich Seitenaufrufe, Sitzungsdauer und allgemeiner Standort (nur auf Länderebene). Es werden keine persönlich identifizierbaren Informationen erfasst."
+    },
+    "cookies": {
+      "title": "Cookies",
+      "content": "Wir verwenden essentielle Cookies für die Website-Funktionalität und Analyse-Cookies zur Leistungsüberwachung. Sie können Cookies jederzeit in Ihren Browsereinstellungen deaktivieren."
+    },
+    "localStorage": {
+      "title": "Lokaler Speicher",
+      "content": "Ihre generierten Teams und Einstellungen werden lokal in Ihrem Browser gespeichert. Diese Daten verlassen niemals Ihr Gerät und werden nicht an unsere Server übertragen."
+    },
+    "thirdParty": {
+      "title": "Drittanbieter-Dienste",
+      "content": "Wir nutzen Vercel für das Hosting und Cloudflare für CDN-Dienste. Diese Anbieter können Standard-Serverprotokolle (IP-Adressen, Browsertyp) gemäß ihren jeweiligen Datenschutzrichtlinien erfassen."
+    },
+    "yourRights": {
+      "title": "Ihre Rechte",
+      "content": "Gemäß der DSGVO haben Sie das Recht auf Zugang, Berichtigung oder Löschung Ihrer personenbezogenen Daten. Da wir nur minimale Daten erfassen, sind die meisten Informationen bereits anonymisiert. Bei Fragen kontaktieren Sie uns über GitHub."
+    },
+    "updates": {
+      "title": "Aktualisierungen",
+      "content": "Diese Datenschutzrichtlinie wurde zuletzt im Januar 2025 aktualisiert. Wir können diese Richtlinie regelmäßig aktualisieren. Die fortgesetzte Nutzung der Website gilt als Akzeptanz aller Änderungen."
+    }
+  },
+  "faq": {
+    "q1": {
+      "question": "Wie generiere ich ein zufälliges Pokémon-Team?",
+      "answer": "Klicke einfach auf den 'TEAM GENERIEREN'-Button. Unser Tool wählt sofort 6 einzigartige Pokémon von Gen 1 bis Gen 9 aus und erstellt ein ausgewogenes Team für Nuzlockes oder kreative Zeichen-Herausforderungen."
+    },
+    "q2": {
+      "question": "Kann ich Legendäre Pokémon ausschließen?",
+      "answer": "Ja. Verwende den 'Seltenheit'-Filter über dem Generator, um Legendäre, Mysteriöse oder Ultrabestien für ein Standard-Spielerlebnis auszuschließen."
+    },
+    "q3": {
+      "question": "Ist dies für Pokémon Karmesin und Purpur aktualisiert?",
+      "answer": "Ja. Unsere Datenbank enthält den vollständigen Paldea-Pokédex und wird regelmäßig für neue DLC-Erweiterungen aktualisiert."
+    },
+    "q4": {
+      "question": "Kann ich mit diesem Tool Pokémon-Karten generieren?",
+      "answer": "Ja! Jedes generierte Pokémon wird als stilisierte Karte mit Werten, Typen und offiziellem Artwork angezeigt. Perfekt für Sammler, TCG-Fans oder die Erstellung eigener Kartensammlungen."
+    },
+    "q5": {
+      "question": "Was ist die Pokédex-Datenbank?",
+      "answer": "Unser umfassender Pokédex enthält detaillierte Informationen zu allen 1025 Pokémon aller Generationen. Durchsuche Werte, Typen, Fähigkeiten, Entwicklungsketten und Pokédex-Einträge für jedes Pokémon."
+    }
+  },
+  "pokedex": {
+    "title": "GLOBALE DATENBANK",
+    "subtitle": "Vollständiger Index von {count} registrierten Pokémon-Arten. Suche, durchsuche und greife auf detaillierte Spezifikationen zu.",
+    "searchPlaceholder": "Pokémon nach Namen suchen...",
+    "results": "{count} Ergebnisse",
+    "loadMore": "MEHR LADEN ({count} verbleibend)",
+    "noResults": "Kein Pokémon gefunden, das \"{query}\" entspricht",
+    "displayingAll": "Zeige alle {count} Pokémon",
+    "viewDetails": "DETAILS ANSEHEN",
+    "backToGenerator": "ZURÜCK ZUM GENERATOR",
+    "indexOnline": "INDEX: ONLINE",
+    "loading": "Lade Pokémon-Details..."
+  },
+  "pokemon": {
+    "visualData": "VISUELLE DATEN",
+    "physicalData": "PHYSISCHE DATEN",
+    "combatStatistics": "KAMPFSTATISTIKEN",
+    "abilities": "FÄHIGKEITEN",
+    "pokedexEntry": "POKÉDEX-EINTRAG",
+    "trainerIntel": "TRAINER-INFO",
+    "evolutionChain": "ENTWICKLUNGSKETTE",
+    "exploreByType": "NACH TYP ERKUNDEN",
+    "allTypesPokemon": "Alle {type}-Pokémon →",
+    "baseForm": "Basisform • Kann sich entwickeln",
+    "middleEvolution": "Mittlere Entwicklung",
+    "finalEvolution": "Finale Entwicklung",
+    "about": "Über {name}",
+    "height": "Größe",
+    "weight": "Gewicht",
+    "classification": "Klassifizierung",
+    "habitat": "Lebensraum",
+    "totalBaseStats": "Gesamte Basiswerte",
+    "noEntry": "Kein Eintrag verfügbar.",
+    "share": "TEILEN",
+    "explorePokedex": "POKÉDEX ERKUNDEN"
+  },
+  "stats": {
+    "hp": "KP",
+    "attack": "ANG",
+    "defense": "VER",
+    "specialAttack": "SP.ANG",
+    "specialDefense": "SP.VER",
+    "speed": "INIT"
+  },
+  "types": {
+    "normal": "Normal",
+    "fire": "Feuer",
+    "water": "Wasser",
+    "electric": "Elektro",
+    "grass": "Pflanze",
+    "ice": "Eis",
+    "fighting": "Kampf",
+    "poison": "Gift",
+    "ground": "Boden",
+    "flying": "Flug",
+    "psychic": "Psycho",
+    "bug": "Käfer",
+    "rock": "Gestein",
+    "ghost": "Geist",
+    "dragon": "Drache",
+    "dark": "Unlicht",
+    "steel": "Stahl",
+    "fairy": "Fee"
+  },
+  "filters": {
+    "type": "Typ",
+    "generation": "Generation",
+    "allTypes": "Alle Typen",
+    "allGenerations": "Alle Generationen",
+    "includeLegendary": "Legendäre einschließen",
+    "includeMythical": "Mysteriöse einschließen",
+    "shinyMode": "Schillernder Modus",
+    "team": "Team",
+    "region": "Region",
+    "rarity": "Seltenheit",
+    "stage": "Stufe",
+    "evolved": "Entwickelt",
+    "gender": "Geschlecht",
+    "nature": "Wesen",
+    "forms": "Formen",
+    "display": "Anzeige",
+    "reset": "ZURÜCKSETZEN",
+    "resetFilters": "FILTER ZURÜCKSETZEN",
+    "advancedFilters": "ERWEITERTE FILTER",
+    "closeFilters": "FILTER SCHLIEßEN",
+    "gen1": "Gen 1 (Kanto)",
+    "gen2": "Gen 2 (Johto)",
+    "gen3": "Gen 3 (Hoenn)",
+    "gen4": "Gen 4 (Sinnoh)",
+    "gen5": "Gen 5 (Einall)",
+    "gen6": "Gen 6 (Kalos)",
+    "gen7": "Gen 7 (Alola)",
+    "gen8": "Gen 8 (Galar)",
+    "gen9": "Gen 9 (Paldea)"
+  },
+  "common": {
+    "loading": "Wird geladen...",
+    "error": "Ein Fehler ist aufgetreten",
+    "retry": "ERNEUT VERSUCHEN",
+    "back": "Zurück",
+    "close": "Schließen",
+    "share": "Teilen",
+    "copy": "Kopieren",
+    "copied": "Kopiert!",
+    "download": "Herunterladen",
+    "pokemon": "Pokémon",
+    "language": "Sprache",
+    "noImage": "Kein Bild",
+    "status": "STATUS",
+    "go": "LOS",
+    "search": "Suchen..."
+  },
+  "seo": {
+    "lookingFor": "Suchst du nach Details zu {name}?",
+    "typeIntro": "Dieses {types}-Pokémon wurde in der {generation} eingeführt.",
+    "knownAs": "Es ist bekannt als das {genus}.",
+    "evolutionLine": "{name} ist Teil der {chain}-Entwicklungslinie.",
+    "battleStrategy": "In Bezug auf die Kampfstrategie hat {name} einen Gesamtbasiswert von {total}.",
+    "highestStat": "Sein höchstes Attribut ist {stat} ({value}), was es zu einer starken Wahl für Trainer macht, die nach {role} suchen.",
+    "physicalDescription": "Mit einer Größe von {height} Metern und einem Gewicht von {weight} kg ist {name} ein {size} Pokémon",
+    "habitatInfo": "typischerweise in {habitat}-Umgebungen anzutreffen",
+    "conclusion": "Ob du ein kompetitives Team aufbaust oder deinen Pokédex vervollständigst, {name} bietet einzigartige Stärken, die es zu berücksichtigen gilt.",
+    "relatedPokemon": "Möchtest du mehr über verwandte Pokémon erfahren? Schau dir an"
+  },
+  "cardShowcase": {
+    "badge": "Neue Funktion",
+    "title": "EXPORTIEREN",
+    "subtitle": "SAMMELKARTEN",
+    "description": "Verwandle jedes generierte Pokémon in eine hochauflösende Sammelkarte. Perfekt zum Teilen deiner Nuzlocke-Begegnungen oder deines Traumteams in sozialen Medien.",
+    "hdDownload": "HD-Download",
+    "instantShare": "Sofort teilen",
+    "generatedBy": "Generiert von RandomPokemon.co"
+  },
+  "seoContent": {
+    "protocol": "PROTOKOLL V1.0",
+    "advanced": "ERWEITERTER",
+    "pokemonGenerator": "POKÉMON-GENERATOR",
+    "advancedDesc1": "Willkommen beim umfassendsten zufälligen Pokémon-Generator im Internet. Unser fortschrittliches Protokoll unterstützt jede Generation von Pokémon-Spielen—von den originalen Rot und Blau (Generation 1) bis zu den neuesten Einträgen einschließlich Pokémon Karmesin und Purpur (Generation 9), und wir sind bereit für das kommende Pokémon-Legenden: Z-A.",
+    "advancedDesc2": "Mit Zugang zu über 1.025 einzigartigen Pokémon-Arten bietet unser Generator Trainern ein unvergleichliches Werkzeug für Teamaufbau, Herausforderungsläufe und Wettbewerbsvorbereitung. Die cypherpunk-inspirierte Oberfläche sorgt für ein elegantes, sachliches Erlebnis, das vollständig auf Funktionalität und Geschwindigkeit ausgerichtet ist.",
+    "advancedDesc3": "Unsere Datenbank wird kontinuierlich aktualisiert und enthält neue Pokémon-Formen, regionale Varianten (Alola-, Galar-, Hisui- und Paldea-Formen), Paradox-Pokémon und spezielle Event-Verteilungen.",
+    "userManual": "BENUTZERHANDBUCH",
+    "operating": "BEDIENUNGS-",
+    "instructions": "ANLEITUNG",
+    "step01": "SCHRITT 01",
+    "setTeamSize": "TEAMGRÖẞE FESTLEGEN",
+    "step01Desc": "Verwende das \"Team\"-Dropdown, um 1-6 Pokémon für ein vollständiges Wettbewerbsteam oder einen Solo-Herausforderungslauf auszuwählen.",
+    "step02": "SCHRITT 02",
+    "selectRegion": "REGION WÄHLEN",
+    "step02Desc": "Filtere nach Heimatregion—Kanto, Johto, Hoenn, Sinnoh, Einall, Kalos, Alola, Galar, Hisui oder Paldea.",
+    "step03": "SCHRITT 03",
+    "applyFilters": "FILTER ANWENDEN",
+    "step03Desc": "Grenze die Ergebnisse ein, indem du einen oder mehrere der 18 Pokémon-Typen auswählst. Perfekt für Monotype-Herausforderungen.",
+    "step04": "SCHRITT 04",
+    "setRarity": "SELTENHEIT FESTLEGEN",
+    "step04Desc": "Schalte legendäre, mysteriöse, Paradox- und Ultrabestien-Pokémon basierend auf deinen Herausforderungsregeln um.",
+    "step05": "SCHRITT 05",
+    "generateTeam": "TEAM GENERIEREN",
+    "step05Desc": "Drücke den leuchtenden Knopf und sieh zu, wie Pokémon, die deinen Kriterien entsprechen, sofort erscheinen.",
+    "step06": "SCHRITT 06",
+    "exploreData": "DATEN ERKUNDEN",
+    "step06Desc": "Klicke bei jedem Pokémon auf \"DATEN\", um detaillierte Werte, Fähigkeiten und zusätzliche Informationen anzuzeigen.",
+    "challengeMode": "HERAUSFORDERUNGSMODUS",
+    "nuzlocke": "NUZLOCKE",
+    "utilities": "WERKZEUGE",
+    "nuzlockeDesc": "Unser zufälliger Pokémon-Generator ist zu einem unverzichtbaren Werkzeug für die Nuzlocke-Community geworden. Verwende unseren Generator, um Starter-Optionen vorab festzulegen, Begegnungstabellen zu simulieren oder Ersatz-Pokémon für gefallene Teammitglieder zu generieren.",
+    "supportedFormats": "Unterstützte Herausforderungsformate",
+    "classicNuzlocke": "Klassisches Nuzlocke",
+    "classicNuzlockeDesc": "Generiere zufällige Starter-Trios oder simuliere Routenbegegnungen für ROM-Hacks und Fan-Spiele.",
+    "soulLink": "SoulLink-Herausforderungen",
+    "soulLinkDesc": "Generiere gepaarte Teams für zwei Spieler, die synchronisierte Nuzlocke-Läufe durchführen.",
+    "draftLeagues": "Draft-Ligen",
+    "draftLeaguesDesc": "Erstelle randomisierte Draft-Pools für kompetitive Pokémon-Draft-Ligen und Turniere.",
+    "randomizerSeeds": "Randomizer-Seeds",
+    "randomizerSeedsDesc": "Vorschau potenzieller Teamzusammensetzungen vor dem Start eines randomisierten ROM-Durchspiels.",
+    "wonderlocke": "Wonderlocke-Vorbereitung",
+    "wonderlockeDesc": "Generiere Erwartungen für auf Wundertausch basierende Herausforderungsläufe.",
+    "systemSpecs": "SYSTEMSPEZIFIKATIONEN",
+    "core": "KERN-",
+    "capabilities": "FUNKTIONEN",
+    "typeFiltering": "Typ-Filtersystem",
+    "typeFilteringDesc": "Filtere nach jedem der 18 Pokémon-Typen. Wähle mehrere Typen aus, um Dual-Typ-Pokémon einzuschließen, oder konzentriere dich auf einen einzelnen Typ für Monotype-Herausforderungen.",
+    "legendaryToggle": "Legendär- & Seltenheits-Umschalter",
+    "legendaryToggleDesc": "Feinabstimmung mit granularen Seltenheitskontrollen. Schließe Legendäre, Mysteriöse, Paradox-Pokémon und Ultrabestien ein oder aus.",
+    "spriteArtwork": "Sprite- & Artwork-Modi",
+    "spriteArtworkDesc": "Wähle \"Nur Sprite\" für Pixel-Art, \"Nur Name\" für minimale Ansicht oder \"Beide\" für hochauflösende Grafiken mit vollständigen Details.",
+    "completePokedex": "Vollständige Pokédex-Datenbank",
+    "completePokedexDesc": "Greife auf unsere umfassende Pokédex-Datenbank mit detaillierten Werten, Typen, Fähigkeiten und Pokédex-Einträgen für alle 1025 Pokémon aller Generationen zu.",
+    "benchmarks": "BENCHMARKS",
+    "whyChoose": "WARUM DIESES",
+    "thisTool": "TOOL WÄHLEN?",
+    "whyChooseDesc1": "Im Gegensatz zu anderen zufälligen Pokémon-Generatoren ist unser Protokoll mit Leistung und Genauigkeit als obersten Prioritäten gebaut. Die Datenbank zieht direkt aus verifizierten Pokémon-API-Quellen und stellt sicher, dass alle Informationen—Typen, Sprites und Pokédex-Nummern—genau und aktuell sind.",
+    "whyChooseDesc2": "Die minimalistische Cypherpunk-Designphilosophie bedeutet null Aufblähung, null unnötige Animationen und null verschwendete Zeit. Unser Generator funktioniert einwandfrei auf Desktop-Computern, Tablets und mobilen Geräten.",
+    "whyChooseDesc3": "Schließe dich den Tausenden von Trainern an, die unserem zufälligen Pokémon-Generator für ihre Teamaufbau-Bedürfnisse vertrauen. Von Gelegenheitsfans bis zu Hardcore-Nuzlockern bedient unser Tool die gesamte Pokémon-Community mit Geschwindigkeit, Zuverlässigkeit und Stil."
+  }
+}

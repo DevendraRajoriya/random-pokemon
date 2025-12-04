@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import Link from 'next/link';
 import Image from 'next/image';
 import { Search, Database, Share2, Loader2, ChevronDown, ArrowLeft } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { Link } from '@/i18n/navigation';
 import ShareModal from '@/components/ShareModal';
 
 interface PokemonListItem {
@@ -63,6 +64,8 @@ interface PokedexClientProps {
 }
 
 export default function PokedexClient({ initialPokemonList, totalCount }: PokedexClientProps) {
+  const t = useTranslations('pokedex');
+  const tCommon = useTranslations('common');
   const [allPokemon] = useState<PokemonListItem[]>(initialPokemonList);
   const [visiblePokemon, setVisiblePokemon] = useState<Pokemon[]>([]);
   const [displayCount, setDisplayCount] = useState(ITEMS_PER_PAGE);
@@ -179,23 +182,19 @@ export default function PokedexClient({ initialPokemonList, totalCount }: Pokede
           className="inline-flex items-center gap-2 bg-black text-white font-mono text-sm font-bold px-4 py-2 border-2 border-black hover:bg-charcoal transition-colors mb-6"
         >
           <ArrowLeft size={16} />
-          BACK TO GENERATOR
+          {t('backToGenerator')}
         </Link>
 
         {/* Header - SSR content visible to Google */}
         <div className="mb-8 md:mb-12">
           <div className="inline-block bg-marigold px-4 py-1 slasher border border-black mb-4">
-            <span className="font-mono text-xs font-bold text-black uppercase tracking-widest">INDEX: ONLINE</span>
+            <span className="font-mono text-xs font-bold text-black uppercase tracking-widest">{t('indexOnline')}</span>
           </div>
           <h1 className="font-sans font-bold text-5xl md:text-6xl lg:text-7xl text-black leading-[0.9] uppercase">
-            GLOBAL <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-black to-charcoal">
-              DATABASE
-            </span>
+            {t('title')}
           </h1>
           <p className="font-mono text-charcoal text-sm md:text-base mt-4 max-w-xl">
-            Complete index of <strong>{totalCount.toLocaleString()}</strong> registered Pokemon species. 
-            Search, browse, and access detailed specifications.
+            {t('subtitle', { count: totalCount.toLocaleString() })}
           </p>
         </div>
 
@@ -207,12 +206,12 @@ export default function PokedexClient({ initialPokemonList, totalCount }: Pokede
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search Pokemon by name..."
+              placeholder={t('searchPlaceholder')}
               className="w-full bg-white border-2 border-black py-3 md:py-4 pl-12 pr-4 font-mono text-sm text-black placeholder:text-black/30 focus:outline-none focus:bg-cream transition-colors"
             />
             <div className="absolute right-4 top-1/2 -translate-y-1/2">
               <span className="font-mono text-xs text-black/40">
-                {filteredList.length} results
+                {t('results', { count: filteredList.length })}
               </span>
             </div>
           </div>
@@ -222,12 +221,12 @@ export default function PokedexClient({ initialPokemonList, totalCount }: Pokede
         {error && (
           <div className="flex flex-col items-center justify-center py-20">
             <div className="border-2 border-red-500 bg-white p-8 text-center">
-              <p className="font-mono text-red-600 text-base mb-4">{error}</p>
+              <p className="font-mono text-red-600 text-base mb-4">{tCommon('error')}</p>
               <button
                 onClick={retryLoad}
                 className="bg-black text-white font-mono text-sm font-bold px-6 py-3 border-2 border-black hover:bg-charcoal transition-colors"
               >
-                RETRY
+                {tCommon('retry')}
               </button>
             </div>
           </div>
@@ -237,7 +236,7 @@ export default function PokedexClient({ initialPokemonList, totalCount }: Pokede
         {loading && !error && (
           <div className="flex flex-col items-center justify-center py-20">
             <Loader2 className="animate-spin text-indigo mb-4" size={48} />
-            <p className="font-mono text-charcoal text-sm">Loading Pokemon details...</p>
+            <p className="font-mono text-charcoal text-sm">{t('loading')}</p>
           </div>
         )}
 
@@ -276,7 +275,7 @@ export default function PokedexClient({ initialPokemonList, totalCount }: Pokede
                         priority={pokemon.id <= 12}
                       />
                     ) : (
-                      <div className="text-black/20 font-mono text-xs">No Image</div>
+                      <div className="text-black/20 font-mono text-xs">{tCommon('noImage')}</div>
                     )}
                   </div>
 
@@ -309,7 +308,7 @@ export default function PokedexClient({ initialPokemonList, totalCount }: Pokede
                     >
                       <span className="flex items-center justify-center gap-1">
                         <Database size={12} />
-                        VIEW DETAILS
+                        {t('viewDetails')}
                       </span>
                     </Link>
                   </div>
@@ -328,12 +327,12 @@ export default function PokedexClient({ initialPokemonList, totalCount }: Pokede
                   {loadingMore ? (
                     <>
                       <Loader2 className="animate-spin" size={18} />
-                      LOADING...
+                      {tCommon('loading')}
                     </>
                   ) : (
                     <>
                       <ChevronDown size={18} />
-                      LOAD MORE ({filteredList.length - displayCount} remaining)
+                      {t('loadMore', { count: filteredList.length - displayCount })}
                     </>
                   )}
                 </button>
@@ -345,7 +344,7 @@ export default function PokedexClient({ initialPokemonList, totalCount }: Pokede
               <div className="text-center py-20">
                 <div className="inline-block border-4 border-charcoal p-8 slasher">
                   <p className="font-mono text-charcoal text-lg">
-                    No Pokemon found matching &quot;{searchQuery}&quot;
+                    {t('noResults', { query: searchQuery })}
                   </p>
                 </div>
               </div>
@@ -355,7 +354,7 @@ export default function PokedexClient({ initialPokemonList, totalCount }: Pokede
             {displayCount >= filteredList.length && filteredList.length > 0 && (
               <div className="mt-8 text-center">
                 <p className="font-mono text-charcoal text-sm">
-                  Displaying all {filteredList.length} Pokemon
+                  {t('displayingAll', { count: filteredList.length })}
                 </p>
               </div>
             )}
