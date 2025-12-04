@@ -56,6 +56,15 @@ interface Genera {
   };
 }
 
+interface EvolutionChainLink {
+  species: { name: string; url: string };
+  evolves_to: EvolutionChainLink[];
+}
+
+interface EvolutionChain {
+  chain: EvolutionChainLink;
+}
+
 interface PokemonSpecies {
   flavor_text_entries: FlavorTextEntry[];
   genera: Genera[];
@@ -65,6 +74,9 @@ interface PokemonSpecies {
   habitat: {
     name: string;
   } | null;
+  evolution_chain: {
+    url: string;
+  };
 }
 
 export interface PokemonWithSpecies extends Pokemon {
@@ -74,10 +86,20 @@ export interface PokemonWithSpecies extends Pokemon {
     generation: string;
     generationNumber: number;
     habitat: string | null;
+    evolutionChain: string[]; // Array of Pokemon names in evolution chain
   };
 }
 
 // ============ DATA FETCHING ============
+// Helper to extract all Pokemon names from evolution chain
+function extractEvolutionChain(chain: EvolutionChainLink): string[] {
+  const names: string[] = [chain.species.name];
+  for (const evolution of chain.evolves_to) {
+    names.push(...extractEvolutionChain(evolution));
+  }
+  return names;
+}
+
 async function getPokemon(name: string): Promise<PokemonWithSpecies | null> {
   try {
     // Fetch Pokemon data and Species data in parallel
@@ -97,6 +119,7 @@ async function getPokemon(name: string): Promise<PokemonWithSpecies | null> {
       generation: "Generation 1",
       generationNumber: 1,
       habitat: null as string | null,
+      evolutionChain: [] as string[],
     };
 
     if (speciesRes.ok) {
@@ -128,7 +151,21 @@ async function getPokemon(name: string): Promise<PokemonWithSpecies | null> {
       // Extract habitat
       const habitat = species.habitat ? species.habitat.name : null;
 
-      speciesData = { flavorText, genus, generation, generationNumber, habitat };
+      // Fetch evolution chain
+      let evolutionChain: string[] = [];
+      if (species.evolution_chain?.url) {
+        try {
+          const evoRes = await fetch(species.evolution_chain.url, { next: { revalidate: 86400 } });
+          if (evoRes.ok) {
+            const evoData: EvolutionChain = await evoRes.json();
+            evolutionChain = extractEvolutionChain(evoData.chain);
+          }
+        } catch {
+          // Evolution chain fetch failed, continue without it
+        }
+      }
+
+      speciesData = { flavorText, genus, generation, generationNumber, habitat, evolutionChain };
     }
 
     return {
@@ -160,18 +197,48 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const formattedName = pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1);
   const types = pokemon.types.map((t) => t.type.name).join("/");
   const typesCapitalized = types.charAt(0).toUpperCase() + types.slice(1);
+  const totalStats = pokemon.stats.reduce((sum, stat) => sum + stat.base_stat, 0);
   
-  // Truncate flavor text for meta description
-  const flavorSnippet = pokemon.species.flavorText.length > 120
-    ? pokemon.species.flavorText.substring(0, 117) + "..."
-    : pokemon.species.flavorText;
+  // Create unique, compelling meta description
+  const hasEvolutions = pokemon.species.evolutionChain.length > 1;
+  const evolutionInfo = hasEvolutions 
+    ? ` Part of the ${pokemon.species.evolutionChain[0].charAt(0).toUpperCase() + pokemon.species.evolutionChain[0].slice(1)} evolution line.`
+    : "";
+  
+  const uniqueDescription = `${formattedName} (#${pokemon.id}) is a ${typesCapitalized}-type ${pokemon.species.genus} from ${pokemon.species.generation}. Base stats total: ${totalStats}. Height: ${(pokemon.height / 10).toFixed(1)}m, Weight: ${(pokemon.weight / 10).toFixed(1)}kg.${evolutionInfo}`;
 
   return {
-    title: `${formattedName} (#${pokemon.id}) Stats, Evolution & Pokedex | Random Pokemon Generator`,
-    description: `${formattedName} is a ${typesCapitalized}-type Pokemon. ${flavorSnippet}`,
+    title: `${formattedName} (#${pokemon.id}) - Stats, Evolution & Type | Pokemon Database`,
+    description: uniqueDescription,
+    keywords: [
+      formattedName.toLowerCase(),
+      `${formattedName.toLowerCase()} stats`,
+      `${formattedName.toLowerCase()} evolution`,
+      `${formattedName.toLowerCase()} type`,
+      ...pokemon.types.map(t => `${t.type.name} type pokemon`),
+      pokemon.species.genus.toLowerCase(),
+      pokemon.species.generation.toLowerCase(),
+    ],
+    alternates: {
+      canonical: `/pokemon/${pokemon.name.toLowerCase()}`,
+    },
     openGraph: {
-      title: `${formattedName} (#${pokemon.id}) | Random Pokemon Generator`,
-      description: `${formattedName} is a ${typesCapitalized}-type Pokemon. ${flavorSnippet}`,
+      title: `${formattedName} (#${pokemon.id}) - ${typesCapitalized} Type | Pokemon Database`,
+      description: uniqueDescription,
+      url: `https://www.randompokemon.co/pokemon/${pokemon.name.toLowerCase()}`,
+      images: [
+        {
+          url: pokemon.sprites.other["official-artwork"].front_default,
+          width: 475,
+          height: 475,
+          alt: `${formattedName} official artwork - ${typesCapitalized} type Pokemon`,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${formattedName} (#${pokemon.id}) | Pokemon Database`,
+      description: uniqueDescription,
       images: [pokemon.sprites.other["official-artwork"].front_default],
     },
   };

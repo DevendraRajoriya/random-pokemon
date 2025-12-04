@@ -86,30 +86,96 @@ export default function PokemonDetailClient({ pokemon }: Props) {
     t.type.name.charAt(0).toUpperCase() + t.type.name.slice(1)
   ).join("/");
 
-  // JSON-LD Structured Data
-  const pokemonJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Product",
-    name: capitalizedName,
-    description: `${capitalizedName} is a ${typesDisplay}-type Pokemon. ${pokemon.species.flavorText}`,
-    image: pokemon.sprites.other["official-artwork"].front_default,
-    brand: { "@type": "Brand", name: "Pokemon" },
-    offers: {
-      "@type": "AggregateOffer",
-      priceCurrency: "USD",
-      lowPrice: "9.99",
-      highPrice: "49.99",
-      offerCount: "50+",
-      availability: "https://schema.org/InStock",
+  // Get evolution chain (exclude current Pokemon)
+  const evolutionChain = pokemon.species.evolutionChain || [];
+  const otherEvolutions = evolutionChain.filter(name => name.toLowerCase() !== pokemon.name.toLowerCase());
+  const currentEvoIndex = evolutionChain.findIndex(name => name.toLowerCase() === pokemon.name.toLowerCase());
+
+  // JSON-LD Structured Data - Improved for rich snippets
+  const pokemonJsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "Thing",
+      "@id": `https://www.randompokemon.co/pokemon/${pokemon.name.toLowerCase()}`,
+      name: capitalizedName,
+      alternateName: `Pokemon #${pokemon.id}`,
+      description: `${capitalizedName} is a ${typesDisplay}-type ${pokemon.species.genus} from ${pokemon.species.generation}. ${pokemon.species.flavorText}`,
+      image: {
+        "@type": "ImageObject",
+        url: pokemon.sprites.other["official-artwork"].front_default,
+        caption: `${capitalizedName} official artwork - ${typesDisplay} type Pokemon`,
+      },
+      identifier: pokemon.id.toString(),
+      additionalProperty: [
+        { "@type": "PropertyValue", name: "National Dex Number", value: pokemon.id.toString() },
+        { "@type": "PropertyValue", name: "Type", value: typesDisplay },
+        { "@type": "PropertyValue", name: "Generation", value: pokemon.species.generation },
+        { "@type": "PropertyValue", name: "Classification", value: pokemon.species.genus },
+        { "@type": "PropertyValue", name: "Height", value: `${(pokemon.height / 10).toFixed(1)} m` },
+        { "@type": "PropertyValue", name: "Weight", value: `${(pokemon.weight / 10).toFixed(1)} kg` },
+        { "@type": "PropertyValue", name: "Total Base Stats", value: totalStats.toString() },
+        ...pokemon.stats.map(stat => ({
+          "@type": "PropertyValue",
+          name: formatStatName(stat.stat.name),
+          value: stat.base_stat.toString(),
+        })),
+      ],
     },
-    additionalProperty: [
-      { "@type": "PropertyValue", name: "Pokemon ID", value: pokemon.id.toString() },
-      { "@type": "PropertyValue", name: "Type", value: typesDisplay },
-      { "@type": "PropertyValue", name: "Generation", value: pokemon.species.generation },
-      { "@type": "PropertyValue", name: "Height", value: `${(pokemon.height / 10).toFixed(1)} m` },
-      { "@type": "PropertyValue", name: "Weight", value: `${(pokemon.weight / 10).toFixed(1)} kg` },
-    ],
-  };
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: [
+        {
+          "@type": "Question",
+          name: `What type is ${capitalizedName}?`,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: `${capitalizedName} is a ${typesDisplay}-type Pokemon introduced in ${pokemon.species.generation}.`,
+          },
+        },
+        {
+          "@type": "Question",
+          name: `What are ${capitalizedName}'s base stats?`,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: `${capitalizedName} has a total base stat of ${totalStats}. Its highest stat is ${formatStatName(highestStat.stat.name)} at ${highestStat.base_stat}, making it strong for ${getBattleRole(highestStat.stat.name)}.`,
+          },
+        },
+        ...(evolutionChain.length > 1 ? [{
+          "@type": "Question",
+          name: `What is ${capitalizedName}'s evolution chain?`,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: `${capitalizedName} is part of the ${evolutionChain.map(n => n.charAt(0).toUpperCase() + n.slice(1)).join(" → ")} evolution line.`,
+          },
+        }] : []),
+      ],
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: "Home",
+          item: "https://www.randompokemon.co",
+        },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: "Pokédex",
+          item: "https://www.randompokemon.co/pokedex",
+        },
+        {
+          "@type": "ListItem",
+          position: 3,
+          name: capitalizedName,
+          item: `https://www.randompokemon.co/pokemon/${pokemon.name.toLowerCase()}`,
+        },
+      ],
+    },
+  ];
 
   return (
     <>
@@ -176,7 +242,7 @@ export default function PokemonDetailClient({ pokemon }: Props) {
                 <div className="relative w-full aspect-square bg-cream/50 flex items-center justify-center">
                   <Image
                     src={pokemon.sprites.other["official-artwork"].front_default}
-                    alt={capitalizedName}
+                    alt={`${capitalizedName} official artwork - ${typesDisplay} type Pokemon from ${pokemon.species.generation}`}
                     fill
                     className="object-contain p-4 mix-blend-multiply"
                     priority
@@ -343,6 +409,79 @@ export default function PokemonDetailClient({ pokemon }: Props) {
                   EXPLORE POKEDEX
                 </Link>
               </div>
+
+              {/* Evolution Chain - Internal Linking */}
+              {evolutionChain.length > 1 && (
+                <div className="bg-white border-4 border-black slasher p-6">
+                  <div className="inline-block bg-black px-3 py-1 mb-4">
+                    <span className="font-mono text-xs font-bold text-white uppercase tracking-wider">
+                      EVOLUTION CHAIN
+                    </span>
+                  </div>
+                  <div className="flex flex-wrap items-center justify-center gap-2">
+                    {evolutionChain.map((evoName, index) => {
+                      const isCurrentPokemon = evoName.toLowerCase() === pokemon.name.toLowerCase();
+                      const formattedEvoName = evoName.split('-').map(word => 
+                        word.charAt(0).toUpperCase() + word.slice(1)
+                      ).join(' ');
+                      
+                      return (
+                        <div key={evoName} className="flex items-center gap-2">
+                          {index > 0 && (
+                            <span className="font-mono text-xl text-charcoal">→</span>
+                          )}
+                          {isCurrentPokemon ? (
+                            <span className="bg-marigold text-black font-mono text-sm font-bold px-4 py-2 border-2 border-black">
+                              {formattedEvoName}
+                            </span>
+                          ) : (
+                            <Link
+                              href={`/pokemon/${evoName.toLowerCase()}`}
+                              className="bg-cream hover:bg-marigold text-black font-mono text-sm font-bold px-4 py-2 border-2 border-black transition-colors"
+                            >
+                              {formattedEvoName}
+                            </Link>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                  {currentEvoIndex >= 0 && (
+                    <p className="font-mono text-xs text-charcoal text-center mt-3">
+                      {currentEvoIndex === 0 && evolutionChain.length > 1 && "Base form • Can evolve"}
+                      {currentEvoIndex > 0 && currentEvoIndex < evolutionChain.length - 1 && "Middle evolution"}
+                      {currentEvoIndex === evolutionChain.length - 1 && evolutionChain.length > 1 && "Final evolution"}
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {/* Related Types - Internal Linking */}
+              <div className="bg-white border-4 border-black slasher p-6">
+                <div className="inline-block bg-black px-3 py-1 mb-4">
+                  <span className="font-mono text-xs font-bold text-white uppercase tracking-wider">
+                    EXPLORE BY TYPE
+                  </span>
+                </div>
+                <p className="font-mono text-xs text-charcoal mb-3">
+                  Find more {typesDisplay}-type Pokemon in the Pokédex:
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {pokemon.types.map((typeInfo) => (
+                    <Link
+                      key={typeInfo.type.name}
+                      href={`/pokedex?type=${typeInfo.type.name}`}
+                      className="font-mono text-xs px-4 py-2 uppercase font-bold border-2 border-black hover:brightness-110 transition-all"
+                      style={{ 
+                        backgroundColor: TYPE_COLORS[typeInfo.type.name] || '#888',
+                        color: ['electric', 'normal', 'ground', 'fairy', 'ice'].includes(typeInfo.type.name) ? '#000' : '#fff'
+                      }}
+                    >
+                      All {typeInfo.type.name} Pokemon →
+                    </Link>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
 
@@ -368,6 +507,31 @@ export default function PokemonDetailClient({ pokemon }: Props) {
                 )}
               </p>
 
+              {evolutionChain.length > 1 && (
+                <p className="font-mono text-sm md:text-base text-charcoal leading-relaxed">
+                  <strong className="text-black">{capitalizedName}</strong> is part of the{" "}
+                  {evolutionChain.map((name, index) => {
+                    const formatted = name.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+                    const isCurrent = name.toLowerCase() === pokemon.name.toLowerCase();
+                    return (
+                      <span key={name}>
+                        {index > 0 && " → "}
+                        {isCurrent ? (
+                          <strong className="text-black">{formatted}</strong>
+                        ) : (
+                          <Link href={`/pokemon/${name.toLowerCase()}`} className="text-indigo hover:underline">
+                            {formatted}
+                          </Link>
+                        )}
+                      </span>
+                    );
+                  })}{" "}
+                  evolution line.
+                  {currentEvoIndex === 0 && " As the base form, it can evolve into stronger forms."}
+                  {currentEvoIndex === evolutionChain.length - 1 && evolutionChain.length > 1 && " This is the final evolved form."}
+                </p>
+              )}
+
               <p className="font-mono text-sm md:text-base text-charcoal leading-relaxed">
                 In terms of <strong className="text-black">battle strategy</strong>,{" "}
                 {capitalizedName} has a total base stat of{" "}
@@ -389,6 +553,27 @@ export default function PokemonDetailClient({ pokemon }: Props) {
                 {" "}Whether you&apos;re building a competitive team or completing your Pokédex,{" "}
                 {capitalizedName} offers unique strengths worth considering.
               </p>
+
+              {otherEvolutions.length > 0 && (
+                <p className="font-mono text-sm md:text-base text-charcoal leading-relaxed">
+                  Want to learn about related Pokemon? Check out{" "}
+                  {otherEvolutions.map((name, index) => {
+                    const formatted = name.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+                    const isLast = index === otherEvolutions.length - 1;
+                    const separator = otherEvolutions.length > 2 
+                      ? (isLast ? ", or " : ", ")
+                      : (isLast ? " or " : "");
+                    return (
+                      <span key={name}>
+                        {index > 0 && separator}
+                        <Link href={`/pokemon/${name.toLowerCase()}`} className="text-indigo hover:underline font-semibold">
+                          {formatted}
+                        </Link>
+                      </span>
+                    );
+                  })}.
+                </p>
+              )}
             </div>
           </article>
         </div>
