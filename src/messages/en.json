@@ -1,9 +1,29 @@
 {
   "metadata": {
-    "title": "Random Pokemon Generator | Build Your Team (Gen 1-9)",
-    "description": "Generate random Pokemon teams instantly. The ultimate Nuzlocke tool and team builder for Scarlet, Violet, and all generations. Filter by type, region, and rarity.",
-    "pokedexTitle": "Pokédex - Complete Pokemon Database | All 1025 Pokemon",
-    "pokedexDescription": "Browse all 1025 Pokemon from Generation 1-9. Complete Pokedex with types, stats, abilities, and sprites."
+    "title": "Random Pokemon Generator | #1 Team Builder & Nuzlocke Tool [2025]",
+    "description": "Generate random Pokemon teams in seconds! Free team builder for Nuzlocke, Soul Link & challenge runs. Filter 1025+ Pokemon by type, gen & rarity. Works with Scarlet/Violet!",
+    "pokedexTitle": "Pokédex Database | All 1025 Pokemon Stats, Types & Abilities",
+    "pokedexDescription": "Complete Pokemon database with all 1025 Pokemon from Gen 1-9. Search by type, view stats, abilities, evolutions & HD sprites. Updated for Scarlet & Violet!",
+    "pokemonDetailTitle": "{name} - Stats, Type, Abilities & Evolution | Pokédex",
+    "pokemonDetailDescription": "Complete {name} guide: base stats, type matchups, abilities, evolution chain & moveset. Official artwork & sprites included."
+  },
+  "footer": {
+    "brandName": "RANDOM POKEMON GENERATOR",
+    "tagline": "Advanced Team Building Protocol v1.0",
+    "systemOnline": "System Online",
+    "navigation": "NAVIGATION",
+    "generator": "Generator",
+    "pokedexDatabase": "Pokedex Database",
+    "legal": "LEGAL",
+    "aboutUs": "About Us",
+    "privacyPolicy": "Privacy Policy",
+    "disclaimer": "Disclaimer",
+    "communication": "COMMUNICATION",
+    "connect": "Connect",
+    "notice": "NOTICE",
+    "copyrightNotice": "Pokémon is © 1995-2025 Nintendo / Creatures Inc. / GAME FREAK inc. TM, ® and character names are trademarks of Nintendo. This tool is not affiliated with, endorsed, or sponsored by Nintendo, The Pokémon Company, or any related entities.",
+    "designedBy": "Designed by",
+    "notAffiliated": "Not affiliated with Nintendo"
   },
   "home": {
     "title": "RANDOM POKEMON GENERATOR",
@@ -121,7 +141,12 @@
     "viewDetails": "VIEW DETAILS",
     "backToGenerator": "BACK TO GENERATOR",
     "indexOnline": "INDEX: ONLINE",
-    "loading": "Loading Pokemon details..."
+    "loading": "Loading Pokemon details...",
+    "filters": "FILTERS",
+    "advancedFilters": "Advanced Filters",
+    "clearAll": "Clear All",
+    "sortBy": "Sort By",
+    "activeFilters": "Active filters"
   },
   "pokemon": {
     "visualData": "VISUAL DATA",
@@ -144,7 +169,17 @@
     "totalBaseStats": "Total Base Stats",
     "noEntry": "No entry available.",
     "share": "SHARE",
-    "explorePokedex": "EXPLORE POKEDEX"
+    "explorePokedex": "EXPLORE POKEDEX",
+    "randomPokemon": "RANDOM POKÉMON",
+    "generateAnother": "GENERATE ANOTHER",
+    "loading": "LOADING...",
+    "generating": "GENERATING...",
+    "baseFormCanEvolve": "Base form, can evolve",
+    "finalEvolvedForm": "This is the final evolved form.",
+    "compact": "compact",
+    "mediumSized": "medium-sized",
+    "large": "large",
+    "generationLabel": "Generation {num}"
   },
   "stats": {
     "hp": "HP",
@@ -153,6 +188,15 @@
     "specialAttack": "SP.ATK",
     "specialDefense": "SP.DEF",
     "speed": "SPEED"
+  },
+  "battleRoles": {
+    "hp": "bulk and endurance",
+    "attack": "physical offense",
+    "defense": "physical defense",
+    "special-attack": "special offense",
+    "special-defense": "special defense",
+    "speed": "outspeeding opponents",
+    "versatile": "versatile play"
   },
   "types": {
     "normal": "Normal",
@@ -175,6 +219,8 @@
     "fairy": "Fairy"
   },
   "filters": {
+    "typeLabel": "Filter by Type",
+    "generationLabel": "Filter by Generation",
     "type": "Type",
     "generation": "Generation",
     "allTypes": "All Types",
@@ -195,6 +241,13 @@
     "resetFilters": "RESET FILTERS",
     "advancedFilters": "ADVANCED FILTERS",
     "closeFilters": "CLOSE FILTERS",
+    "selectAll": "Select All",
+    "deselectAll": "Deselect All",
+    "any": "Any",
+    "all": "All",
+    "both": "Both",
+    "nameOnly": "Name",
+    "spriteOnly": "Sprite",
     "gen1": "Gen 1 (Kanto)",
     "gen2": "Gen 2 (Johto)",
     "gen3": "Gen 3 (Hoenn)",
@@ -203,7 +256,168 @@
     "gen6": "Gen 6 (Kalos)",
     "gen7": "Gen 7 (Alola)",
     "gen8": "Gen 8 (Galar)",
-    "gen9": "Gen 9 (Paldea)"
+    "gen9": "Gen 9 (Paldea)",
+    "regions": {
+      "kanto": "Kanto",
+      "stadiumRentals": "Stadium Rentals",
+      "johto": "Johto",
+      "stadium2Rentals": "Stadium 2 Rentals",
+      "hoenn": "Hoenn",
+      "sinnoh": "Sinnoh",
+      "sinnohPlatinum": "Sinnoh (Platinum)",
+      "unova": "Unova",
+      "unovaB2W2": "Unova (B2W2)",
+      "kalos": "Kalos",
+      "alola": "Alola",
+      "alolaUSUM": "Alola (USUM)",
+      "galar": "Galar",
+      "hisui": "Hisui",
+      "paldea": "Paldea",
+      "kitakami": "Kitakami",
+      "blueberryAcademy": "Blueberry Academy",
+      "lumioseCity": "Lumiose City"
+    },
+    "legendaryOptions": {
+      "subLegendary": "Sub-Legendary",
+      "legendary": "Legendary",
+      "mythical": "Mythical",
+      "paradox": "Paradox",
+      "ultraBeast": "Ultra Beast"
+    },
+    "evolutionStages": {
+      "unevolved": "Unevolved",
+      "evolvedOnce": "Evolved Once",
+      "evolvedTwice": "Evolved Twice"
+    },
+    "fullyEvolvedOptions": {
+      "notFullyEvolved": "Not Fully Evolved",
+      "fullyEvolved": "Fully Evolved"
+    },
+    "genderOptions": {
+      "male": "Male",
+      "female": "Female",
+      "genderless": "Genderless"
+    },
+    "displayFormats": {
+      "nameOnly": "Name Only",
+      "spriteOnly": "Sprite Only",
+      "both": "Both Name and Sprite"
+    },
+    "formOptions": {
+      "alternateForms": "Alternate Forms",
+      "megaEvolutions": "Mega Evolutions",
+      "gigantamaxForms": "Gigantamax Forms"
+    },
+    "natures": {
+      "adamant": "Adamant",
+      "bold": "Bold",
+      "brave": "Brave",
+      "calm": "Calm",
+      "careful": "Careful",
+      "gentle": "Gentle",
+      "hasty": "Hasty",
+      "hardy": "Hardy",
+      "impish": "Impish",
+      "jolly": "Jolly",
+      "lax": "Lax",
+      "lonely": "Lonely",
+      "mild": "Mild",
+      "modest": "Modest",
+      "naive": "Naive",
+      "naughty": "Naughty",
+      "quiet": "Quiet",
+      "quirky": "Quirky",
+      "rash": "Rash",
+      "relaxed": "Relaxed",
+      "sassy": "Sassy",
+      "timid": "Timid",
+      "bashful": "Bashful",
+      "docile": "Docile",
+      "serious": "Serious"
+    },
+    "modeLabel": "Mode",
+    "challengeModes": {
+      "monoType": "Mono-Type Team",
+      "noDuplicateLines": "No Duplicate Lines",
+      "nuzlockeSafe": "Nuzlocke Safe",
+      "startersOnly": "Starters Only"
+    },
+    "challengeModeDescriptions": {
+      "monoType": "All Pokemon share at least one type",
+      "noDuplicateLines": "No Pokemon from the same evolution family",
+      "nuzlockeSafe": "Excludes legendaries and mythicals",
+      "startersOnly": "Only starter Pokemon and evolutions"
+    },
+    "gameFilters": {
+      "label": "Game",
+      "any": "Any Game",
+      "redBlue": "Red/Blue",
+      "yellow": "Yellow",
+      "goldSilver": "Gold/Silver",
+      "crystal": "Crystal",
+      "rubySapphire": "Ruby/Sapphire",
+      "emerald": "Emerald",
+      "fireRedLeafGreen": "FireRed/LeafGreen",
+      "diamondPearl": "Diamond/Pearl",
+      "platinum": "Platinum",
+      "heartGoldSoulSilver": "HeartGold/SoulSilver",
+      "blackWhite": "Black/White",
+      "black2White2": "Black 2/White 2",
+      "xY": "X/Y",
+      "omegarubyAlphasapphire": "OmegaRuby/AlphaSapphire",
+      "sunMoon": "Sun/Moon",
+      "ultraSunUltraMoon": "Ultra Sun/Ultra Moon",
+      "letsGo": "Let's Go Pikachu/Eevee",
+      "swordShield": "Sword/Shield",
+      "brilliantDiamondShiningPearl": "Brilliant Diamond/Shining Pearl",
+      "legendsArceus": "Legends: Arceus",
+      "scarletViolet": "Scarlet/Violet"
+    }
+  },
+  "challengeIdeas": {
+    "badge": "CHALLENGE IDEAS",
+    "title": "Try These Rules With Your Team",
+    "subtitle": "Push your skills with these challenge modes",
+    "hardcoreNuzlocke": {
+      "badge": "HARD",
+      "title": "Hardcore Nuzlocke",
+      "description": "No items in battle, level caps at each gym, set mode only. If a Pokemon faints, it's gone forever."
+    },
+    "soulLink": {
+      "badge": "CO-OP",
+      "title": "Soul Link",
+      "description": "Partner with a friend! Each of your Pokemon is linked to one of theirs - if one faints, both are gone."
+    },
+    "typeLocke": {
+      "badge": "TYPE",
+      "title": "Type-Locke",
+      "description": "Only use Pokemon of a single type. This team's primary type would make for a great mono-type run!"
+    },
+    "randomMoves": {
+      "badge": "RNG",
+      "title": "Random Movesets",
+      "description": "Each Pokemon can only use 4 randomly selected moves from their learnset."
+    },
+    "noEvolutions": {
+      "badge": "BASE",
+      "title": "No Evolutions",
+      "description": "Play through the entire game without evolving any Pokemon. Test your base form strategies!"
+    },
+    "itemless": {
+      "badge": "PURE",
+      "title": "Itemless Run",
+      "description": "No held items allowed. Pure skill and strategy only."
+    },
+    "speedrun": {
+      "badge": "SPEED",
+      "title": "Speedrun Challenge",
+      "description": "Try to complete the game as fast as possible using only this team."
+    },
+    "egglocke": {
+      "badge": "EGG",
+      "title": "Egglocke Prep",
+      "description": "Use this team as your egg pool - trade eggs with friends containing these Pokemon."
+    }
   },
   "common": {
     "loading": "Loading...",
@@ -235,73 +449,104 @@
     "relatedPokemon": "Want to learn about related Pokemon? Check out"
   },
   "cardShowcase": {
-    "badge": "New Feature",
-    "title": "EXPORT",
-    "subtitle": "TRADING CARDS",
+    "newFeature": "New Feature",
+    "export": "EXPORT",
+    "tradingCards": "TRADING CARDS",
     "description": "Turn any generated Pokémon into a high-resolution collectible card. Perfect for sharing your Nuzlocke encounters or dream team on social media.",
     "hdDownload": "HD Download",
-    "instantShare": "Instant Share",
-    "generatedBy": "Generated by RandomPokemon.co"
+    "instantShare": "Instant Share"
   },
   "seoContent": {
-    "protocol": "PROTOCOL V1.0",
-    "advanced": "ADVANCED",
-    "pokemonGenerator": "POKEMON GENERATOR",
-    "advancedDesc1": "Welcome to the most comprehensive random Pokemon generator available on the internet. Our advanced protocol supports every generation of Pokemon games—from the original Red and Blue (Generation 1) through the latest entries including Pokemon Scarlet and Violet (Generation 9), and we're ready for the upcoming Pokemon Legends: Z-A.",
-    "advancedDesc2": "With access to over 1,025 unique Pokemon species, our generator provides trainers with an unparalleled tool for team building, challenge runs, and competitive preparation. The cypherpunk-inspired interface ensures a sleek, no-nonsense experience focused entirely on functionality and speed.",
-    "advancedDesc3": "Our database is continuously updated to include new Pokemon forms, regional variants (Alolan, Galarian, Hisuian, and Paldean forms), Paradox Pokemon, and special event distributions.",
-    "userManual": "USER MANUAL",
-    "operating": "OPERATING",
-    "instructions": "INSTRUCTIONS",
-    "step01": "STEP 01",
-    "setTeamSize": "SET TEAM SIZE",
-    "step01Desc": "Use the \"Team\" dropdown to select 1-6 Pokemon for a full competitive team or solo challenge run.",
-    "step02": "STEP 02",
-    "selectRegion": "SELECT REGION",
-    "step02Desc": "Filter by native region—Kanto, Johto, Hoenn, Sinnoh, Unova, Kalos, Alola, Galar, Hisui, or Paldea.",
-    "step03": "STEP 03",
-    "applyFilters": "APPLY FILTERS",
-    "step03Desc": "Narrow results by selecting one or more of the 18 Pokemon types. Perfect for monotype challenges.",
-    "step04": "STEP 04",
-    "setRarity": "SET RARITY",
-    "step04Desc": "Toggle legendary, mythical, Paradox, and Ultra Beast Pokemon based on your challenge rules.",
-    "step05": "STEP 05",
-    "generateTeam": "GENERATE TEAM",
-    "step05Desc": "Press the glowing button and watch as Pokemon matching your criteria appear instantly.",
-    "step06": "STEP 06",
-    "exploreData": "EXPLORE DATA",
-    "step06Desc": "Click \"DATA\" on any Pokemon to view detailed stats, abilities, and additional information.",
-    "challengeMode": "CHALLENGE MODE",
-    "nuzlocke": "NUZLOCKE",
-    "utilities": "UTILITIES",
-    "nuzlockeDesc": "Our random Pokemon generator has become an indispensable utility for the Nuzlocke community. Use our generator to pre-determine starter options, simulate encounter tables, or generate replacement Pokemon for fallen team members.",
-    "supportedFormats": "Supported Challenge Formats",
-    "classicNuzlocke": "Classic Nuzlocke",
-    "classicNuzlockeDesc": "Generate random starter trios or simulate route encounters for ROM hacks and fan games.",
-    "soulLink": "SoulLink Challenges",
-    "soulLinkDesc": "Generate paired teams for two players running synchronized Nuzlocke runs.",
-    "draftLeagues": "Draft Leagues",
-    "draftLeaguesDesc": "Create randomized draft pools for competitive Pokemon draft leagues and tournaments.",
-    "randomizerSeeds": "Randomizer Seeds",
-    "randomizerSeedsDesc": "Preview potential team compositions before starting a randomized ROM playthrough.",
-    "wonderlocke": "Wonderlocke Prep",
-    "wonderlockeDesc": "Generate expectations for Wonder Trade-based challenge runs.",
-    "systemSpecs": "SYSTEM SPECS",
-    "core": "CORE",
-    "capabilities": "CAPABILITIES",
-    "typeFiltering": "Type Filtering System",
-    "typeFilteringDesc": "Filter by any of the 18 Pokemon types. Select multiple types to include dual-type Pokemon or focus on a single type for monotype challenges.",
-    "legendaryToggle": "Legendary & Rarity Toggle",
-    "legendaryToggleDesc": "Fine-tune with granular rarity controls. Include or exclude Legendaries, Mythicals, Paradox Pokemon, and Ultra Beasts.",
-    "spriteArtwork": "Sprite & Artwork Modes",
-    "spriteArtworkDesc": "Choose \"Sprite Only\" for pixel-art, \"Name Only\" for minimal view, or \"Both\" for high-resolution artwork with full details.",
-    "completePokedex": "Complete Pokedex Database",
-    "completePokedexDesc": "Access our comprehensive Pokedex database with detailed stats, types, abilities, and Pokédex entries for all 1025 Pokemon across every generation.",
-    "benchmarks": "BENCHMARKS",
-    "whyChoose": "WHY CHOOSE",
-    "thisTool": "THIS TOOL?",
-    "whyChooseDesc1": "Unlike other random Pokemon generators, our protocol is built with performance and accuracy as top priorities. The database pulls directly from verified Pokemon API sources ensuring that all information—types, sprites, and Pokédex numbers—is accurate and up-to-date.",
-    "whyChooseDesc2": "The minimalist cypherpunk design philosophy means zero bloat, zero unnecessary animations, and zero wasted time. Our generator works flawlessly on desktop computers, tablets, and mobile devices.",
-    "whyChooseDesc3": "Join the thousands of trainers who trust our random Pokemon generator for their team-building needs. From casual fans to hardcore Nuzlockers, our tool serves the entire Pokemon community with speed, reliability, and style."
+    "protocol": {
+      "badge": "PROTOCOL V1.0",
+      "title": "ADVANCED POKEMON GENERATOR",
+      "subtitle": "Your Ultimate Companion for Random Pokemon Selection",
+      "paragraph1": "Whether you're building a balanced team, exploring new favorites, or adding a touch of luck to your next game, our generator makes it easy to discover your next Pokemon companion.",
+      "paragraph2": "Use it for Nuzlocke challenges, Soul Link tournaments, or simply to have fun experimenting with unique team combinations."
+    },
+    "instructions": {
+      "badge": "USER MANUAL",
+      "title": "How to Use Our Random Pokemon Generator",
+      "subtitle": "Follow these simple steps to generate your random Pokemon team",
+      "stepLabel": "STEP",
+      "step1": {
+        "title": "Step 1: Choose Team Size",
+        "description": "Select how many Pokemon you want to generate - from 1 to 6 for a full team. You can also opt for a single Pokemon for quick decisions."
+      },
+      "step2": {
+        "title": "Step 2: Apply Filters (Optional)",
+        "description": "Refine your selection by filtering by Pokemon type, generation, or legendary status. This helps you get more customized teams for specific challenges."
+      },
+      "step3": {
+        "title": "Step 3: Generate Your Team",
+        "description": "Press the generate button and watch your random Pokemon appear. Each Pokemon comes with its details, including types, abilities, and base stats."
+      },
+      "step4": {
+        "title": "Step 4: Learn About Each Pokemon",
+        "description": "Click on any generated Pokemon to see detailed information including moves, evolution lines, and more."
+      },
+      "step5": {
+        "title": "Step 5: Regenerate or Save",
+        "description": "Not satisfied with the results? Simply regenerate. Or save your team for future reference."
+      },
+      "step6": {
+        "title": "Step 6: Share Your Team",
+        "description": "Share your generated team with friends via social media or direct link."
+      }
+    },
+    "nuzlocke": {
+      "badge": "NUZLOCKE UTILITIES",
+      "title": "Tools for Pokemon Nuzlocke Challenges",
+      "subtitle": "Power up your Nuzlocke gaming experience with our random Pokemon generator",
+      "intro": "Nuzlocke runs are one of the most thrilling ways to play Pokemon games. With rules that add real consequences to battle, every decision matters. Our generator helps you:",
+      "challenge1": {
+        "title": "Soul Link Challenge",
+        "description": "Pair randomly generated Pokemon with a partner for a cooperative challenge."
+      },
+      "challenge2": {
+        "title": "Wonderlocke Challenge",
+        "description": "Simulate surprise trade encounters with completely random selections."
+      },
+      "challenge3": {
+        "title": "Monotype Challenge",
+        "description": "Generate single-type teams for the most challenging monotype runs."
+      },
+      "challenge4": {
+        "title": "Starter Selection",
+        "description": "Can't decide your starter? Let the generator choose your initial companion."
+      },
+      "challenge5": {
+        "title": "Randomizer Run",
+        "description": "Combine with ROM randomizers for unpredictable team planning."
+      }
+    },
+    "capabilities": {
+      "badge": "CORE CAPABILITIES",
+      "title": "Random Generator Features",
+      "subtitle": "Discover what makes our Pokemon generator unique",
+      "feature1": {
+        "title": "Complete Pokedex",
+        "description": "Access to all 1000+ Pokemon including all regional forms and variants."
+      },
+      "feature2": {
+        "title": "Smart Filtering",
+        "description": "Advanced filters for type, generation, rarity, and more."
+      },
+      "feature3": {
+        "title": "Detailed Information",
+        "description": "Comprehensive info on stats, moves, abilities, and evolution lines for each Pokemon."
+      },
+      "feature4": {
+        "title": "Social Sharing",
+        "description": "Easily share your generated team on social media platforms or save as image."
+      }
+    },
+    "whyChoose": {
+      "badge": "WHY CHOOSE THIS TOOL?",
+      "title": "The Best Online Random Pokemon Generator",
+      "subtitle": "Why do trainers trust our random Pokemon generator?",
+      "paragraph1": "We've built this generator with both casual players and hardcore speedrunners in mind. Whether you're looking for a balanced team for competitive playthroughs or just want some random fun, we have the right tools.",
+      "paragraph2": "Our generator is regularly updated with the latest Pokemon data and offers a seamless experience across all devices."
+    }
   }
 }
