@@ -1,6 +1,7 @@
 'use client';
 import { Share2, Download } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import Image from 'next/image';
 
 /**
  * CardShowcase Component - Export Trading Cards Feature
@@ -60,10 +61,13 @@ export default function CardShowcase() {
             {/* Art Box */}
             <div className="bg-white border-2 border-[#D4AF37] shadow-inner flex items-center justify-center h-48 mb-3 relative overflow-hidden">
               <div className="absolute inset-0 bg-[radial-gradient(circle,_var(--tw-gradient-stops))] from-yellow-100 to-transparent opacity-50"></div>
-              <img 
+              <Image 
                 src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png" 
-                alt="Pikachu"
-                className="w-40 h-40 object-contain relative z-10"
+                alt="Pikachu official artwork - Electric type Pokemon"
+                width={160}
+                height={160}
+                className="object-contain relative z-10"
+                loading="lazy"
               />
             </div>
 

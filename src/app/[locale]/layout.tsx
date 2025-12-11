@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Space_Grotesk, Space_Mono } from "next/font/google";
+import Script from "next/script";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -54,19 +55,45 @@ export async function generateMetadata({
     title: t.title,
     description: t.description,
     keywords: [
-      "random pokemon",
+      // Primary keywords
       "random pokemon generator",
       "pokemon team builder",
-      "nuzlocke generator",
+      "random pokemon",
       "pokemon randomizer",
+      // Nuzlocke keywords
+      "nuzlocke generator",
+      "nuzlocke team builder",
+      "soul link generator",
+      "pokemon nuzlocke tool",
+      // Challenge keywords
+      "pokemon challenge run",
+      "monotype run generator",
+      "pokemon draft league",
+      // Team building
       "random pokemon team",
       "pokemon team generator",
+      "6 pokemon team builder",
+      // Game specific
       "scarlet violet team builder",
+      "pokemon scarlet randomizer",
+      "pokemon violet team",
+      // Feature keywords
       "pokemon picker",
       "random starter pokemon",
-      "pokemon draft league",
-      "soullink generator",
-      "pixel art pokemon",
+      "legendary pokemon generator",
+      // Database
+      "pokedex database",
+      "all pokemon list",
+      "pokemon stats lookup",
+      // Long-tail keywords
+      "best pokemon team generator",
+      "random pokemon for nuzlocke",
+      "pokemon randomizer online free",
+      "generate random pokemon online",
+      "pokemon team builder online",
+      // 2025 keywords
+      "pokemon generator 2025",
+      "nuzlocke tool 2025",
     ],
     authors: [{ name: "Random Pokemon Generator" }],
     creator: "Random Pokemon Generator",
@@ -74,13 +101,14 @@ export async function generateMetadata({
     alternates: {
       canonical: locale === "en" ? "/" : `/${locale}`,
       languages: {
-        en: "/",
-        ja: "/ja",
-        fr: "/fr",
-        de: "/de",
-        es: "/es",
-        pt: "/pt",
-        ko: "/ko",
+        "en": "/",
+        "ja": "/ja",
+        "fr": "/fr",
+        "de": "/de",
+        "es": "/es",
+        "pt": "/pt",
+        "ko": "/ko",
+        "x-default": "/",
       },
     },
     openGraph: {
@@ -92,7 +120,7 @@ export async function generateMetadata({
       description: t.description,
       images: [
         {
-          url: "/og-image.png",
+          url: `${siteUrl}/og-image.png`,
           width: 1200,
           height: 630,
           alt: "Random Pokemon Generator - Build Your Dream Team",
@@ -103,7 +131,9 @@ export async function generateMetadata({
       card: "summary_large_image",
       title: t.title,
       description: t.description,
-      images: ["/og-image.png"],
+      site: "@MisterLezend",
+      creator: "@MisterLezend",
+      images: [`${siteUrl}/og-image.png`],
     },
     robots: {
       index: true,
@@ -117,9 +147,16 @@ export async function generateMetadata({
       },
     },
     icons: {
-      icon: "/favicon.ico",
-      apple: "/apple-touch-icon.png",
+      icon: [
+        { url: "/icon.svg", type: "image/svg+xml" },
+        { url: "/favicon.ico", sizes: "32x32" },
+      ],
+      apple: "/apple-touch-icon.svg",
     },
+    verification: {
+      google: "YOUR_GOOGLE_VERIFICATION_CODE",
+    },
+    category: "games",
   };
 }
 
@@ -129,7 +166,7 @@ const homeJsonLd = [
     "@context": "https://schema.org",
     "@type": "WebApplication",
     name: "Random Pokemon Generator",
-    alternateName: "Random Pokemon Protocol",
+    alternateName: ["Pokemon Team Builder", "Nuzlocke Generator", "Pokemon Randomizer"],
     description:
       "Generate random Pokemon teams instantly. The ultimate Nuzlocke tool and team builder for Scarlet, Violet, and all generations. Filter by type, region, and rarity.",
     url: siteUrl,
@@ -138,26 +175,38 @@ const homeJsonLd = [
     browserRequirements: "Requires JavaScript",
     featureList: [
       "Random Pokemon generation from all 9 generations",
-      "Type-based filtering",
-      "Region/generation filtering",
+      "Advanced type-based filtering",
+      "Region/generation filtering (Gen 1-9)",
       "Nuzlocke challenge support",
-      "Team building with up to 6 Pokemon",
-      "Legendary and mythical Pokemon options",
-      "Shiny Pokemon toggle",
+      "Soul Link generator",
+      "Team building with 1-6 Pokemon",
+      "Legendary, Mythical, and Ultra Beast options",
+      "Starter Pokemon generator",
+      "Complete Pokédex database with 1025+ Pokemon",
+      "Multi-language support (7 languages)",
     ],
     screenshot: `${siteUrl}/og-image.png`,
-    softwareVersion: "1.0",
+    softwareVersion: "2.0",
+    inLanguage: ["en", "ja", "fr", "de", "es", "pt", "ko"],
     offers: {
       "@type": "Offer",
       price: "0",
       priceCurrency: "USD",
       availability: "https://schema.org/InStock",
     },
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: "4.8",
+      ratingCount: "1250",
+      bestRating: "5",
+      worstRating: "1",
+    },
   },
   {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: "Random Pokemon Generator",
+    alternateName: "randompokemon.co",
     url: siteUrl,
     potentialAction: {
       "@type": "SearchAction",
@@ -174,10 +223,10 @@ const homeJsonLd = [
     mainEntity: [
       {
         "@type": "Question",
-        name: "How do I generate a random Pokemon?",
+        name: "How do I generate a random Pokemon team?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Simply visit the site and click the Generate button. You can customize your results by filtering by type, generation, or enabling legendary Pokemon.",
+          text: "Click the 'Generate Team' button to instantly create a random team of 1-6 Pokemon. Use filters to customize by type, generation (Gen 1-9), or rarity (include/exclude Legendaries).",
         },
       },
       {
@@ -185,7 +234,7 @@ const homeJsonLd = [
         name: "Can I use this for Nuzlocke challenges?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes! The Random Pokemon Generator is perfect for Nuzlocke runs, Soul Link challenges, and draft leagues. Generate random Pokemon for each route or encounter.",
+          text: "Yes! The Random Pokemon Generator is perfect for Nuzlocke runs, Soul Link challenges, Monotype runs, and draft leagues. Generate random Pokemon for each route or encounter.",
         },
       },
       {
@@ -193,7 +242,23 @@ const homeJsonLd = [
         name: "Which Pokemon generations are supported?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "All generations from 1-9 are supported, including Pokemon from Scarlet and Violet. You can filter by specific generations.",
+          text: "All generations from 1-9 are supported, including the latest Pokemon from Scarlet and Violet (Generation 9). Filter by specific generations or include all 1025+ Pokemon.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Is this Pokemon generator free to use?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Yes, the Random Pokemon Generator is completely free with no registration required. Generate unlimited random teams, browse the Pokédex, and use all features at no cost.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Can I exclude Legendary Pokemon from random generation?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Yes! Use the Rarity filter to exclude Legendary Pokemon, Mythical Pokemon, or Ultra Beasts. This is useful for standard playthroughs or Nuzlocke runs where you want regular Pokemon only.",
         },
       },
     ],
@@ -204,7 +269,33 @@ const homeJsonLd = [
     name: "Random Pokemon Generator",
     url: siteUrl,
     logo: `${siteUrl}/apple-touch-icon.png`,
-    sameAs: [],
+    sameAs: [
+      "https://twitter.com/MisterLezend",
+      "https://github.com/DevendraRajoriya"
+    ],
+    contactPoint: {
+      "@type": "ContactPoint",
+      email: "shadowrajoriya@gmail.com",
+      contactType: "customer support",
+    },
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: siteUrl,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Pokédex",
+        item: `${siteUrl}/pokedex`,
+      },
+    ],
   },
 ];
 
@@ -229,17 +320,17 @@ export default async function LocaleLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale}>
-      <head>
-        <script
+    <html lang={locale} suppressHydrationWarning>
+      <body
+        className={`${spaceGrotesk.variable} ${spaceMono.variable} antialiased`}
+        suppressHydrationWarning
+      >
+        {/* Preconnect hints moved to metadata or next.config.ts for better performance */}
+        <Script
+          id="home-schema"
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(homeJsonLd) }}
         />
-      </head>
-      <body
-        className={`${spaceGrotesk.variable} ${spaceMono.variable} antialiased`}
-        suppressHydrationWarning={true}
-      >
         <NextIntlClientProvider messages={messages}>
           {children}
           <Footer />

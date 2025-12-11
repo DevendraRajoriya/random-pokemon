@@ -1,9 +1,11 @@
 {
   "metadata": {
-    "title": "랜덤 포켓몬 생성기 | 팀 만들기 (1-9세대)",
-    "description": "랜덤 포켓몬 팀을 즉시 생성하세요. 스칼렛, 바이올렛 및 모든 세대를 위한 최고의 녹턴 도구와 팀 빌더. 타입, 지역, 희귀도로 필터링.",
-    "pokedexTitle": "포켓몬 도감 - 완전한 포켓몬 데이터베이스 | 전 1025 포켓몬",
-    "pokedexDescription": "1-9세대의 전 1025 포켓몬을 탐색하세요. 타입, 스탯, 특성, 스프라이트가 포함된 완전한 도감."
+    "title": "랜덤 포켓몬 생성기 | #1 팀 빌더 & 너즐록 툴 [2025]",
+    "description": "랜덤 포켓몬 팀을 순식간에 생성하세요! 너즈록, 소울링크, 챌린지 런용 무료 툴. 1025+ 포켓몬을 타입, 세대, 희귀도로 필터링. 스칼렛/바이올렛 대응!",
+    "pokedexTitle": "포켓몬 도감 | 1025 포켓몬 스탯, 타입, 특성",
+    "pokedexDescription": "1-9세대 전체 1025 포켓몬 데이터베이스. 타입 검색, 스탯, 특성, 진화, HD 스프라이트. 스칼렛/바이올렛 업데이트!",
+    "pokemonDetailTitle": "{name} - 스탯, 타입, 특성, 진화 | 도감",
+    "pokemonDetailDescription": "{name} 완벽 가이드: 기초 스탯, 타입 상성, 특성, 진화 체인, 기술 구성. 공식 아트워크 포함."
   },
   "home": {
     "title": "랜덤 포켓몰 생성기",
@@ -121,7 +123,12 @@
     "viewDetails": "상세 보기",
     "backToGenerator": "생성기로 돌아가기",
     "indexOnline": "인덱스: 온라인",
-    "loading": "포켓몬 상세정보 로딩 중..."
+    "loading": "포켓몬 상세정보 로딩 중...",
+    "filters": "필터",
+    "advancedFilters": "고급 필터",
+    "clearAll": "모두 지우기",
+    "sortBy": "정렬 기준",
+    "activeFilters": "활성 필터"
   },
   "pokemon": {
     "visualData": "시각 데이터",
@@ -144,15 +151,34 @@
     "totalBaseStats": "총 종족값",
     "noEntry": "설명이 없습니다.",
     "share": "공유",
-    "explorePokedex": "도감 탐색"
+    "explorePokedex": "도감 탐색",
+    "randomPokemon": "랜덤 포켓몬",
+    "generateAnother": "다시 생성",
+    "loading": "로딩 중...",
+    "generating": "생성 중...",
+    "baseFormCanEvolve": "기본 형태, 진화 가능",
+    "finalEvolvedForm": "최종 진화 형태입니다.",
+    "compact": "소형",
+    "mediumSized": "중형",
+    "large": "대형",
+    "generationLabel": "{num}세대"
   },
   "stats": {
-    "hp": "HP",
+    "hp": "체력",
     "attack": "공격",
     "defense": "방어",
     "specialAttack": "특수공격",
     "specialDefense": "특수방어",
     "speed": "스피드"
+  },
+  "battleRoles": {
+    "hp": "내구성과 지구력",
+    "attack": "물리 공격",
+    "defense": "물리 방어",
+    "special-attack": "특수 공격",
+    "special-defense": "특수 방어",
+    "speed": "상대보다 빠른 선공",
+    "versatile": "다재다능한 플레이"
   },
   "types": {
     "normal": "노말",
@@ -175,6 +201,8 @@
     "fairy": "페어리"
   },
   "filters": {
+    "typeLabel": "타입으로 필터링",
+    "generationLabel": "세대로 필터링",
     "type": "타입",
     "generation": "세대",
     "allTypes": "모든 타입",
@@ -195,6 +223,13 @@
     "resetFilters": "필터 초기화",
     "advancedFilters": "고급 필터",
     "closeFilters": "필터 닫기",
+    "selectAll": "모두 선택",
+    "deselectAll": "모두 해제",
+    "any": "모두",
+    "all": "모두",
+    "both": "둘 다",
+    "nameOnly": "이름",
+    "spriteOnly": "스프라이트",
     "gen1": "1세대 (관동)",
     "gen2": "2세대 (성도)",
     "gen3": "3세대 (호연)",
@@ -203,7 +238,186 @@
     "gen6": "6세대 (칼로스)",
     "gen7": "7세대 (알로라)",
     "gen8": "8세대 (가라르)",
-    "gen9": "9세대 (팔데아)"
+    "gen9": "9세대 (팔데아)",
+    "regions": {
+      "kanto": "관동",
+      "stadiumRentals": "스타디움 대여",
+      "johto": "성도",
+      "stadium2Rentals": "스타디움 2 대여",
+      "hoenn": "호연",
+      "sinnoh": "신오",
+      "sinnohPlatinum": "신오 (플라티나)",
+      "unova": "하나",
+      "unovaB2W2": "하나 (블2화2)",
+      "kalos": "칼로스",
+      "alola": "알로라",
+      "alolaUSUM": "알로라 (USUM)",
+      "galar": "가라르",
+      "hisui": "히스이",
+      "paldea": "팔데아",
+      "kitakami": "키타카미",
+      "blueberryAcademy": "블루베리 학원",
+      "lumioseCity": "미르시티"
+    },
+    "legendaryOptions": {
+      "subLegendary": "준전설",
+      "legendary": "전설",
+      "mythical": "환상",
+      "paradox": "패러독스",
+      "ultraBeast": "울트라비스트"
+    },
+    "evolutionStages": {
+      "unevolved": "미진화",
+      "evolvedOnce": "1단계 진화",
+      "evolvedTwice": "2단계 진화"
+    },
+    "fullyEvolvedOptions": {
+      "notFullyEvolved": "최종 진화 아님",
+      "fullyEvolved": "최종 진화"
+    },
+    "genderOptions": {
+      "male": "수컷",
+      "female": "암컷",
+      "genderless": "무성"
+    },
+    "displayFormats": {
+      "nameOnly": "이름만",
+      "spriteOnly": "스프라이트만",
+      "both": "이름과 스프라이트"
+    },
+    "formOptions": {
+      "alternateForms": "다른 폼",
+      "megaEvolutions": "메가진화",
+      "gigantamaxForms": "거다이맥스 폼"
+    },
+    "natures": {
+      "adamant": "고집",
+      "bold": "대담",
+      "brave": "용감",
+      "calm": "차분",
+      "careful": "신중",
+      "gentle": "온순",
+      "hasty": "성급",
+      "hardy": "노력",
+      "impish": "개구쟁이",
+      "jolly": "명랑",
+      "lax": "촐랑",
+      "lonely": "외로움",
+      "mild": "얌전",
+      "modest": "조심",
+      "naive": "천진난만",
+      "naughty": "버릇없음",
+      "quiet": "냉정",
+      "quirky": "변덕",
+      "rash": "덜렁",
+      "relaxed": "무사태평",
+      "sassy": "건방",
+      "timid": "겁쟁이",
+      "bashful": "수줍음",
+      "docile": "온순",
+      "serious": "성실"
+    },
+    "modeLabel": "모드",
+    "challengeModes": {
+      "monoType": "단일 타입 팀",
+      "noDuplicateLines": "중복 진화 계열 없음",
+      "nuzlockeSafe": "너즈록 안전",
+      "startersOnly": "스타터만"
+    },
+    "challengeModeDescriptions": {
+      "monoType": "모든 포켓몬이 최소 하나의 타입을 공유합니다",
+      "noDuplicateLines": "같은 진화 계열의 포켓몬이 없습니다",
+      "nuzlockeSafe": "전설 및 환상 포켓몬 제외",
+      "startersOnly": "스타터 포켓몬과 진화형만"
+    },
+    "gameFilters": {
+      "label": "게임",
+      "any": "모든 게임",
+      "redBlue": "레드/블루",
+      "yellow": "옐로우",
+      "goldSilver": "골드/실버",
+      "crystal": "크리스탈",
+      "rubySapphire": "루비/사파이어",
+      "emerald": "에메랄드",
+      "fireRedLeafGreen": "파이어레드/리프그린",
+      "diamondPearl": "다이아몬드/펄",
+      "platinum": "플라티나",
+      "heartGoldSoulSilver": "하트골드/소울실버",
+      "blackWhite": "블랙/화이트",
+      "black2White2": "블랙2/화이트2",
+      "xY": "X/Y",
+      "omegarubyAlphasapphire": "오메가루비/알파사파이어",
+      "sunMoon": "썬/문",
+      "ultraSunUltraMoon": "울트라썬/울트라문",
+      "letsGo": "레츠고 피카츄/이브이",
+      "swordShield": "소드/실드",
+      "brilliantDiamondShiningPearl": "브릴리언트다이아몬드/샤이닝펄",
+      "legendsArceus": "레전드 아르세우스",
+      "scarletViolet": "스칼렛/바이올렛"
+    }
+  },
+  "challengeIdeas": {
+    "badge": "도전 아이디어",
+    "title": "이 팀으로 시도해 볼 규칙들",
+    "subtitle": "이러한 챌린지 모드로 실력을 시험해보세요",
+    "hardcoreNuzlocke": {
+      "badge": "고난도",
+      "title": "하드코어 너즈락",
+      "description": "배틀 중 아이템 사용 금지, 체육관마다 레벨 제한, 세트 모드만. 포켓몬이 쓰러지면 영원히 사라집니다."
+    },
+    "soulLink": {
+      "badge": "협동",
+      "title": "소울링크",
+      "description": "친구와 함께 플레이하세요! 당신의 포켓몬과 친구의 포켓몬이 연결되어 하나가 쓰러지면 둘 다 사라집니다."
+    },
+    "typeLocke": {
+      "badge": "타입",
+      "title": "타입락",
+      "description": "단일 타입의 포켓몬만 사용하세요. 이 팀의 주요 타입으로 모노타입 런을 해보세요!"
+    },
+    "randomMoves": {
+      "badge": "랜덤",
+      "title": "랜덤 무브셋",
+      "description": "각 포켓몬은 배울 수 있는 기술 중 무작위로 선택된 4개만 사용할 수 있습니다."
+    },
+    "noEvolutions": {
+      "badge": "기본",
+      "title": "진화 금지",
+      "description": "포켓몬을 진화시키지 않고 전체 게임을 클리어하세요. 기본 폼 전략을 테스트해보세요!"
+    },
+    "itemless": {
+      "badge": "순수",
+      "title": "아이템 없이 런",
+      "description": "지닌 물건 사용 금지. 순수한 실력과 전략만으로 도전하세요."
+    },
+    "speedrun": {
+      "badge": "스피드",
+      "title": "스피드런 챌린지",
+      "description": "이 팀만 사용하여 가능한 빨리 게임을 클리어해보세요."
+    },
+    "egglocke": {
+      "badge": "알",
+      "title": "에그락 준비",
+      "description": "이 팀을 에그 풀로 사용하세요 - 이 포켓몬들이 들어있는 알을 친구와 교환하세요."
+    }
+  },
+  "footer": {
+    "brandName": "랜덤 포켓몬 생성기",
+    "tagline": "고급 팀 빌딩 프로토콜 v1.0",
+    "systemOnline": "시스템 온라인",
+    "navigation": "내비게이션",
+    "generator": "생성기",
+    "pokedexDatabase": "포켓몬 도감 데이터베이스",
+    "legal": "법적 정보",
+    "aboutUs": "소개",
+    "privacyPolicy": "개인정보 처리방침",
+    "disclaimer": "면책 조항",
+    "communication": "커뮤니케이션",
+    "connect": "연락처",
+    "notice": "공지",
+    "copyrightNotice": "포켓몬은 © 1995-2025 Nintendo / Creatures Inc. / GAME FREAK inc. TM, ® 및 캐릭터 이름은 닌텐도의 상표입니다. 이 도구는 닌텐도, 주식회사 포켓몬 또는 관련 기업과 제휴, 보증 또는 후원을 받지 않습니다.",
+    "designedBy": "디자인:",
+    "notAffiliated": "닌텐도와 제휴하지 않음"
   },
   "common": {
     "loading": "로딩 중...",
@@ -254,6 +468,7 @@
       "badge": "사용 방법",
       "title": "랜덤 포켓몬 생성기 사용법",
       "subtitle": "이 간단한 단계를 따라 랜덤 포켓몬 팀을 생성하세요",
+      "stepLabel": "단계",
       "step1": {
         "title": "1단계: 팀 규모 선택",
         "description": "생성할 포켓몬 수를 선택하세요 - 풀팀의 경우 1에서 6까지. 빠른 결정을 위해 단일 포켓몬도 선택할 수 있습니다."
@@ -333,5 +548,23 @@
       "paragraph1": "캐주얼 플레이어와 하드코어 스피드러너 모두를 염두에 두고 이 생성기를 만들었습니다. 경쟁 플레이스루를 위한 균형 잡힌 팀을 찾든, 단순히 랜덤한 재미를 원하든, 저희에게 적합한 도구가 있습니다.",
       "paragraph2": "저희 생성기는 최신 포켓몬 데이터로 정기적으로 업데이트되며 모든 장치에서 원활한 경험을 제공합니다."
     }
+  },
+  "common": {
+    "loading": "로딩 중...",
+    "error": "오류가 발생했습니다",
+    "retry": "재시도",
+    "back": "뒤로",
+    "backToHome": "홈으로 돌아가기",
+    "close": "닫기",
+    "share": "공유",
+    "copy": "복사",
+    "copied": "복사됨!",
+    "download": "다운로드",
+    "pokemon": "포켓몬",
+    "language": "언어",
+    "noImage": "이미지 없음",
+    "status": "상태",
+    "go": "이동",
+    "search": "검색..."
   }
 }

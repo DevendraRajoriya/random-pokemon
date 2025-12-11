@@ -1,17 +1,43 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Link } from "@/i18n/navigation";
-import { ArrowLeft, Database, Share2, Zap, Shuffle, Sparkles } from "lucide-react";
+import { ArrowLeft, Database, Share2, Zap, Shuffle, Loader2 } from "lucide-react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
+import Script from "next/script";
 import ShareModal from "@/components/ShareModal";
 import { PokemonWithSpecies } from "./page";
+import { pokemonList, TOTAL_POKEMON } from "@/data/pokemon";
+import { Locale } from "@/i18n/routing";
 
 interface Props {
   pokemon: PokemonWithSpecies;
+  locale: Locale;
 }
+
+// Type gradient colors for beautiful badges
+const TYPE_GRADIENTS: Record<string, { from: string; to: string; text: string }> = {
+  normal: { from: "#A8A878", to: "#C6C6A7", text: "#000" },
+  fire: { from: "#F08030", to: "#F5AC78", text: "#fff" },
+  water: { from: "#6890F0", to: "#9DB7F5", text: "#fff" },
+  electric: { from: "#F8D030", to: "#FAE078", text: "#000" },
+  grass: { from: "#78C850", to: "#A7DB8D", text: "#000" },
+  ice: { from: "#98D8D8", to: "#BCE6E6", text: "#000" },
+  fighting: { from: "#C03028", to: "#D67873", text: "#fff" },
+  poison: { from: "#A040A0", to: "#C183C1", text: "#fff" },
+  ground: { from: "#E0C068", to: "#EBD69D", text: "#000" },
+  flying: { from: "#A890F0", to: "#C6B7F5", text: "#000" },
+  psychic: { from: "#F85888", to: "#FA92B2", text: "#fff" },
+  bug: { from: "#A8B820", to: "#C6D16E", text: "#000" },
+  rock: { from: "#B8A038", to: "#D1C17D", text: "#000" },
+  ghost: { from: "#705898", to: "#A292BC", text: "#fff" },
+  dragon: { from: "#7038F8", to: "#A27DFA", text: "#fff" },
+  dark: { from: "#705848", to: "#A29288", text: "#fff" },
+  steel: { from: "#B8B8D0", to: "#D1D1E0", text: "#000" },
+  fairy: { from: "#EE99AC", to: "#F4BDC9", text: "#000" },
+};
 
 const TYPE_COLORS: Record<string, string> = {
   normal: "#A8A878",
@@ -34,28 +60,32 @@ const TYPE_COLORS: Record<string, string> = {
   fairy: "#EE99AC",
 };
 
-// Total Pokemon count for random generation (Gen 1-9)
-const TOTAL_POKEMON = 1025;
-
-export default function PokemonDetailClient({ pokemon }: Props) {
+export default function PokemonDetailClient({ pokemon, locale }: Props) {
   const router = useRouter();
   const [showShareModal, setShowShareModal] = useState(false);
-  const [showShiny, setShowShiny] = useState(false);
-  const [isGenerating, setIsGenerating] = useState(false);
+  const [isNavigating, setIsNavigating] = useState(false);
   const t = useTranslations('pokemon');
   const tStats = useTranslations('stats');
+  const tTypes = useTranslations('types');
   const tCommon = useTranslations('common');
   const tSeo = useTranslations('seo');
 
-  // Generate Random Pokemon - navigates to a random pre-built Pokemon page
-  const generateRandomPokemon = () => {
-    setIsGenerating(true);
+  // ============ RANDOM GENERATION (Client-Side Only - No API Calls!) ============
+  // This is the key to the "Library Architecture" pattern
+  // All 1025 pages are pre-built, so we just calculate a random ID and navigate
+  const generateRandomPokemon = useCallback(() => {
+    setIsNavigating(true);
+    
+    // Generate random ID (1-1025) - Pure client-side, no API call
     const randomId = Math.floor(Math.random() * TOTAL_POKEMON) + 1;
-    // Small delay for visual feedback, then navigate to pre-rendered page
-    setTimeout(() => {
-      router.push(`/pokemon/${randomId}`);
-    }, 300);
-  };
+    const randomPokemon = pokemonList[randomId - 1];
+    
+    // Navigate to the pre-built static page
+    router.push(`/pokemon/${randomPokemon.name}`);
+    
+    // Reset loading state after navigation completes
+    setTimeout(() => setIsNavigating(false), 500);
+  }, [router]);
 
   const formatStatName = (name: string): string => {
     const statNames: Record<string, string> = {
@@ -76,11 +106,20 @@ export default function PokemonDetailClient({ pokemon }: Props) {
     return "bg-black";
   };
 
-  // Format pokemon name for display
-  const capitalizedName = pokemon.name
+  // Format pokemon name for display - use localized name if available
+  const capitalizedName = pokemon.localizedName || pokemon.name
     .split('-')
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ');
+  
+  // Helper to get translated type name
+  const getTranslatedType = (typeName: string): string => {
+    try {
+      return tTypes(typeName as any);
+    } catch {
+      return typeName.charAt(0).toUpperCase() + typeName.slice(1);
+    }
+  };
   
   // Calculate stats
   const totalStats = pokemon.stats.reduce((sum, stat) => sum + stat.base_stat, 0);
@@ -88,28 +127,30 @@ export default function PokemonDetailClient({ pokemon }: Props) {
     stat.base_stat > max.base_stat ? stat : max
   , pokemon.stats[0]);
   
-  // Determine battle role based on highest stat
+  // Determine battle role based on highest stat (translated)
+  const tRoles = useTranslations("battleRoles");
   const getBattleRole = (statName: string): string => {
-    const roles: Record<string, string> = {
-      "hp": "bulk and endurance",
-      "attack": "physical offense",
-      "defense": "physical defense",
-      "special-attack": "special offense",
-      "special-defense": "special defense",
-      "speed": "outspeeding opponents",
-    };
-    return roles[statName] || "versatile play";
+    try {
+      return tRoles(statName as any);
+    } catch {
+      return tRoles("versatile");
+    }
   };
 
-  // Get types display
-  const typesDisplay = pokemon.types.map(t => 
-    t.type.name.charAt(0).toUpperCase() + t.type.name.slice(1)
-  ).join("/");
+  // Get types display (translated)
+  const typesDisplay = pokemon.types.map(t => getTranslatedType(t.type.name)).join("/");
 
-  // Get evolution chain (exclude current Pokemon)
+  // Get evolution chain with localized names
   const evolutionChain = pokemon.species.evolutionChain || [];
+  const evolutionChainLocalized = pokemon.species.evolutionChainLocalized || [];
   const otherEvolutions = evolutionChain.filter(name => name.toLowerCase() !== pokemon.name.toLowerCase());
   const currentEvoIndex = evolutionChain.findIndex(name => name.toLowerCase() === pokemon.name.toLowerCase());
+  
+  // Helper to get localized evolution name
+  const getLocalizedEvoName = (englishName: string): string => {
+    const entry = evolutionChainLocalized.find(e => e.name.toLowerCase() === englishName.toLowerCase());
+    return entry?.localizedName || englishName.charAt(0).toUpperCase() + englishName.slice(1);
+  };
 
   // JSON-LD Structured Data - Improved for rich snippets
   const pokemonJsonLd = [
@@ -166,7 +207,7 @@ export default function PokemonDetailClient({ pokemon }: Props) {
           name: `What is ${capitalizedName}'s evolution chain?`,
           acceptedAnswer: {
             "@type": "Answer",
-            text: `${capitalizedName} is part of the ${evolutionChain.map(n => n.charAt(0).toUpperCase() + n.slice(1)).join(" → ")} evolution line.`,
+            text: `${capitalizedName} is part of the ${evolutionChainLocalized.map(e => e.localizedName).join(" → ")} evolution line.`,
           },
         }] : []),
       ],
@@ -199,7 +240,8 @@ export default function PokemonDetailClient({ pokemon }: Props) {
 
   return (
     <>
-      <script
+      <Script
+        id="pokemon-schema"
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(pokemonJsonLd) }}
       />
@@ -208,25 +250,32 @@ export default function PokemonDetailClient({ pokemon }: Props) {
           
           {/* Top Navigation */}
           <div className="flex flex-wrap justify-between items-center gap-3 mb-6 md:mb-8">
-            <div className="flex gap-2">
-              <button
-                onClick={() => router.push("/")}
-                className="flex items-center gap-2 bg-black text-white font-mono text-xs px-4 py-2 slasher hover:bg-charcoal transition-colors"
-              >
-                <ArrowLeft size={14} />
-                {tCommon('back').toUpperCase()}
-              </button>
-              
-              {/* Generate Random Pokemon Button */}
-              <button
-                onClick={generateRandomPokemon}
-                disabled={isGenerating}
-                className="flex items-center gap-2 bg-marigold text-black font-mono text-xs font-bold px-4 py-2 slasher border-2 border-black hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <Shuffle size={14} className={isGenerating ? 'animate-spin' : ''} />
-                {isGenerating ? t('generating') : t('randomPokemon')}
-              </button>
-            </div>
+            <button
+              onClick={() => router.push("/")}
+              className="flex items-center gap-2 bg-black text-white font-mono text-xs px-4 py-2 slasher hover:bg-charcoal transition-colors"
+            >
+              <ArrowLeft size={14} />
+              {tCommon('back').toUpperCase()}
+            </button>
+            
+            {/* Generate Another Random Pokémon - The Key Feature! */}
+            <button
+              onClick={generateRandomPokemon}
+              disabled={isNavigating}
+              className="flex items-center gap-2 bg-[#4ADE80] hover:bg-[#22c55e] text-black font-mono text-xs font-bold px-5 py-2.5 slasher border-2 border-black shadow-[3px_3px_0px_0px_#000] hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_#000] active:translate-y-0.5 active:shadow-none transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+            >
+              {isNavigating ? (
+                <>
+                  <Loader2 size={16} className="animate-spin" />
+                  {t('loading')}
+                </>
+              ) : (
+                <>
+                  <Shuffle size={16} />
+                  {t('randomPokemon')}
+                </>
+              )}
+            </button>
             
             <button
               onClick={() => setShowShareModal(true)}
@@ -251,7 +300,7 @@ export default function PokemonDetailClient({ pokemon }: Props) {
                 </span>
                 <div className="inline-block bg-marigold px-3 py-1 slasher border border-black">
                   <span className="font-mono text-xs font-bold text-black uppercase">
-                    {pokemon.species.generation}
+                    {t('generationLabel', { num: pokemon.species.generationNumber })}
                   </span>
                 </div>
               </div>
@@ -266,46 +315,19 @@ export default function PokemonDetailClient({ pokemon }: Props) {
               
               {/* Artwork Box */}
               <div className="bg-white border-4 border-black slasher p-6 md:p-8">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="inline-block bg-black px-3 py-1">
-                    <span className="font-mono text-xs font-bold text-white uppercase tracking-wider">
-                      {t('visualData')}
-                    </span>
-                  </div>
-                  
-                  {/* Shiny Toggle Button */}
-                  <button
-                    onClick={() => setShowShiny(!showShiny)}
-                    className={`flex items-center gap-2 font-mono text-xs font-bold px-3 py-1.5 border-2 border-black transition-all ${
-                      showShiny 
-                        ? 'bg-gradient-to-r from-purple-400 via-pink-400 to-yellow-400 text-black' 
-                        : 'bg-cream text-black hover:bg-marigold'
-                    }`}
-                  >
-                    <Sparkles size={14} className={showShiny ? 'animate-pulse' : ''} />
-                    {showShiny ? t('shiny') : t('normal')}
-                  </button>
+                <div className="inline-block bg-black px-3 py-1 mb-4">
+                  <span className="font-mono text-xs font-bold text-white uppercase tracking-wider">
+                    {t('visualData')}
+                  </span>
                 </div>
-                
                 <div className="relative w-full aspect-square bg-cream/50 flex items-center justify-center">
-                  {/* Shiny sparkle effect overlay */}
-                  {showShiny && (
-                    <div className="absolute inset-0 pointer-events-none z-20">
-                      <div className="absolute top-4 left-8 w-2 h-2 bg-yellow-300 rounded-full animate-ping" />
-                      <div className="absolute top-12 right-12 w-1.5 h-1.5 bg-pink-300 rounded-full animate-ping delay-100" />
-                      <div className="absolute bottom-16 left-16 w-2 h-2 bg-purple-300 rounded-full animate-ping delay-200" />
-                    </div>
-                  )}
                   <Image
-                    src={showShiny 
-                      ? (pokemon.sprites.other["official-artwork"].front_shiny || pokemon.sprites.front_shiny || pokemon.sprites.other["official-artwork"].front_default)
-                      : pokemon.sprites.other["official-artwork"].front_default
-                    }
-                    alt={`${capitalizedName} ${showShiny ? 'shiny ' : ''}official artwork - ${typesDisplay} type Pokemon from ${pokemon.species.generation}`}
+                    src={pokemon.sprites.other["official-artwork"].front_default}
+                    alt={`${capitalizedName} official artwork - ${typesDisplay} type Pokemon from ${pokemon.species.generation}`}
                     fill
-                    className={`object-contain p-4 mix-blend-multiply transition-all duration-300 ${showShiny ? 'drop-shadow-[0_0_15px_rgba(255,215,0,0.5)]' : ''}`}
+                    sizes="(max-width: 768px) 90vw, (max-width: 1024px) 45vw, 40vw"
+                    className="object-contain p-4 mix-blend-multiply"
                     priority
-                    unoptimized
                   />
                 </div>
                 
@@ -320,7 +342,7 @@ export default function PokemonDetailClient({ pokemon }: Props) {
                         color: ['electric', 'normal', 'ground', 'fairy', 'ice'].includes(typeInfo.type.name) ? '#000' : '#fff'
                       }}
                     >
-                      {typeInfo.type.name}
+                      {getTranslatedType(typeInfo.type.name)}
                     </span>
                   ))}
                 </div>
@@ -377,7 +399,7 @@ export default function PokemonDetailClient({ pokemon }: Props) {
                       className="bg-cream border-2 border-black px-4 py-2"
                     >
                       <span className="font-mono text-sm text-black uppercase font-semibold">
-                        {abilityInfo.ability.name.replace(/-/g, " ")}
+                        {abilityInfo.ability.localizedName || abilityInfo.ability.name.replace(/-/g, " ")}
                       </span>
                     </div>
                   ))}
@@ -458,8 +480,27 @@ export default function PokemonDetailClient({ pokemon }: Props) {
                 )}
               </div>
 
-              {/* Action Buttons */}
-              <div className="grid grid-cols-1 gap-4">
+              {/* Action Buttons - Primary CTAs */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {/* Generate Another Random - THE MAIN CTA */}
+                <button
+                  onClick={generateRandomPokemon}
+                  disabled={isNavigating}
+                  className="bg-[#4ADE80] hover:bg-[#22c55e] text-black font-mono font-bold text-sm px-6 py-4 text-center border-4 border-black transition-all duration-200 slasher flex items-center justify-center gap-2 shadow-[4px_4px_0px_0px_#000] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_#000] active:translate-y-1 active:shadow-none disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-[4px_4px_0px_0px_#000]"
+                >
+                  {isNavigating ? (
+                    <>
+                      <Loader2 size={18} className="animate-spin" />
+                      {t('generating')}
+                    </>
+                  ) : (
+                    <>
+                      <Zap size={18} className="text-yellow-400 fill-yellow-400" />
+                      {t('generateAnother')}
+                    </>
+                  )}
+                </button>
+                
                 <Link
                   href="/pokedex"
                   className="bg-purple-300 hover:brightness-110 text-black font-mono font-bold text-sm px-6 py-4 text-center border-4 border-black transition-all duration-200 slasher flex items-center justify-center gap-2"
@@ -480,9 +521,8 @@ export default function PokemonDetailClient({ pokemon }: Props) {
                   <div className="flex flex-wrap items-center justify-center gap-2">
                     {evolutionChain.map((evoName, index) => {
                       const isCurrentPokemon = evoName.toLowerCase() === pokemon.name.toLowerCase();
-                      const formattedEvoName = evoName.split('-').map(word => 
-                        word.charAt(0).toUpperCase() + word.slice(1)
-                      ).join(' ');
+                      // Use localized name for display
+                      const displayName = getLocalizedEvoName(evoName);
                       
                       return (
                         <div key={evoName} className="flex items-center gap-2">
@@ -491,14 +531,14 @@ export default function PokemonDetailClient({ pokemon }: Props) {
                           )}
                           {isCurrentPokemon ? (
                             <span className="bg-marigold text-black font-mono text-sm font-bold px-4 py-2 border-2 border-black">
-                              {formattedEvoName}
+                              {displayName}
                             </span>
                           ) : (
                             <Link
                               href={`/pokemon/${evoName.toLowerCase()}`}
                               className="bg-cream hover:bg-marigold text-black font-mono text-sm font-bold px-4 py-2 border-2 border-black transition-colors"
                             >
-                              {formattedEvoName}
+                              {displayName}
                             </Link>
                           )}
                         </div>
@@ -522,23 +562,23 @@ export default function PokemonDetailClient({ pokemon }: Props) {
                     {t('exploreByType')}
                   </span>
                 </div>
-                <p className="font-mono text-xs text-charcoal mb-3">
-                  Find more {typesDisplay}-type Pokemon in the Pokédex:
-                </p>
                 <div className="flex flex-wrap gap-2">
-                  {pokemon.types.map((typeInfo) => (
-                    <Link
-                      key={typeInfo.type.name}
-                      href={`/pokedex?type=${typeInfo.type.name}`}
-                      className="font-mono text-xs px-4 py-2 uppercase font-bold border-2 border-black hover:brightness-110 transition-all"
-                      style={{ 
-                        backgroundColor: TYPE_COLORS[typeInfo.type.name] || '#888',
-                        color: ['electric', 'normal', 'ground', 'fairy', 'ice'].includes(typeInfo.type.name) ? '#000' : '#fff'
-                      }}
-                    >
-                      {t('allTypesPokemon', { type: typeInfo.type.name })}
-                    </Link>
-                  ))}
+                  {pokemon.types.map((typeInfo) => {
+                    const translatedType = getTranslatedType(typeInfo.type.name);
+                    return (
+                      <Link
+                        key={typeInfo.type.name}
+                        href={`/pokedex?type=${typeInfo.type.name}`}
+                        className="font-mono text-xs px-4 py-2 uppercase font-bold border-2 border-black hover:brightness-110 transition-all"
+                        style={{ 
+                          backgroundColor: TYPE_COLORS[typeInfo.type.name] || '#888',
+                          color: ['electric', 'normal', 'ground', 'fairy', 'ice'].includes(typeInfo.type.name) ? '#000' : '#fff'
+                        }}
+                      >
+                        {t('allTypesPokemon', { type: translatedType })}
+                      </Link>
+                    );
+                  })}
                 </div>
               </div>
             </div>
@@ -558,75 +598,60 @@ export default function PokemonDetailClient({ pokemon }: Props) {
             
             <div className="space-y-4">
               <p className="font-mono text-sm md:text-base text-charcoal leading-relaxed">
-                Looking for details on <strong className="text-black">{capitalizedName}</strong>? 
-                This <strong className="text-black">{typesDisplay}</strong>-type Pokemon was first introduced in{" "}
-                <strong className="text-black">{pokemon.species.generation}</strong>.
+                {tSeo('lookingFor', { name: capitalizedName })}{" "}
+                {tSeo('typeIntro', { types: typesDisplay, generation: t('generationLabel', { num: pokemon.species.generationNumber }) })}
                 {pokemon.species.genus && (
-                  <> It is known as the <strong className="text-black">{pokemon.species.genus}</strong>.</>
+                  <> {tSeo('knownAs', { genus: pokemon.species.genus })}</>
                 )}
               </p>
 
               {evolutionChain.length > 1 && (
                 <p className="font-mono text-sm md:text-base text-charcoal leading-relaxed">
-                  <strong className="text-black">{capitalizedName}</strong> is part of the{" "}
-                  {evolutionChain.map((name, index) => {
-                    const formatted = name.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-                    const isCurrent = name.toLowerCase() === pokemon.name.toLowerCase();
-                    return (
-                      <span key={name}>
-                        {index > 0 && " → "}
-                        {isCurrent ? (
-                          <strong className="text-black">{formatted}</strong>
-                        ) : (
-                          <Link href={`/pokemon/${name.toLowerCase()}`} className="text-indigo hover:underline">
-                            {formatted}
-                          </Link>
-                        )}
-                      </span>
-                    );
-                  })}{" "}
-                  evolution line.
-                  {currentEvoIndex === 0 && " As the base form, it can evolve into stronger forms."}
-                  {currentEvoIndex === evolutionChain.length - 1 && evolutionChain.length > 1 && " This is the final evolved form."}
+                  {tSeo('evolutionLine', { 
+                    name: capitalizedName, 
+                    chain: evolutionChainLocalized.map(e => e.localizedName).join(" → ")
+                  })}
+                  {currentEvoIndex === 0 && ` ${t('baseFormCanEvolve')}`}
+                  {currentEvoIndex === evolutionChain.length - 1 && evolutionChain.length > 1 && ` ${t('finalEvolvedForm')}`}
                 </p>
               )}
 
               <p className="font-mono text-sm md:text-base text-charcoal leading-relaxed">
-                In terms of <strong className="text-black">battle strategy</strong>,{" "}
-                {capitalizedName} has a total base stat of{" "}
-                <strong className="text-black">{totalStats}</strong>. Its highest attribute is{" "}
-                <strong className="text-black">
-                  {formatStatName(highestStat.stat.name)} ({highestStat.base_stat})
-                </strong>, making it a strong choice for trainers looking for{" "}
-                <strong className="text-black">{getBattleRole(highestStat.stat.name)}</strong>.
+                {tSeo('battleStrategy', { name: capitalizedName, total: totalStats })}{" "}
+                {tSeo('highestStat', { 
+                  stat: formatStatName(highestStat.stat.name), 
+                  value: highestStat.base_stat,
+                  role: getBattleRole(highestStat.stat.name)
+                })}
               </p>
 
               <p className="font-mono text-sm md:text-base text-charcoal leading-relaxed">
-                Standing at <strong className="text-black">{(pokemon.height / 10).toFixed(1)} meters</strong> tall 
-                and weighing <strong className="text-black">{(pokemon.weight / 10).toFixed(1)} kg</strong>,{" "}
-                {capitalizedName} is a{" "}
-                {pokemon.height < 10 ? "compact" : pokemon.height < 20 ? "medium-sized" : "large"} Pokemon
+                {tSeo('physicalDescription', { 
+                  height: (pokemon.height / 10).toFixed(1), 
+                  weight: (pokemon.weight / 10).toFixed(1),
+                  name: capitalizedName,
+                  size: pokemon.height < 10 ? t('compact') : pokemon.height < 20 ? t('mediumSized') : t('large')
+                })}
                 {pokemon.species.habitat && (
-                  <> typically found in <strong className="text-black">{pokemon.species.habitat}</strong> environments</>
+                  <> {tSeo('habitatInfo', { habitat: pokemon.species.habitat })}</>
                 )}.
-                {" "}Whether you&apos;re building a competitive team or completing your Pokédex,{" "}
-                {capitalizedName} offers unique strengths worth considering.
+                {" "}{tSeo('conclusion', { name: capitalizedName })}
               </p>
 
               {otherEvolutions.length > 0 && (
                 <p className="font-mono text-sm md:text-base text-charcoal leading-relaxed">
-                  Want to learn about related Pokemon? Check out{" "}
+                  {tSeo('relatedPokemon')}{" "}
                   {otherEvolutions.map((name, index) => {
-                    const formatted = name.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+                    const displayName = getLocalizedEvoName(name);
                     const isLast = index === otherEvolutions.length - 1;
                     const separator = otherEvolutions.length > 2 
-                      ? (isLast ? ", or " : ", ")
-                      : (isLast ? " or " : "");
+                      ? (isLast ? ", " : ", ")
+                      : (isLast ? " " : "");
                     return (
                       <span key={name}>
                         {index > 0 && separator}
                         <Link href={`/pokemon/${name.toLowerCase()}`} className="text-indigo hover:underline font-semibold">
-                          {formatted}
+                          {displayName}
                         </Link>
                       </span>
                     );

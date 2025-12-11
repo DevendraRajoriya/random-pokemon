@@ -4,6 +4,15 @@ import createNextIntlPlugin from 'next-intl/plugin';
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
 const nextConfig: NextConfig = {
+  // Enable standalone output for optimized Docker/Heroku deployment
+  output: 'standalone',
+  
+  // Turbopack configuration
+  turbopack: {
+    // Ensure consistent root directory
+    root: __dirname,
+  },
+  
   images: {
     remotePatterns: [
       {
@@ -13,20 +22,32 @@ const nextConfig: NextConfig = {
       },
     ],
     formats: ["image/avif", "image/webp"],
-    minimumCacheTTL: 86400, // Cache images for 24 hours
-    deviceSizes: [640, 750, 828, 1080, 1200], // Optimized for common mobile/tablet sizes
-    imageSizes: [16, 32, 48, 64, 96, 128, 256], // Smaller icon sizes
+    minimumCacheTTL: 31536000, // Cache images for 1 year (immutable sprites)
+    deviceSizes: [640, 750, 828, 1080, 1200],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256],
   },
+  
   // Enable compression
   compress: true,
-  // Optimize production builds
+  
+  // Security headers
   poweredByHeader: false,
-  // Optimize React for production
+  
+  // React strict mode for better development
   reactStrictMode: true,
-  // Cache static assets
+  
+  // Experimental features for better performance
+  experimental: {
+    // Enable optimized CSS
+    optimizeCss: true,
+    // Optimize package imports (tree-shaking)
+    optimizePackageImports: ['lucide-react', 'next-intl'],
+  },
+  
+  // Cache static assets with long TTL
   headers: async () => [
     {
-      source: "/:all*(svg|jpg|png|webp|avif|ico)",
+      source: "/:all*(svg|jpg|png|webp|avif|ico|woff|woff2)",
       headers: [
         {
           key: "Cache-Control",
@@ -35,7 +56,7 @@ const nextConfig: NextConfig = {
       ],
     },
     {
-      source: "/:all*(js|css)",
+      source: "/_next/static/:path*",
       headers: [
         {
           key: "Cache-Control",
@@ -57,6 +78,10 @@ const nextConfig: NextConfig = {
         {
           key: "X-XSS-Protection",
           value: "1; mode=block",
+        },
+        {
+          key: "Referrer-Policy",
+          value: "strict-origin-when-cross-origin",
         },
       ],
     },

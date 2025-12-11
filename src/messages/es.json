@@ -1,9 +1,11 @@
 {
   "metadata": {
-    "title": "Generador de Pokémon Aleatorio | Crea tu equipo (Gen 1-9)",
-    "description": "Genera equipos Pokémon aleatorios al instante. La herramienta definitiva para Nuzlocke y creación de equipos para Escarlata, Púrpura y todas las generaciones. Filtra por tipo, región y rareza.",
-    "pokedexTitle": "Pokédex - Base de datos Pokémon completa | Los 1025 Pokémon",
-    "pokedexDescription": "Explora los 1025 Pokémon de las generaciones 1-9. Pokédex completa con tipos, estadísticas, habilidades y sprites."
+    "title": "Generador Pokémon Aleatorio | #1 Team Builder & Herramienta Nuzlocke [2025]",
+    "description": "¡Genera equipos Pokémon aleatorios en segundos! Herramienta gratis para Nuzlocke, Soul Link y desafíos. Filtra 1025+ Pokémon por tipo, gen y rareza. ¡Compatible con Escarlata/Púrpura!",
+    "pokedexTitle": "Pokédex Base de Datos | 1025 Pokémon Stats, Tipos y Habilidades",
+    "pokedexDescription": "Base de datos completa con los 1025 Pokémon de Gen 1-9. Busca por tipo, stats, habilidades, evoluciones y sprites HD. ¡Actualizado para Escarlata y Púrpura!",
+    "pokemonDetailTitle": "{name} - Stats, Tipo, Habilidades y Evolución | Pokédex",
+    "pokemonDetailDescription": "Guía completa de {name}: stats base, debilidades de tipo, habilidades, cadena evolutiva y moveset. Artworks y sprites oficiales."
   },
   "home": {
     "title": "GENERADOR DE POKÉMON ALEATORIO",
@@ -121,7 +123,12 @@
     "viewDetails": "VER DETALLES",
     "backToGenerator": "VOLVER AL GENERADOR",
     "indexOnline": "ÍNDICE: EN LÍNEA",
-    "loading": "Cargando detalles de Pokémon..."
+    "loading": "Cargando detalles de Pokémon...",
+    "filters": "FILTROS",
+    "advancedFilters": "Filtros avanzados",
+    "clearAll": "Limpiar todo",
+    "sortBy": "Ordenar por",
+    "activeFilters": "Filtros activos"
   },
   "pokemon": {
     "visualData": "DATOS VISUALES",
@@ -144,7 +151,17 @@
     "totalBaseStats": "Estadísticas base totales",
     "noEntry": "No hay entrada disponible.",
     "share": "COMPARTIR",
-    "explorePokedex": "EXPLORAR POKÉDEX"
+    "explorePokedex": "EXPLORAR POKÉDEX",
+    "randomPokemon": "POKÉMON ALEATORIO",
+    "generateAnother": "GENERAR OTRO",
+    "loading": "CARGANDO...",
+    "generating": "GENERANDO...",
+    "baseFormCanEvolve": "Forma base, puede evolucionar",
+    "finalEvolvedForm": "Esta es la forma evolucionada final.",
+    "compact": "compacto",
+    "mediumSized": "de tamaño mediano",
+    "large": "grande",
+    "generationLabel": "Generación {num}"
   },
   "stats": {
     "hp": "PS",
@@ -153,6 +170,15 @@
     "specialAttack": "ATQ.ESP",
     "specialDefense": "DEF.ESP",
     "speed": "VEL"
+  },
+  "battleRoles": {
+    "hp": "resistencia y aguante",
+    "attack": "ataque físico",
+    "defense": "defensa física",
+    "special-attack": "ataque especial",
+    "special-defense": "defensa especial",
+    "speed": "superar la velocidad rival",
+    "versatile": "juego versátil"
   },
   "types": {
     "normal": "Normal",
@@ -175,6 +201,8 @@
     "fairy": "Hada"
   },
   "filters": {
+    "typeLabel": "Filtrar por tipo",
+    "generationLabel": "Filtrar por generación",
     "type": "Tipo",
     "generation": "Generación",
     "allTypes": "Todos los tipos",
@@ -195,6 +223,13 @@
     "resetFilters": "RESTABLECER FILTROS",
     "advancedFilters": "FILTROS AVANZADOS",
     "closeFilters": "CERRAR FILTROS",
+    "selectAll": "Seleccionar todo",
+    "deselectAll": "Deseleccionar todo",
+    "any": "Todos",
+    "all": "Todos",
+    "both": "Ambos",
+    "nameOnly": "Nombre",
+    "spriteOnly": "Sprite",
     "gen1": "Gen 1 (Kanto)",
     "gen2": "Gen 2 (Johto)",
     "gen3": "Gen 3 (Hoenn)",
@@ -203,7 +238,186 @@
     "gen6": "Gen 6 (Kalos)",
     "gen7": "Gen 7 (Alola)",
     "gen8": "Gen 8 (Galar)",
-    "gen9": "Gen 9 (Paldea)"
+    "gen9": "Gen 9 (Paldea)",
+    "regions": {
+      "kanto": "Kanto",
+      "stadiumRentals": "Alquiler Stadium",
+      "johto": "Johto",
+      "stadium2Rentals": "Alquiler Stadium 2",
+      "hoenn": "Hoenn",
+      "sinnoh": "Sinnoh",
+      "sinnohPlatinum": "Sinnoh (Platino)",
+      "unova": "Teselia",
+      "unovaB2W2": "Teselia (N2B2)",
+      "kalos": "Kalos",
+      "alola": "Alola",
+      "alolaUSUM": "Alola (USUL)",
+      "galar": "Galar",
+      "hisui": "Hisui",
+      "paldea": "Paldea",
+      "kitakami": "Noroteo",
+      "blueberryAcademy": "Academia Arándano",
+      "lumioseCity": "Ciudad Luminalia"
+    },
+    "legendaryOptions": {
+      "subLegendary": "Sublegendario",
+      "legendary": "Legendario",
+      "mythical": "Singular",
+      "paradox": "Paradoja",
+      "ultraBeast": "Ultraente"
+    },
+    "evolutionStages": {
+      "unevolved": "Sin evolucionar",
+      "evolvedOnce": "1ª evolución",
+      "evolvedTwice": "2ª evolución"
+    },
+    "fullyEvolvedOptions": {
+      "notFullyEvolved": "No completamente evolucionado",
+      "fullyEvolved": "Completamente evolucionado"
+    },
+    "genderOptions": {
+      "male": "Macho",
+      "female": "Hembra",
+      "genderless": "Sin género"
+    },
+    "displayFormats": {
+      "nameOnly": "Solo nombre",
+      "spriteOnly": "Solo sprite",
+      "both": "Nombre y sprite"
+    },
+    "formOptions": {
+      "alternateForms": "Formas alternativas",
+      "megaEvolutions": "Megaevoluciones",
+      "gigantamaxForms": "Formas Gigamax"
+    },
+    "natures": {
+      "adamant": "Firme",
+      "bold": "Osada",
+      "brave": "Audaz",
+      "calm": "Serena",
+      "careful": "Cauta",
+      "gentle": "Amable",
+      "hasty": "Activa",
+      "hardy": "Fuerte",
+      "impish": "Agitada",
+      "jolly": "Alegre",
+      "lax": "Floja",
+      "lonely": "Huraña",
+      "mild": "Afable",
+      "modest": "Modesta",
+      "naive": "Ingenua",
+      "naughty": "Pícara",
+      "quiet": "Mansa",
+      "quirky": "Rara",
+      "rash": "Alocada",
+      "relaxed": "Plácida",
+      "sassy": "Grosera",
+      "timid": "Miedosa",
+      "bashful": "Tímida",
+      "docile": "Dócil",
+      "serious": "Seria"
+    },
+    "modeLabel": "Modo",
+    "challengeModes": {
+      "monoType": "Equipo Mono-Tipo",
+      "noDuplicateLines": "Sin Líneas Duplicadas",
+      "nuzlockeSafe": "Seguro para Nuzlocke",
+      "startersOnly": "Solo Iniciales"
+    },
+    "challengeModeDescriptions": {
+      "monoType": "Todos los Pokémon comparten al menos un tipo",
+      "noDuplicateLines": "Sin Pokémon de la misma familia evolutiva",
+      "nuzlockeSafe": "Excluye legendarios y singulares",
+      "startersOnly": "Solo Pokémon iniciales y sus evoluciones"
+    },
+    "gameFilters": {
+      "label": "Juego",
+      "any": "Todos los Juegos",
+      "redBlue": "Rojo/Azul",
+      "yellow": "Amarillo",
+      "goldSilver": "Oro/Plata",
+      "crystal": "Cristal",
+      "rubySapphire": "Rubí/Zafiro",
+      "emerald": "Esmeralda",
+      "fireRedLeafGreen": "Rojo Fuego/Verde Hoja",
+      "diamondPearl": "Diamante/Perla",
+      "platinum": "Platino",
+      "heartGoldSoulSilver": "Oro HeartGold/Plata SoulSilver",
+      "blackWhite": "Negro/Blanco",
+      "black2White2": "Negro 2/Blanco 2",
+      "xY": "X/Y",
+      "omegarubyAlphasapphire": "Rubí Omega/Zafiro Alfa",
+      "sunMoon": "Sol/Luna",
+      "ultraSunUltraMoon": "Ultrasol/Ultraluna",
+      "letsGo": "Let's Go, Pikachu/Eevee",
+      "swordShield": "Espada/Escudo",
+      "brilliantDiamondShiningPearl": "Diamante Brillante/Perla Reluciente",
+      "legendsArceus": "Leyendas: Arceus",
+      "scarletViolet": "Escarlata/Púrpura"
+    }
+  },
+  "challengeIdeas": {
+    "badge": "IDEAS DE DESAFÍO",
+    "title": "Prueba Estas Reglas Con Tu Equipo",
+    "subtitle": "Pon a prueba tus habilidades con estos modos de desafío",
+    "hardcoreNuzlocke": {
+      "badge": "DURO",
+      "title": "Nuzlocke Extremo",
+      "description": "Sin objetos en combate, límites de nivel por gimnasio, solo modo fijo. Un Pokémon debilitado desaparece para siempre."
+    },
+    "soulLink": {
+      "badge": "COOP",
+      "title": "Soul Link",
+      "description": "¡Juega con un amigo! Cada uno de tus Pokémon está vinculado a uno de los suyos—si uno cae, ambos desaparecen."
+    },
+    "typeLocke": {
+      "badge": "TIPO",
+      "title": "Type-Locke",
+      "description": "Solo usa Pokémon de un único tipo. ¡El tipo principal de este equipo sería genial para una partida mono-tipo!"
+    },
+    "randomMoves": {
+      "badge": "AZAR",
+      "title": "Movimientos Aleatorios",
+      "description": "Cada Pokémon solo puede usar 4 movimientos seleccionados al azar."
+    },
+    "noEvolutions": {
+      "badge": "BASE",
+      "title": "Sin Evoluciones",
+      "description": "Completa el juego sin evolucionar ningún Pokémon. ¡Pon a prueba tus estrategias de forma base!"
+    },
+    "itemless": {
+      "badge": "PURO",
+      "title": "Sin Objetos Equipados",
+      "description": "No se permiten objetos equipados. Solo pura habilidad y estrategia."
+    },
+    "speedrun": {
+      "badge": "VELOZ",
+      "title": "Desafío Speedrun",
+      "description": "Intenta completar el juego lo más rápido posible usando solo este equipo."
+    },
+    "egglocke": {
+      "badge": "HUEVO",
+      "title": "Preparación Egglocke",
+      "description": "Usa este equipo como tu pool de huevos—intercambia huevos que contengan estos Pokémon con amigos."
+    }
+  },
+  "footer": {
+    "brandName": "GENERADOR POKÉMON ALEATORIO",
+    "tagline": "Protocolo avanzado de creación de equipos v1.0",
+    "systemOnline": "Sistema en línea",
+    "navigation": "NAVEGACIÓN",
+    "generator": "Generador",
+    "pokedexDatabase": "Base de datos Pokédex",
+    "legal": "LEGAL",
+    "aboutUs": "Sobre nosotros",
+    "privacyPolicy": "Política de privacidad",
+    "disclaimer": "Aviso legal",
+    "communication": "COMUNICACIÓN",
+    "connect": "Contacto",
+    "notice": "AVISO",
+    "copyrightNotice": "Pokémon es © 1995-2025 Nintendo / Creatures Inc. / GAME FREAK inc. TM, ® y los nombres de personajes son marcas de Nintendo. Esta herramienta no está afiliada, respaldada ni patrocinada por Nintendo, The Pokémon Company ni ninguna entidad relacionada.",
+    "designedBy": "Diseñado por",
+    "notAffiliated": "No afiliado con Nintendo"
   },
   "common": {
     "loading": "Cargando...",
@@ -254,6 +468,7 @@
       "badge": "INSTRUCCIONES DE USO",
       "title": "Cómo Usar Nuestro Generador Aleatorio de Pokémon",
       "subtitle": "Sigue estos sencillos pasos para generar tu equipo aleatorio de Pokémon",
+      "stepLabel": "PASO",
       "step1": {
         "title": "Paso 1: Elige el Tamaño del Equipo",
         "description": "Selecciona cuántos Pokémon quieres generar - de 1 a 6 para un equipo completo. También puedes optar por un solo Pokémon para decisiones rápidas."
@@ -333,5 +548,23 @@
       "paragraph1": "Hemos construido este generador teniendo en cuenta tanto a jugadores casuales como a speedrunners hardcore. Ya sea que busques un equipo equilibrado para playthroughs competitivos o solo quieras un poco de diversión aleatoria, tenemos las herramientas adecuadas.",
       "paragraph2": "Nuestro generador se actualiza regularmente con los últimos datos de Pokémon y ofrece una experiencia fluida en todos los dispositivos."
     }
+  },
+  "common": {
+    "loading": "Cargando...",
+    "error": "Ocurrió un error",
+    "retry": "REINTENTAR",
+    "back": "Volver",
+    "backToHome": "Volver al inicio",
+    "close": "Cerrar",
+    "share": "Compartir",
+    "copy": "Copiar",
+    "copied": "¡Copiado!",
+    "download": "Descargar",
+    "pokemon": "Pokémon",
+    "language": "Idioma",
+    "noImage": "Sin imagen",
+    "status": "ESTADO",
+    "go": "IR",
+    "search": "Buscar..."
   }
 }

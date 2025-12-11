@@ -5,10 +5,30 @@ import { useRouter } from "next/navigation";
 import { Loader2, Zap, Database, ChevronDown, X, Search, Share2, BookOpen } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import Image from "next/image";
-import { useTranslations } from "next-intl";
-import SeoContent from "@/components/SeoContent";
-import ShareModal from "@/components/ShareModal";
-import CardShowcase from "@/components/CardShowcase";
+import { useTranslations, useLocale } from "next-intl";
+import dynamic from "next/dynamic";
+import Script from "next/script";
+import { Locale, pokeApiLanguageMap } from "@/i18n/routing";
+
+// Dynamic imports for heavy/below-fold components (reduces initial bundle)
+const SeoContent = dynamic(() => import("@/components/SeoContent"), {
+  loading: () => <div className="h-96 bg-cream animate-pulse border-2 border-black" />,
+  ssr: true, // Keep for SEO
+});
+
+const ShareModal = dynamic(() => import("@/components/ShareModal"), {
+  loading: () => (
+    <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[100]">
+      <Loader2 className="animate-spin text-white" size={48} />
+    </div>
+  ),
+  ssr: false, // Modal doesn't need SSR
+});
+
+const CardShowcase = dynamic(() => import("@/components/CardShowcase"), {
+  loading: () => <div className="h-96 bg-cream animate-pulse border-2 border-black" />,
+  ssr: true,
+});
 
 interface PokemonType {
   type: {
@@ -19,6 +39,7 @@ interface PokemonType {
 interface Pokemon {
   id: number;
   name: string;
+  localizedName?: string;
   sprites: {
     other: {
       "official-artwork": {
@@ -40,6 +61,12 @@ interface FilterState {
   natures: string[];
   forms: string[];
   regions: string[];
+  // Advanced challenge modes
+  monoType: boolean;
+  noDuplicateLines: boolean;
+  nuzlockeSafe: boolean;
+  startersOnly: boolean;
+  gameFilter: string;
 }
 
 const POKEMON_TYPES = [
@@ -48,46 +75,141 @@ const POKEMON_TYPES = [
   "steel", "fairy",
 ];
 
-const REGIONS = [
-  { name: "Kanto", range: [1, 151] },
-  { name: "Stadium Rentals", range: [1, 151] },
-  { name: "Johto", range: [152, 251] },
-  { name: "Stadium 2 Rentals", range: [152, 251] },
-  { name: "Hoenn", range: [252, 386] },
-  { name: "Sinnoh", range: [387, 493] },
-  { name: "Sinnoh (Platinum)", range: [387, 493] },
-  { name: "Unova", range: [494, 649] },
-  { name: "Unova (B2W2)", range: [494, 649] },
-  { name: "Kalos", range: [650, 721] },
-  { name: "Alola", range: [722, 809] },
-  { name: "Alola (USUM)", range: [722, 809] },
-  { name: "Galar", range: [810, 905] },
-  { name: "Hisui", range: [387, 905] },
-  { name: "Paldea", range: [906, 1025] },
-  { name: "Kitakami", range: [906, 1025] },
-  { name: "Blueberry Academy", range: [906, 1025] },
-  { name: "Lumiose City", range: [650, 721] },
+// Region definitions with keys matching translation keys
+const REGION_KEYS = [
+  { key: "kanto", range: [1, 151] },
+  { key: "stadiumRentals", range: [1, 151] },
+  { key: "johto", range: [152, 251] },
+  { key: "stadium2Rentals", range: [152, 251] },
+  { key: "hoenn", range: [252, 386] },
+  { key: "sinnoh", range: [387, 493] },
+  { key: "sinnohPlatinum", range: [387, 493] },
+  { key: "unova", range: [494, 649] },
+  { key: "unovaB2W2", range: [494, 649] },
+  { key: "kalos", range: [650, 721] },
+  { key: "alola", range: [722, 809] },
+  { key: "alolaUSUM", range: [722, 809] },
+  { key: "galar", range: [810, 905] },
+  { key: "hisui", range: [387, 905] },
+  { key: "paldea", range: [906, 1025] },
+  { key: "kitakami", range: [906, 1025] },
+  { key: "blueberryAcademy", range: [906, 1025] },
+  { key: "lumioseCity", range: [650, 721] },
 ];
 
-const LEGENDARY_OPTIONS = [
-  "Sub-Legendary",
-  "Legendary",
-  "Mythical",
-  "Paradox",
-  "Ultra Beast",
+// Legendary option keys matching translation keys
+const LEGENDARY_OPTION_KEYS = [
+  "subLegendary",
+  "legendary",
+  "mythical",
+  "paradox",
+  "ultraBeast",
 ];
 
-const EVOLUTION_STAGES = ["Unevolved", "Evolved Once", "Evolved Twice"];
-const FULLY_EVOLVED_OPTIONS = ["Not Fully Evolved", "Fully Evolved"];
-const GENDERS = ["Male", "Female", "Genderless"];
-const DISPLAY_FORMATS = ["Name Only", "Sprite Only", "Both Name and Sprite"];
-const NATURES = [
-  "Adamant", "Bold", "Brave", "Calm", "Careful", "Gentle", "Hasty", "Hardy",
-  "Impish", "Jolly", "Lax", "Lonely", "Mild", "Modest", "Naive", "Naughty",
-  "Quiet", "Quirky", "Rash", "Relaxed", "Sassy", "Timid", "Bashful", "Docile",
-  "Serious",
+// Evolution stage keys matching translation keys
+const EVOLUTION_STAGE_KEYS = ["unevolved", "evolvedOnce", "evolvedTwice"];
+const FULLY_EVOLVED_KEYS = ["notFullyEvolved", "fullyEvolved"];
+const GENDER_KEYS = ["male", "female", "genderless"];
+const DISPLAY_FORMAT_KEYS = ["nameOnly", "spriteOnly", "both"];
+const NATURE_KEYS = [
+  "adamant", "bold", "brave", "calm", "careful", "gentle", "hasty", "hardy",
+  "impish", "jolly", "lax", "lonely", "mild", "modest", "naive", "naughty",
+  "quiet", "quirky", "rash", "relaxed", "sassy", "timid", "bashful", "docile",
+  "serious",
 ];
-const FORM_OPTIONS = ["Alternate Forms", "Mega Evolutions", "Gigantamax Forms"];
+const FORM_OPTION_KEYS = ["alternateForms", "megaEvolutions", "gigantamaxForms"];
+
+// Game filter keys for per-game availability
+const GAME_FILTER_KEYS = [
+  "any",
+  "redBlue", "yellow", "goldSilver", "crystal",
+  "rubySapphire", "emerald", "fireRedLeafGreen",
+  "diamondPearl", "platinum", "heartGoldSoulSilver",
+  "blackWhite", "black2White2",
+  "xY", "omegarubyAlphasapphire",
+  "sunMoon", "ultraSunUltraMoon", "letsGo",
+  "swordShield", "brilliantDiamondShiningPearl", "legendsArceus",
+  "scarletViolet"
+];
+
+// Game to Pokedex range mapping (approximate availability)
+const GAME_POKEDEX_RANGES: Record<string, [number, number]> = {
+  "any": [1, 1025],
+  "redBlue": [1, 151],
+  "yellow": [1, 151],
+  "goldSilver": [1, 251],
+  "crystal": [1, 251],
+  "rubySapphire": [1, 386],
+  "emerald": [1, 386],
+  "fireRedLeafGreen": [1, 386],
+  "diamondPearl": [1, 493],
+  "platinum": [1, 493],
+  "heartGoldSoulSilver": [1, 493],
+  "blackWhite": [1, 649],
+  "black2White2": [1, 649],
+  "xY": [1, 721],
+  "omegarubyAlphasapphire": [1, 721],
+  "sunMoon": [1, 809],
+  "ultraSunUltraMoon": [1, 809],
+  "letsGo": [1, 153], // Gen 1 + Meltan/Melmetal
+  "swordShield": [1, 898],
+  "brilliantDiamondShiningPearl": [1, 493],
+  "legendsArceus": [1, 905],
+  "scarletViolet": [1, 1025]
+};
+
+// Starter Pokemon IDs (all generations)
+const STARTER_IDS = new Set([
+  // Gen 1
+  1, 2, 3, 4, 5, 6, 7, 8, 9,
+  // Gen 2
+  152, 153, 154, 155, 156, 157, 158, 159, 160,
+  // Gen 3
+  252, 253, 254, 255, 256, 257, 258, 259, 260,
+  // Gen 4
+  387, 388, 389, 390, 391, 392, 393, 394, 395,
+  // Gen 5
+  495, 496, 497, 498, 499, 500, 501, 502, 503,
+  // Gen 6
+  650, 651, 652, 653, 654, 655, 656, 657, 658,
+  // Gen 7
+  722, 723, 724, 725, 726, 727, 728, 729, 730,
+  // Gen 8
+  810, 811, 812, 813, 814, 815, 816, 817, 818,
+  // Gen 9
+  906, 907, 908, 909, 910, 911, 912, 913, 914
+]);
+
+// Evolution line data - maps Pokemon ID to their base form ID
+// This helps identify Pokemon from the same evolution family
+const getEvolutionLineId = (pokemonId: number): number => {
+  // This is a simplified mapping - ideally would be fetched from API
+  // Maps each Pokemon to its base form ID
+  const evolutionLines: Record<number, number> = {
+    // Bulbasaur line
+    1: 1, 2: 1, 3: 1,
+    // Charmander line
+    4: 4, 5: 4, 6: 4,
+    // Squirtle line
+    7: 7, 8: 7, 9: 7,
+    // Caterpie line
+    10: 10, 11: 10, 12: 10,
+    // Weedle line
+    13: 13, 14: 13, 15: 13,
+    // Pidgey line
+    16: 16, 17: 16, 18: 16,
+    // Rattata line
+    19: 19, 20: 19,
+    // Spearow line
+    21: 21, 22: 21,
+    // Ekans line
+    23: 23, 24: 23,
+    // Pikachu line
+    25: 172, 26: 172, 172: 172,
+    // And so on... for production, fetch from API
+  };
+  return evolutionLines[pokemonId] || pokemonId;
+};
 
 const LEGENDARY_IDS = new Set([
   144, 145, 146, 150, 151, 243, 244, 245, 249, 250, 251, 377, 378, 379, 380,
@@ -141,7 +263,7 @@ const CompactFilterDropdown = ({
     <div ref={dropdownRef} className={`relative ${className}`}>
       <button
         onClick={onToggle}
-        className="h-12 w-full px-3 md:px-4 bg-cream hover:bg-charcoal hover:text-cream border-2 border-black font-mono text-xs md:text-sm text-black whitespace-nowrap flex items-center gap-2 transition-colors duration-200"
+        className="btn-slide h-12 w-full px-3 md:px-4 bg-cream hover:bg-charcoal hover:text-cream border-2 border-black font-mono text-xs md:text-sm text-black whitespace-nowrap flex items-center gap-2 transition-colors duration-200"
         aria-expanded={isOpen}
         aria-haspopup="true"
       >
@@ -156,7 +278,7 @@ const CompactFilterDropdown = ({
       </button>
       {isOpen && (
         <div
-          className={`absolute top-full left-0 mt-1 bg-white border-2 border-black ${minWidth} max-w-[90vw] max-h-[60vh] overflow-y-auto z-50 slasher`}
+          className={`absolute top-full left-0 mt-1 bg-white border-2 border-black ${minWidth} max-w-[90vw] max-h-[60vh] overflow-y-auto z-50 slasher animate-in fade-in slide-in-from-top-2 duration-200`}
         >
           <div className="p-3 md:p-4">{children}</div>
         </div>
@@ -170,6 +292,7 @@ interface MultiSelectCheckboxesProps {
   selected: string[];
   onChange: (selected: string[]) => void;
   showSelectAll?: boolean;
+  translationFn?: (key: string) => string;
 }
 
 const MultiSelectCheckboxes = ({
@@ -177,8 +300,10 @@ const MultiSelectCheckboxes = ({
   selected,
   onChange,
   showSelectAll = false,
+  translationFn,
 }: MultiSelectCheckboxesProps) => {
   const isAllSelected = options.length > 0 && selected.length === options.length;
+  const tFilters = useTranslations('filters');
 
   const handleSelectAll = () => {
     if (isAllSelected) {
@@ -186,6 +311,13 @@ const MultiSelectCheckboxes = ({
     } else {
       onChange(options);
     }
+  };
+
+  const getDisplayText = (option: string) => {
+    if (translationFn) {
+      return translationFn(option);
+    }
+    return option;
   };
 
   return (
@@ -199,7 +331,7 @@ const MultiSelectCheckboxes = ({
             className="w-4 h-4 cursor-pointer"
           />
           <span className="font-mono text-xs md:text-sm text-black">
-            {isAllSelected ? "Deselect All" : "Select All"}
+            {isAllSelected ? tFilters('deselectAll') : tFilters('selectAll')}
           </span>
         </label>
       )}
@@ -218,7 +350,7 @@ const MultiSelectCheckboxes = ({
               }}
               className="w-4 h-4 cursor-pointer flex-shrink-0"
             />
-            <span className="font-mono text-xs md:text-sm text-black">{option}</span>
+            <span className="font-mono text-xs md:text-sm text-black">{getDisplayText(option)}</span>
           </label>
         ))}
       </div>
@@ -302,6 +434,7 @@ const ActiveFilterChips = ({ filters, onRemoveFilter }: ActiveFilterChipsProps) 
 
 export default function Home() {
   const router = useRouter();
+  const locale = useLocale() as Locale;
   const t = useTranslations('home');
   const tCommon = useTranslations('common');
   const tFilters = useTranslations('filters');
@@ -314,8 +447,8 @@ export default function Home() {
   const [loading, setLoading] = useState(true); // Start as loading to avoid hydration mismatch
   const [terminalStatus, setTerminalStatus] = useState("INITIALIZING");
   const [searchQuery, setSearchQuery] = useState("");
-  const [allPokemon, setAllPokemon] = useState<{ name: string; id: number }[]>([]);
-  const [suggestions, setSuggestions] = useState<{ name: string; id: number }[]>([]);
+  const [allPokemon, setAllPokemon] = useState<{ name: string; id: number; localizedName?: string }[]>([]);
+  const [suggestions, setSuggestions] = useState<{ name: string; id: number; localizedName?: string }[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
   const [filters, setFilters] = useState<FilterState>({
@@ -329,6 +462,11 @@ export default function Home() {
     natures: [],
     forms: [],
     regions: [],
+    monoType: false,
+    noDuplicateLines: false,
+    nuzlockeSafe: false,
+    startersOnly: false,
+    gameFilter: "any",
   });
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [typeCache, setTypeCache] = useState<Record<string, Set<number>>>({});
@@ -336,6 +474,7 @@ export default function Home() {
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [sharePokemon, setSharePokemon] = useState<Pokemon | null>(null);
   const [isMounted, setIsMounted] = useState(false);
+  const tChallengeIdeas = useTranslations('challengeIdeas');
 
   // Track if initial team has been generated
   const hasGeneratedInitialTeam = useRef(false);
@@ -343,12 +482,44 @@ export default function Home() {
   // Ref for scrolling to team grid
   const teamGridRef = useRef<HTMLDivElement>(null);
 
+  // Fetch localized Pokemon name from species endpoint
+  const fetchLocalizedName = useCallback(async (pokemonName: string): Promise<string> => {
+    try {
+      const pokeApiLang = pokeApiLanguageMap[locale];
+      
+      // Try original name first, then base name (without form suffix)
+      const namesToTry = [pokemonName];
+      if (pokemonName.includes('-')) {
+        const baseName = pokemonName.split('-')[0];
+        if (!namesToTry.includes(baseName)) {
+          namesToTry.push(baseName);
+        }
+      }
+      
+      for (const name of namesToTry) {
+        const res = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${name}`);
+        if (res.ok) {
+          const species = await res.json();
+          const localizedEntry = species.names?.find((n: { language: { name: string }, name: string }) => n.language.name === pokeApiLang);
+          if (localizedEntry) return localizedEntry.name;
+          
+          const englishEntry = species.names?.find((n: { language: { name: string }, name: string }) => n.language.name === 'en');
+          if (englishEntry) return englishEntry.name;
+        }
+      }
+      
+      return pokemonName;
+    } catch {
+      return pokemonName;
+    }
+  }, [locale]);
+
   // Mark as mounted after hydration is complete
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  // Fetch all Pokemon names on mount for autocomplete
+  // Fetch all Pokemon names on mount for autocomplete (with localized names)
   useEffect(() => {
     const fetchAllPokemon = async () => {
       try {
@@ -358,15 +529,48 @@ export default function Home() {
           // Extract ID from URL like "https://pokeapi.co/api/v2/pokemon/25/"
           const urlParts = p.url.split("/");
           const id = parseInt(urlParts[urlParts.length - 2]);
-          return { name: p.name, id };
+          return { name: p.name, id, localizedName: undefined as string | undefined };
         });
         setAllPokemon(pokemonList);
+        
+        // Fetch localized names in background for non-English locales
+        if (locale !== 'en') {
+          const pokeApiLang = pokeApiLanguageMap[locale];
+          // Fetch in batches to avoid overwhelming the API
+          const batchSize = 50;
+          for (let i = 0; i < pokemonList.length; i += batchSize) {
+            const batch = pokemonList.slice(i, i + batchSize);
+            const localizedBatch = await Promise.all(
+              batch.map(async (p: { name: string; id: number; localizedName?: string }) => {
+                try {
+                  const speciesRes = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${p.id}`);
+                  if (speciesRes.ok) {
+                    const species = await speciesRes.json();
+                    const localizedEntry = species.names?.find((n: { language: { name: string }, name: string }) => n.language.name === pokeApiLang);
+                    return { ...p, localizedName: localizedEntry?.name || p.name };
+                  }
+                } catch {
+                  // Ignore errors for individual Pokemon
+                }
+                return p;
+              })
+            );
+            // Update state progressively
+            setAllPokemon(prev => {
+              const updated = [...prev];
+              for (let j = 0; j < localizedBatch.length; j++) {
+                updated[i + j] = localizedBatch[j];
+              }
+              return updated;
+            });
+          }
+        }
       } catch (error) {
         console.error("Error fetching Pokemon list:", error);
       }
     };
     fetchAllPokemon();
-  }, []);
+  }, [locale]);
 
   // Auto-generate team on initial page load for zero-click value
   useEffect(() => {
@@ -385,9 +589,12 @@ export default function Home() {
             uniqueIds.add(Math.floor(Math.random() * 1025) + 1);
           }
           
-          const fetchPromises = Array.from(uniqueIds).map((id) =>
-            fetch(`https://pokeapi.co/api/v2/pokemon/${id}`).then((res) => res.json())
-          );
+          const fetchPromises = Array.from(uniqueIds).map(async (id) => {
+            const pokemonRes = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
+            const pokemonData = await pokemonRes.json();
+            const localizedName = await fetchLocalizedName(pokemonData.name);
+            return { ...pokemonData, localizedName };
+          });
           
           const pokemonData = await Promise.all(fetchPromises);
           setTeam(pokemonData);
@@ -407,7 +614,7 @@ export default function Home() {
       
       autoGenerateTeam();
     }
-  }, [isMounted]);
+  }, [isMounted, fetchLocalizedName]);
 
   // Handle click outside to close suggestions
   useEffect(() => {
@@ -423,8 +630,12 @@ export default function Home() {
   const handleSearchInput = (value: string) => {
     setSearchQuery(value);
     if (value.trim().length > 0) {
+      const searchTerm = value.toLowerCase().trim();
       const filtered = allPokemon
-        .filter((p) => p.name.toLowerCase().includes(value.toLowerCase().trim()))
+        .filter((p) => 
+          p.name.toLowerCase().includes(searchTerm) || 
+          (p.localizedName && p.localizedName.toLowerCase().includes(searchTerm))
+        )
         .slice(0, 8);
       setSuggestions(filtered);
       setShowSuggestions(filtered.length > 0);
@@ -490,9 +701,15 @@ export default function Home() {
   const getValidPokemonIds = async (): Promise<number[]> => {
     let validIds = new Set<number>();
 
-    if (filters.regions.length > 0) {
-      const regionRanges = filters.regions.map((regionName) => {
-        const region = REGIONS.find((r) => r.name === regionName);
+    // Apply game filter first (limits the Pokemon pool)
+    if (filters.gameFilter !== "any") {
+      const [start, end] = GAME_POKEDEX_RANGES[filters.gameFilter] || [1, 1025];
+      for (let i = start; i <= end; i++) {
+        validIds.add(i);
+      }
+    } else if (filters.regions.length > 0) {
+      const regionRanges = filters.regions.map((regionKey) => {
+        const region = REGION_KEYS.find((r) => r.key === regionKey);
         return region?.range || [0, 0];
       });
 
@@ -507,6 +724,16 @@ export default function Home() {
       }
     }
 
+    // Apply Nuzlocke-safe filter (excludes legendaries/mythicals)
+    if (filters.nuzlockeSafe) {
+      validIds = new Set([...validIds].filter((id) => !LEGENDARY_IDS.has(id)));
+    }
+
+    // Apply starters only filter
+    if (filters.startersOnly) {
+      validIds = new Set([...validIds].filter((id) => STARTER_IDS.has(id)));
+    }
+
     if (filters.types.length > 0) {
       const typeIdSets = await Promise.all(
         filters.types.map((type) => getTypeIds(type))
@@ -519,7 +746,7 @@ export default function Home() {
     }
 
     if (filters.legendaryStatus.length > 0) {
-      const isLegendary = filters.legendaryStatus.includes("Legendary");
+      const isLegendary = filters.legendaryStatus.includes("legendary");
       const isNonLegendary = !isLegendary;
 
       if (isLegendary) {
@@ -573,27 +800,83 @@ export default function Home() {
 
       if (validIds.length === 0) {
         setTerminalStatus("NO MATCHES");
+        setLoading(false);
         return;
       }
 
       const uniqueIds = new Set<number>();
+      const usedEvolutionLines = new Set<number>();
       const teamSize = Math.min(filters.teamSize, validIds.length);
-      const maxAttempts = Math.min(validIds.length, teamSize * 10);
+      const maxAttempts = Math.min(validIds.length * 3, teamSize * 50);
       let attempts = 0;
 
+      // If mono-type is enabled, first pick a random type to focus on
+      let monoTypeFilter: string | null = null;
+      if (filters.monoType && filters.types.length === 0) {
+        // Pick a random type
+        monoTypeFilter = POKEMON_TYPES[Math.floor(Math.random() * POKEMON_TYPES.length)];
+      } else if (filters.monoType && filters.types.length > 0) {
+        // Use the first selected type
+        monoTypeFilter = filters.types[0];
+      }
+
+      // Fetch type data for mono-type filtering if needed
+      let monoTypeIds: Set<number> | null = null;
+      if (monoTypeFilter) {
+        monoTypeIds = await getTypeIds(monoTypeFilter);
+      }
+
       while (uniqueIds.size < teamSize && attempts < maxAttempts) {
-        uniqueIds.add(validIds[Math.floor(Math.random() * validIds.length)]);
+        const candidateId = validIds[Math.floor(Math.random() * validIds.length)];
+        
+        // Check mono-type filter
+        if (monoTypeIds && !monoTypeIds.has(candidateId)) {
+          attempts++;
+          continue;
+        }
+
+        // Check no duplicate evolution lines
+        if (filters.noDuplicateLines) {
+          const lineId = getEvolutionLineId(candidateId);
+          if (usedEvolutionLines.has(lineId)) {
+            attempts++;
+            continue;
+          }
+          usedEvolutionLines.add(lineId);
+        }
+
+        uniqueIds.add(candidateId);
         attempts++;
       }
 
-      const fetchPromises = Array.from(uniqueIds).map((id) =>
-        fetch(`https://pokeapi.co/api/v2/pokemon/${id}`).then((res) =>
-          res.json()
-        )
-      );
+      const fetchPromises = Array.from(uniqueIds).map(async (id) => {
+        const pokemonRes = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
+        const pokemonData = await pokemonRes.json();
+        const localizedName = await fetchLocalizedName(pokemonData.name);
+        return { ...pokemonData, localizedName };
+      });
 
       const pokemonData = await Promise.all(fetchPromises);
-      setTeam(pokemonData);
+      
+      // For mono-type, verify all Pokemon share at least one type
+      if (filters.monoType && pokemonData.length > 1) {
+        const firstTypes = new Set(pokemonData[0].types.map((t: PokemonType) => t.type.name));
+        const sharedType = pokemonData.every((p: Pokemon) => 
+          p.types.some((t: PokemonType) => firstTypes.has(t.type.name))
+        );
+        if (!sharedType && monoTypeFilter) {
+          // Filter to only Pokemon with the mono-type
+          const filteredData = pokemonData.filter((p: Pokemon) =>
+            p.types.some((t: PokemonType) => t.type.name === monoTypeFilter)
+          );
+          setTeam(filteredData.length > 0 ? filteredData : pokemonData);
+        } else {
+          setTeam(pokemonData);
+        }
+      } else {
+        setTeam(pokemonData);
+      }
+      
       setTerminalStatus("SUCCESS");
       
       // Scroll to the team grid after generation
@@ -644,6 +927,11 @@ export default function Home() {
       natures: [],
       forms: [],
       regions: [],
+      monoType: false,
+      noDuplicateLines: false,
+      nuzlockeSafe: false,
+      startersOnly: false,
+      gameFilter: "any",
     });
   };
 
@@ -652,6 +940,10 @@ export default function Home() {
       setFilters({ ...filters, teamSize: 6 });
     } else if (key === "displayFormat") {
       setFilters({ ...filters, displayFormat: "both" });
+    } else if (key === "monoType" || key === "noDuplicateLines" || key === "nuzlockeSafe" || key === "startersOnly") {
+      setFilters({ ...filters, [key]: false });
+    } else if (key === "gameFilter") {
+      setFilters({ ...filters, gameFilter: "any" });
     } else if (Array.isArray(filters[key])) {
       const arr = filters[key] as string[];
       if (value) {
@@ -679,14 +971,21 @@ export default function Home() {
       filters.genders.length > 0 ||
       filters.natures.length > 0 ||
       filters.forms.length > 0 ||
-      filters.regions.length > 0
+      filters.regions.length > 0 ||
+      filters.monoType ||
+      filters.noDuplicateLines ||
+      filters.nuzlockeSafe ||
+      filters.startersOnly ||
+      filters.gameFilter !== "any"
     );
   }, [filters]);
 
   const filteredNatures = useMemo(() => {
-    return NATURES.filter((nature) =>
-      nature.toLowerCase().includes(natureSearch.toLowerCase())
-    );
+    // Filter natures by searching translated names
+    return NATURE_KEYS.filter((natureKey) => {
+      // Search by the key itself (which matches English names lowercase)
+      return natureKey.toLowerCase().includes(natureSearch.toLowerCase());
+    });
   }, [natureSearch]);
 
   const getFilterDisplayValue = (key: keyof FilterState): string => {
@@ -695,60 +994,60 @@ export default function Home() {
         return String(filters.teamSize);
       case "regions":
         return filters.regions.length === 0
-          ? "All"
+          ? tFilters('any')
           : filters.regions.length === 1
-          ? filters.regions[0]
+          ? tFilters(`regions.${filters.regions[0]}`)
           : `${filters.regions.length}`;
       case "types":
         return filters.types.length === 0
-          ? "Any"
+          ? tFilters('any')
           : filters.types.length === 1
-          ? filters.types[0].charAt(0).toUpperCase() + filters.types[0].slice(1)
+          ? tTypes(filters.types[0])
           : `${filters.types.length}`;
       case "legendaryStatus":
         return filters.legendaryStatus.length === 0
-          ? "All"
+          ? tFilters('all')
           : filters.legendaryStatus.length === 1
-          ? filters.legendaryStatus[0]
+          ? tFilters(`legendaryOptions.${filters.legendaryStatus[0]}`)
           : `${filters.legendaryStatus.length}`;
       case "evolutionStage":
         return filters.evolutionStage.length === 0
-          ? "All"
+          ? tFilters('all')
           : filters.evolutionStage.length === 1
-          ? filters.evolutionStage[0]
+          ? tFilters(`evolutionStages.${filters.evolutionStage[0]}`)
           : `${filters.evolutionStage.length}`;
       case "fullyEvolved":
         return filters.fullyEvolved.length === 0
-          ? "All"
+          ? tFilters('all')
           : filters.fullyEvolved.length === 1
-          ? filters.fullyEvolved[0]
+          ? tFilters(`fullyEvolvedOptions.${filters.fullyEvolved[0]}`)
           : `${filters.fullyEvolved.length}`;
       case "genders":
         return filters.genders.length === 0
-          ? "All"
+          ? tFilters('all')
           : filters.genders.length === 1
-          ? filters.genders[0]
+          ? tFilters(`genderOptions.${filters.genders[0]}`)
           : `${filters.genders.length}`;
       case "natures":
         return filters.natures.length === 0
-          ? "All"
+          ? tFilters('all')
           : filters.natures.length === 1
-          ? filters.natures[0]
+          ? tFilters(`natures.${filters.natures[0]}`)
           : `${filters.natures.length}`;
       case "forms":
         return filters.forms.length === 0
-          ? "All"
+          ? tFilters('all')
           : filters.forms.length === 1
-          ? filters.forms[0]
+          ? tFilters(`formOptions.${filters.forms[0]}`)
           : `${filters.forms.length}`;
       case "displayFormat":
         return filters.displayFormat === "both"
-          ? "Both"
+          ? tFilters('both')
           : filters.displayFormat === "name-only"
-          ? "Name"
-          : "Sprite";
+          ? tFilters('nameOnly')
+          : tFilters('spriteOnly');
       default:
-        return "All";
+        return tFilters('all');
     }
   };
 
@@ -764,7 +1063,69 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-cream p-4 md:p-8 relative">
+    <>
+      {/* JSON-LD Structured Data for SEO */}
+      <Script
+        id="schema-org"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebApplication",
+            "name": "Random Pokemon Team Generator",
+            "applicationCategory": "GameApplication",
+            "operatingSystem": "Web Browser",
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "USD"
+            },
+            "description": "Generate random Pokemon teams with advanced filters for types, generations, and Nuzlocke challenge modes. Supports all 1,025+ Pokemon across 7 languages.",
+            "url": "https://www.randompokemon.co",
+            "inLanguage": ["en", "ja", "ko", "fr", "de", "es", "pt"],
+            "featureList": [
+              "Random Pokemon team generation",
+              "Nuzlocke mode support",
+              "Type and generation filters",
+              "Multi-language support (7 languages)",
+              "Pokemon card generator",
+              "Full Pokedex database"
+            ],
+            "browserRequirements": "Requires JavaScript"
+          })
+        }}
+      />
+
+      <main className="min-h-screen bg-cream p-4 md:p-8 relative">
+
+      {/* Noscript fallback for Googlebot and users without JS */}
+      <noscript>
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <h1 className="font-grotesk font-bold text-5xl md:text-7xl text-black mb-4">
+              {t('title')}
+            </h1>
+            <p className="font-sans text-xl text-black/70 mb-8 max-w-3xl mx-auto">
+              {t('subtitle')}
+            </p>
+            <div className="bg-cream border-2 border-black p-8 slasher max-w-4xl mx-auto">
+              <h2 className="text-2xl font-bold mb-4">Generate Random Pokemon Teams</h2>
+              <p className="text-black/80 mb-4 font-mono text-sm">
+                This tool allows you to generate random Pokemon teams with advanced filters for types, generations, and challenge modes including Nuzlocke runs.
+              </p>
+              <p className="text-black/80 mb-4 font-mono text-sm">
+                Please enable JavaScript to use the interactive team generator. You can also browse our <a href="/pokedex" className="underline font-bold">Full Pokedex</a> to explore all 1,025+ Pokemon.
+              </p>
+              <div className="mt-6">
+                <a href="/pokedex" className="inline-block bg-black text-white px-6 py-3 font-mono font-bold border-2 border-black hover:bg-charcoal">
+                  → Browse Full Pokedex
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </noscript>
+
       {/* Blur Overlay when search is active */}
       {showSuggestions && suggestions.length > 0 && (
         <div 
@@ -802,7 +1163,7 @@ export default function Home() {
               </div>
               <button 
                 type="submit"
-                className="bg-black text-white px-4 md:px-6 font-mono text-xs md:text-sm font-bold hover:bg-charcoal transition-colors border-2 border-black border-l-0"
+                className="btn-slide bg-black text-white px-4 md:px-6 font-mono text-xs md:text-sm font-bold hover:bg-charcoal transition-colors border-2 border-black border-l-0"
               >
                 {tCommon('go')}
               </button>
@@ -816,18 +1177,18 @@ export default function Home() {
                     key={pokemon.name}
                     type="button"
                     onClick={() => handleSuggestionClick(pokemon.name)}
-                    className="w-full flex items-center gap-2 md:gap-3 px-3 md:px-4 py-2 font-mono text-xs md:text-sm text-black hover:bg-cream transition-colors border-b border-black/10 last:border-b-0"
+                    className="btn-slide w-full flex items-center gap-2 md:gap-3 px-3 md:px-4 py-2 font-mono text-xs md:text-sm text-black hover:bg-cream transition-colors border-b border-black/10 last:border-b-0"
                   >
                     <div className="relative w-8 h-8 md:w-10 md:h-10 flex-shrink-0 bg-cream">
                       <Image
                         src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png`}
-                        alt={pokemon.name}
+                        alt={pokemon.localizedName || pokemon.name}
                         fill
                         className="object-contain"
                         unoptimized
                       />
                     </div>
-                    <span className="uppercase font-semibold truncate">{pokemon.name}</span>
+                    <span className="uppercase font-semibold truncate">{pokemon.localizedName || pokemon.name}</span>
                     <span className="text-black/40 text-xs ml-auto flex-shrink-0">#{String(pokemon.id).padStart(4, "0")}</span>
                   </button>
                 ))}
@@ -879,10 +1240,11 @@ export default function Home() {
                 minWidth="min-w-[220px]"
               >
                 <MultiSelectCheckboxes
-                  options={REGIONS.map((r) => r.name)}
+                  options={REGION_KEYS.map((r) => r.key)}
                   selected={filters.regions}
                   onChange={(regions) => setFilters({ ...filters, regions })}
                   showSelectAll={true}
+                  translationFn={(key) => tFilters(`regions.${key}`)}
                 />
               </CompactFilterDropdown>
 
@@ -895,19 +1257,16 @@ export default function Home() {
                 minWidth="min-w-[200px]"
               >
                 <MultiSelectCheckboxes
-                  options={POKEMON_TYPES.map(
-                    (t) => t.charAt(0).toUpperCase() + t.slice(1)
-                  )}
-                  selected={filters.types.map(
-                    (t) => t.charAt(0).toUpperCase() + t.slice(1)
-                  )}
+                  options={POKEMON_TYPES}
+                  selected={filters.types}
                   onChange={(types) =>
                     setFilters({
                       ...filters,
-                      types: types.map((t) => t.toLowerCase()),
+                      types: types,
                     })
                   }
                   showSelectAll={true}
+                  translationFn={(type) => tTypes(type)}
                 />
               </CompactFilterDropdown>
 
@@ -920,12 +1279,13 @@ export default function Home() {
                 minWidth="min-w-[200px]"
               >
                 <MultiSelectCheckboxes
-                  options={LEGENDARY_OPTIONS}
+                  options={LEGENDARY_OPTION_KEYS}
                   selected={filters.legendaryStatus}
                   onChange={(legendaryStatus) =>
                     setFilters({ ...filters, legendaryStatus })
                   }
                   showSelectAll={true}
+                  translationFn={(key) => tFilters(`legendaryOptions.${key}`)}
                 />
               </CompactFilterDropdown>
 
@@ -948,12 +1308,13 @@ export default function Home() {
                   minWidth="min-w-[180px]"
                 >
                   <MultiSelectCheckboxes
-                    options={EVOLUTION_STAGES}
+                    options={EVOLUTION_STAGE_KEYS}
                     selected={filters.evolutionStage}
                     onChange={(evolutionStage) =>
                       setFilters({ ...filters, evolutionStage })
                     }
                     showSelectAll={true}
+                    translationFn={(key) => tFilters(`evolutionStages.${key}`)}
                   />
                 </CompactFilterDropdown>
               </div>
@@ -968,12 +1329,13 @@ export default function Home() {
                   minWidth="min-w-[180px]"
                 >
                   <MultiSelectCheckboxes
-                    options={FULLY_EVOLVED_OPTIONS}
+                    options={FULLY_EVOLVED_KEYS}
                     selected={filters.fullyEvolved}
                     onChange={(fullyEvolved) =>
                       setFilters({ ...filters, fullyEvolved })
                     }
                     showSelectAll={false}
+                    translationFn={(key) => tFilters(`fullyEvolvedOptions.${key}`)}
                   />
                 </CompactFilterDropdown>
               </div>
@@ -988,10 +1350,11 @@ export default function Home() {
                   minWidth="min-w-[160px]"
                 >
                   <MultiSelectCheckboxes
-                    options={GENDERS}
+                    options={GENDER_KEYS}
                     selected={filters.genders}
                     onChange={(genders) => setFilters({ ...filters, genders })}
                     showSelectAll={true}
+                    translationFn={(key) => tFilters(`genderOptions.${key}`)}
                   />
                 </CompactFilterDropdown>
               </div>
@@ -1021,6 +1384,7 @@ export default function Home() {
                       selected={filters.natures}
                       onChange={(natures) => setFilters({ ...filters, natures })}
                       showSelectAll={true}
+                      translationFn={(key) => tFilters(`natures.${key}`)}
                     />
                   </div>
                 </CompactFilterDropdown>
@@ -1036,10 +1400,11 @@ export default function Home() {
                   minWidth="min-w-[180px]"
                 >
                   <MultiSelectCheckboxes
-                    options={FORM_OPTIONS}
+                    options={FORM_OPTION_KEYS}
                     selected={filters.forms}
                     onChange={(forms) => setFilters({ ...filters, forms })}
                     showSelectAll={true}
+                    translationFn={(key) => tFilters(`formOptions.${key}`)}
                   />
                 </CompactFilterDropdown>
               </div>
@@ -1054,9 +1419,9 @@ export default function Home() {
                   minWidth="min-w-[180px]"
                 >
                   <div className="space-y-1.5">
-                    {DISPLAY_FORMATS.map((format) => (
+                    {DISPLAY_FORMAT_KEYS.map((formatKey) => (
                       <label
-                        key={format}
+                        key={formatKey}
                         className="flex items-center gap-2 cursor-pointer hover:bg-cream p-1"
                       >
                         <input
@@ -1064,17 +1429,17 @@ export default function Home() {
                           name="displayFormat"
                           checked={
                             filters.displayFormat ===
-                            (format === "Name Only"
+                            (formatKey === "nameOnly"
                               ? "name-only"
-                              : format === "Sprite Only"
+                              : formatKey === "spriteOnly"
                               ? "sprite-only"
                               : "both")
                           }
                           onChange={() => {
                             const formatValue =
-                              format === "Name Only"
+                              formatKey === "nameOnly"
                                 ? "name-only"
-                                : format === "Sprite Only"
+                                : formatKey === "spriteOnly"
                                 ? "sprite-only"
                                 : "both";
                             setFilters({
@@ -1085,9 +1450,107 @@ export default function Home() {
                           }}
                           className="w-4 h-4 cursor-pointer flex-shrink-0"
                         />
-                        <span className="font-mono text-xs md:text-sm text-black">{format}</span>
+                        <span className="font-mono text-xs md:text-sm text-black">{tFilters(`displayFormats.${formatKey}`)}</span>
                       </label>
                     ))}
+                  </div>
+                </CompactFilterDropdown>
+              </div>
+
+              {/* 11. GAME FILTER */}
+              <div className={`${showAdvanced ? '' : 'hidden md:block'}`}>
+                <CompactFilterDropdown
+                  label={tFilters('gameFilters.label')}
+                  value={filters.gameFilter === "any" ? tFilters('gameFilters.any') : tFilters(`gameFilters.${filters.gameFilter}`)}
+                  isOpen={openDropdown === "gameFilter"}
+                  onToggle={() => toggleDropdown("gameFilter")}
+                  minWidth="min-w-[220px]"
+                >
+                  <div className="space-y-1.5 max-h-[300px] overflow-y-auto">
+                    {GAME_FILTER_KEYS.map((gameKey) => (
+                      <label
+                        key={gameKey}
+                        className="flex items-center gap-2 cursor-pointer hover:bg-cream p-1"
+                      >
+                        <input
+                          type="radio"
+                          name="gameFilter"
+                          checked={filters.gameFilter === gameKey}
+                          onChange={() => {
+                            setFilters({ ...filters, gameFilter: gameKey });
+                            closeAllDropdowns();
+                          }}
+                          className="w-4 h-4 cursor-pointer flex-shrink-0"
+                        />
+                        <span className="font-mono text-xs md:text-sm text-black">{tFilters(`gameFilters.${gameKey}`)}</span>
+                      </label>
+                    ))}
+                  </div>
+                </CompactFilterDropdown>
+              </div>
+
+              {/* 12. CHALLENGE MODES */}
+              <div className={`${showAdvanced ? '' : 'hidden md:block'}`}>
+                <CompactFilterDropdown
+                  label={tFilters('modeLabel')}
+                  value={
+                    filters.monoType || filters.noDuplicateLines || filters.nuzlockeSafe || filters.startersOnly
+                      ? `${[filters.monoType, filters.noDuplicateLines, filters.nuzlockeSafe, filters.startersOnly].filter(Boolean).length} active`
+                      : tFilters('all')
+                  }
+                  isOpen={openDropdown === "challengeModes"}
+                  onToggle={() => toggleDropdown("challengeModes")}
+                  minWidth="min-w-[220px]"
+                >
+                  <div className="space-y-3">
+                    <label className="flex items-start gap-2 cursor-pointer hover:bg-cream p-1">
+                      <input
+                        type="checkbox"
+                        checked={filters.monoType}
+                        onChange={(e) => setFilters({ ...filters, monoType: e.target.checked })}
+                        className="w-4 h-4 cursor-pointer flex-shrink-0 mt-0.5"
+                      />
+                      <div>
+                        <span className="font-mono text-xs md:text-sm text-black font-semibold block">{tFilters('challengeModes.monoType')}</span>
+                        <span className="font-mono text-[10px] text-charcoal">{tFilters('challengeModeDescriptions.monoType')}</span>
+                      </div>
+                    </label>
+                    <label className="flex items-start gap-2 cursor-pointer hover:bg-cream p-1">
+                      <input
+                        type="checkbox"
+                        checked={filters.noDuplicateLines}
+                        onChange={(e) => setFilters({ ...filters, noDuplicateLines: e.target.checked })}
+                        className="w-4 h-4 cursor-pointer flex-shrink-0 mt-0.5"
+                      />
+                      <div>
+                        <span className="font-mono text-xs md:text-sm text-black font-semibold block">{tFilters('challengeModes.noDuplicateLines')}</span>
+                        <span className="font-mono text-[10px] text-charcoal">{tFilters('challengeModeDescriptions.noDuplicateLines')}</span>
+                      </div>
+                    </label>
+                    <label className="flex items-start gap-2 cursor-pointer hover:bg-cream p-1">
+                      <input
+                        type="checkbox"
+                        checked={filters.nuzlockeSafe}
+                        onChange={(e) => setFilters({ ...filters, nuzlockeSafe: e.target.checked })}
+                        className="w-4 h-4 cursor-pointer flex-shrink-0 mt-0.5"
+                      />
+                      <div>
+                        <span className="font-mono text-xs md:text-sm text-black font-semibold block">{tFilters('challengeModes.nuzlockeSafe')}</span>
+                        <span className="font-mono text-[10px] text-charcoal">{tFilters('challengeModeDescriptions.nuzlockeSafe')}</span>
+                      </div>
+                    </label>
+                    <label className="flex items-start gap-2 cursor-pointer hover:bg-cream p-1">
+                      <input
+                        type="checkbox"
+                        checked={filters.startersOnly}
+                        onChange={(e) => setFilters({ ...filters, startersOnly: e.target.checked })}
+                        className="w-4 h-4 cursor-pointer flex-shrink-0 mt-0.5"
+                      />
+                      <div>
+                        <span className="font-mono text-xs md:text-sm text-black font-semibold block">{tFilters('challengeModes.startersOnly')}</span>
+                        <span className="font-mono text-[10px] text-charcoal">{tFilters('challengeModeDescriptions.startersOnly')}</span>
+                      </div>
+                    </label>
                   </div>
                 </CompactFilterDropdown>
               </div>
@@ -1096,7 +1559,7 @@ export default function Home() {
               {hasActiveFilters && (
                 <button
                   onClick={resetFilters}
-                  className="hidden md:flex h-12 px-4 bg-marigold text-black hover:bg-marigold-hover font-mono text-xs md:text-sm font-semibold border-2 border-black transition-colors duration-200 items-center justify-center"
+                  className="btn-pop hidden md:flex h-12 px-4 bg-marigold text-black hover:bg-marigold-hover font-mono text-xs md:text-sm font-semibold border-2 border-black transition-colors duration-200 items-center justify-center"
                   aria-label="Reset all filters"
                 >
                   {tFilters('reset')}
@@ -1108,7 +1571,7 @@ export default function Home() {
             {hasActiveFilters && (
               <button
                 onClick={resetFilters}
-                className="md:hidden w-full mt-2 h-12 bg-marigold text-black hover:bg-marigold-hover font-mono text-xs font-semibold border-2 border-black transition-colors duration-200 flex items-center justify-center"
+                className="btn-pop md:hidden w-full mt-2 h-12 bg-marigold text-black hover:bg-marigold-hover font-mono text-xs font-semibold border-2 border-black transition-colors duration-200 flex items-center justify-center"
                 aria-label="Reset all filters"
               >
                 {tFilters('resetFilters')}
@@ -1122,7 +1585,7 @@ export default function Home() {
           <button
             onClick={generateTeam}
             disabled={loading}
-            className="w-full md:w-auto px-10 py-5 font-grotesk font-bold text-xl uppercase tracking-wider bg-[#4ADE80] hover:bg-[#22c55e] text-black border-2 border-black slasher shadow-[4px_4px_0px_0px_#000] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_#000] active:translate-y-1 active:shadow-none transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-[4px_4px_0px_0px_#000]"
+            className="btn-shine btn-glow w-full md:w-auto px-10 py-5 font-grotesk font-bold text-xl uppercase tracking-wider bg-[#4ADE80] hover:bg-[#22c55e] text-black border-2 border-black slasher shadow-[4px_4px_0px_0px_#000] hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_#000] active:translate-y-1 active:shadow-none transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-[4px_4px_0px_0px_#000]"
           >
             {loading ? (
               <span className="flex items-center justify-center gap-3">
@@ -1138,20 +1601,45 @@ export default function Home() {
           </button>
         </div>
 
-        {/* Loading State */}
+        {/* Loading State - Skeleton cards to prevent CLS */}
         {loading && (
-          <div className="flex justify-center items-center py-20">
-            <Loader2 className="animate-spin text-indigo" size={64} />
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6" aria-label="Loading Pokemon team">
+            {[...Array(6)].map((_, index) => (
+              <div
+                key={index}
+                className="bg-white border-2 md:border-4 border-black slasher p-2 md:p-6 animate-pulse"
+              >
+                {/* ID Badge skeleton */}
+                <div className="flex justify-between items-center mb-2 md:mb-4">
+                  <div className="h-4 md:h-6 w-16 md:w-20 bg-gray-200 rounded" />
+                  <div className="h-4 md:h-5 w-4 md:w-5 bg-gray-200 rounded" />
+                </div>
+                {/* Image skeleton */}
+                <div className="relative w-full h-28 md:h-48 mb-2 md:mb-4 bg-gray-200" />
+                {/* Name skeleton */}
+                <div className="h-5 md:h-8 w-3/4 bg-gray-200 rounded mb-1 md:mb-3" />
+                {/* Type badges skeleton */}
+                <div className="flex gap-1 md:gap-2 mb-2 md:mb-6">
+                  <div className="h-4 md:h-6 w-12 md:w-16 bg-gray-200 rounded" />
+                  <div className="h-4 md:h-6 w-12 md:w-16 bg-gray-200 rounded" />
+                </div>
+                {/* Buttons skeleton */}
+                <div className="grid grid-cols-2 gap-1.5 md:gap-3">
+                  <div className="h-8 md:h-12 bg-gray-200 rounded" />
+                  <div className="h-8 md:h-12 bg-gray-200 rounded" />
+                </div>
+              </div>
+            ))}
           </div>
         )}
 
         {/* Pokemon Grid */}
         {!loading && team.length > 0 && (
           <div ref={teamGridRef} className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
-            {team.map((pokemon) => (
+            {team.map((pokemon, index) => (
               <div
                 key={pokemon.id}
-                className="bg-white border-2 md:border-4 border-black slasher p-2 md:p-6 hover:shadow-2xl transition-shadow duration-200"
+                className={`pokemon-card bg-white border-2 md:border-4 border-black slasher p-2 md:p-6 hover:shadow-2xl transition-shadow duration-200 card-flip-in stagger-${index + 1}`}
               >
                 {/* ID Badge & Share Button */}
                 <div className="flex justify-between items-center mb-2 md:mb-4">
@@ -1160,17 +1648,17 @@ export default function Home() {
                   </span>
                   <button
                     onClick={() => setSharePokemon(pokemon)}
-                    className="p-1 md:p-2 text-black/40 hover:text-marigold transition-colors cursor-pointer"
+                    className="btn-icon-rotate p-1 md:p-2 text-black/40 hover:text-marigold transition-colors cursor-pointer"
                     aria-label={`Share ${pokemon.name} flash card`}
                   >
-                    <Share2 size={16} className="md:w-5 md:h-5" />
+                    <Share2 size={16} className="md:w-5 md:h-5 transition-transform duration-200" />
                   </button>
                 </div>
 
                 {/* Pokemon Image */}
                 {(filters.displayFormat === "both" ||
                   filters.displayFormat === "sprite-only") && (
-                  <div className="relative w-full h-28 md:h-48 mb-2 md:mb-4 bg-cream">
+                  <div className="relative w-full h-28 md:h-48 mb-2 md:mb-4 bg-cream overflow-hidden">
                     {(() => {
                       const pokemonName = pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1);
                       const typeText = pokemon.types.map((t) => t.type.name.charAt(0).toUpperCase() + t.type.name.slice(1)).join('/');
@@ -1182,8 +1670,10 @@ export default function Home() {
                           }
                           alt={altText}
                           fill
-                          className="object-contain blend-multiply"
-                          unoptimized
+                          sizes="(max-width: 768px) 45vw, (max-width: 1024px) 30vw, 25vw"
+                          className="object-contain blend-multiply pokemon-image pokemon-float"
+                          priority={index < 3}
+                          loading={index < 3 ? undefined : "lazy"}
                         />
                       );
                     })()}
@@ -1194,17 +1684,20 @@ export default function Home() {
                 {(filters.displayFormat === "both" ||
                   filters.displayFormat === "name-only") && (
                   <h2 className="font-grotesk font-bold text-sm md:text-2xl text-black mb-1 md:mb-3 uppercase truncate">
-                    {pokemon.name}
+                    {pokemon.localizedName || pokemon.name}
                   </h2>
                 )}
 
                 {/* Type Badges */}
                 <div className="flex gap-1 md:gap-2 mb-2 md:mb-6 flex-wrap">
-                  {pokemon.types.map((typeInfo) => (
+                  {pokemon.types.map((typeInfo, typeIndex) => (
                     <span
                       key={typeInfo.type.name}
-                      className="font-mono text-[10px] md:text-xs px-1.5 md:px-3 py-0.5 md:py-1 text-white uppercase border border-black"
-                      style={{ backgroundColor: getTypeColor(typeInfo.type.name) }}
+                      className="font-mono text-[10px] md:text-xs px-1.5 md:px-3 py-0.5 md:py-1 text-white uppercase border border-black type-pop"
+                      style={{ 
+                        backgroundColor: getTypeColor(typeInfo.type.name),
+                        animationDelay: `${typeIndex * 0.1 + 0.3}s`
+                      }}
                     >
                       {tTypes(typeInfo.type.name)}
                     </span>
@@ -1215,7 +1708,7 @@ export default function Home() {
                 <div className="grid grid-cols-2 gap-1.5 md:gap-3">
                   <Link
                     href={`/pokemon/${pokemon.name}`}
-                    className="bg-indigo hover:bg-opacity-90 text-cream font-grotesk font-semibold text-[10px] md:text-sm px-2 md:px-4 py-2 md:py-3 text-center border md:border-2 border-black transition-all duration-200"
+                    className="btn-shine bg-indigo hover:bg-opacity-90 text-cream font-grotesk font-semibold text-[10px] md:text-sm px-2 md:px-4 py-2 md:py-3 text-center border md:border-2 border-black transition-all duration-200 hover:-translate-y-0.5"
                   >
                     <span className="flex items-center justify-center gap-1 md:gap-2">
                       <Database size={12} className="md:w-4 md:h-4" />
@@ -1224,7 +1717,7 @@ export default function Home() {
                   </Link>
                   <Link
                     href="/pokedex"
-                    className="bg-purple-300 hover:bg-purple-400 text-purple-900 font-grotesk font-semibold text-[10px] md:text-sm px-2 md:px-4 py-2 md:py-3 text-center border md:border-2 border-black transition-all duration-200"
+                    className="btn-shine bg-purple-300 hover:bg-purple-400 text-purple-900 font-grotesk font-semibold text-[10px] md:text-sm px-2 md:px-4 py-2 md:py-3 text-center border md:border-2 border-black transition-all duration-200 hover:-translate-y-0.5"
                   >
                     <span className="flex items-center justify-center gap-1 md:gap-2">
                       <BookOpen size={12} className="md:w-4 md:h-4" />
@@ -1247,6 +1740,122 @@ export default function Home() {
             </div>
           </div>
         )}
+
+        {/* Challenge Ideas Section - Shows after team is generated */}
+        {!loading && team.length > 0 && (
+          <section className="mt-8 md:mt-12 mb-8 bg-cream border-2 border-black p-4 md:p-8 slasher">
+            <div className="inline-block bg-black px-3 py-1 slasher border border-black mb-4 challenge-badge">
+              <span className="font-mono text-xs font-bold text-white uppercase tracking-widest">{tChallengeIdeas('badge')}</span>
+            </div>
+            <h2 className="font-sans font-bold text-2xl md:text-3xl lg:text-4xl text-black leading-tight mb-2">
+              {tChallengeIdeas('title')}
+            </h2>
+            <p className="font-mono text-sm text-charcoal mb-6">
+              {tChallengeIdeas('subtitle')}
+            </p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+              {/* Challenge 1: Hardcore Nuzlocke */}
+              <div className="challenge-card bg-white border-2 border-black p-4 hover:shadow-lg transition-shadow stagger-1">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="challenge-badge bg-red-500 text-white font-mono text-[10px] px-2 py-0.5 font-bold">{tChallengeIdeas('hardcoreNuzlocke.badge')}</span>
+                  <h3 className="font-sans font-bold text-sm text-black">{tChallengeIdeas('hardcoreNuzlocke.title')}</h3>
+                </div>
+                <p className="font-mono text-xs text-charcoal leading-relaxed">
+                  {tChallengeIdeas('hardcoreNuzlocke.description')}
+                </p>
+              </div>
+
+              {/* Challenge 2: Soul Link */}
+              <div className="challenge-card bg-white border-2 border-black p-4 hover:shadow-lg transition-shadow stagger-2">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="challenge-badge bg-purple-500 text-white font-mono text-[10px] px-2 py-0.5 font-bold">{tChallengeIdeas('soulLink.badge')}</span>
+                  <h3 className="font-sans font-bold text-sm text-black">{tChallengeIdeas('soulLink.title')}</h3>
+                </div>
+                <p className="font-mono text-xs text-charcoal leading-relaxed">
+                  {tChallengeIdeas('soulLink.description')}
+                </p>
+              </div>
+
+              {/* Challenge 3: Type-Locke */}
+              <div className="challenge-card bg-white border-2 border-black p-4 hover:shadow-lg transition-shadow stagger-3">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="challenge-badge bg-blue-500 text-white font-mono text-[10px] px-2 py-0.5 font-bold">{tChallengeIdeas('typeLocke.badge')}</span>
+                  <h3 className="font-sans font-bold text-sm text-black">{tChallengeIdeas('typeLocke.title')}</h3>
+                </div>
+                <p className="font-mono text-xs text-charcoal leading-relaxed">
+                  {tChallengeIdeas('typeLocke.description')}
+                </p>
+              </div>
+
+              {/* Challenge 4: Random Moves */}
+              <div className="challenge-card bg-white border-2 border-black p-4 hover:shadow-lg transition-shadow stagger-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="challenge-badge bg-orange-500 text-white font-mono text-[10px] px-2 py-0.5 font-bold">{tChallengeIdeas('randomMoves.badge')}</span>
+                  <h3 className="font-sans font-bold text-sm text-black">{tChallengeIdeas('randomMoves.title')}</h3>
+                </div>
+                <p className="font-mono text-xs text-charcoal leading-relaxed">
+                  {tChallengeIdeas('randomMoves.description')}
+                </p>
+              </div>
+
+              {/* Challenge 5: No Evolutions */}
+              <div className="challenge-card bg-white border-2 border-black p-4 hover:shadow-lg transition-shadow stagger-5">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="challenge-badge bg-green-500 text-white font-mono text-[10px] px-2 py-0.5 font-bold">{tChallengeIdeas('noEvolutions.badge')}</span>
+                  <h3 className="font-sans font-bold text-sm text-black">{tChallengeIdeas('noEvolutions.title')}</h3>
+                </div>
+                <p className="font-mono text-xs text-charcoal leading-relaxed">
+                  {tChallengeIdeas('noEvolutions.description')}
+                </p>
+              </div>
+
+              {/* Challenge 6: Itemless */}
+              <div className="challenge-card bg-white border-2 border-black p-4 hover:shadow-lg transition-shadow stagger-6">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="challenge-badge bg-gray-700 text-white font-mono text-[10px] px-2 py-0.5 font-bold">{tChallengeIdeas('itemless.badge')}</span>
+                  <h3 className="font-sans font-bold text-sm text-black">{tChallengeIdeas('itemless.title')}</h3>
+                </div>
+                <p className="font-mono text-xs text-charcoal leading-relaxed">
+                  {tChallengeIdeas('itemless.description')}
+                </p>
+              </div>
+
+              {/* Challenge 7: Speedrun */}
+              <div className="challenge-card bg-white border-2 border-black p-4 hover:shadow-lg transition-shadow stagger-7">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="challenge-badge bg-yellow-500 text-black font-mono text-[10px] px-2 py-0.5 font-bold">{tChallengeIdeas('speedrun.badge')}</span>
+                  <h3 className="font-sans font-bold text-sm text-black">{tChallengeIdeas('speedrun.title')}</h3>
+                </div>
+                <p className="font-mono text-xs text-charcoal leading-relaxed">
+                  {tChallengeIdeas('speedrun.description')}
+                </p>
+              </div>
+
+              {/* Challenge 8: Egglocke */}
+              <div className="challenge-card bg-white border-2 border-black p-4 hover:shadow-lg transition-shadow stagger-8">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="challenge-badge bg-pink-500 text-white font-mono text-[10px] px-2 py-0.5 font-bold">{tChallengeIdeas('egglocke.badge')}</span>
+                  <h3 className="font-sans font-bold text-sm text-black">{tChallengeIdeas('egglocke.title')}</h3>
+                </div>
+                <p className="font-mono text-xs text-charcoal leading-relaxed">
+                  {tChallengeIdeas('egglocke.description')}
+                </p>
+              </div>
+            </div>
+
+            {/* Link to Pokedex for more exploration */}
+            <div className="mt-6 text-center">
+              <Link
+                href="/pokedex"
+                className="btn-shine btn-glow group inline-flex items-center gap-2 bg-indigo hover:bg-opacity-90 text-cream font-grotesk font-semibold text-sm px-6 py-3 border-2 border-black transition-all duration-200"
+              >
+                <BookOpen size={16} className="group-hover:animate-pulse" />
+                {t('pokedexButton')} - Explore All Pokemon
+              </Link>
+            </div>
+          </section>
+        )}
         </div>
 
         {/* FAQ Section */}
@@ -1258,7 +1867,7 @@ export default function Home() {
 
         {/* About Section */}
         <section id="about" className="mt-12 md:mt-16 mb-8 bg-cream border-2 border-black p-6 md:p-12 slasher">
-          <div className="inline-block bg-black px-4 py-1 slasher border border-black mb-4">
+          <div className="inline-block bg-black px-4 py-1 slasher border border-black mb-4 challenge-badge">
             <span className="font-mono text-xs font-bold text-white uppercase tracking-widest">{t('aboutUs')}</span>
           </div>
           <h2 className="font-sans font-bold text-4xl md:text-5xl lg:text-6xl text-black leading-[0.9] mb-8 uppercase">
@@ -1266,7 +1875,7 @@ export default function Home() {
           </h2>
           
           {/* About Item 1 */}
-          <div>
+          <div className="challenge-card stagger-1">
             <div className="bg-black text-white p-4 slasher">
               <h3 className="font-sans font-bold text-lg md:text-xl">{tAbout('ourMission.title')}</h3>
             </div>
@@ -1278,7 +1887,7 @@ export default function Home() {
           </div>
 
           {/* About Item 2 */}
-          <div className="mt-4">
+          <div className="mt-4 challenge-card stagger-2">
             <div className="bg-black text-white p-4 slasher">
               <h3 className="font-sans font-bold text-lg md:text-xl">{tAbout('whatWeOffer.title')}</h3>
             </div>
@@ -1290,7 +1899,7 @@ export default function Home() {
           </div>
 
           {/* About Item 3 */}
-          <div className="mt-4">
+          <div className="mt-4 challenge-card stagger-3">
             <div className="bg-black text-white p-4 slasher">
               <h3 className="font-sans font-bold text-lg md:text-xl">{tAbout('perfectFor.title')}</h3>
             </div>
@@ -1304,7 +1913,7 @@ export default function Home() {
 
         {/* Disclaimer Section */}
         <section id="disclaimer" className="mt-12 md:mt-16 mb-8 bg-cream border-2 border-black p-6 md:p-12 slasher">
-          <div className="inline-block bg-black px-4 py-1 slasher border border-black mb-4">
+          <div className="inline-block bg-black px-4 py-1 slasher border border-black mb-4 challenge-badge">
             <span className="font-mono text-xs font-bold text-white uppercase tracking-widest">{t('legalInfo')}</span>
           </div>
           <h2 className="font-sans font-bold text-4xl md:text-5xl lg:text-6xl text-black leading-[0.9] mb-8 uppercase">
@@ -1312,7 +1921,7 @@ export default function Home() {
           </h2>
           
           {/* Disclaimer Item 1 */}
-          <div>
+          <div className="challenge-card stagger-1">
             <div className="bg-black text-white p-4 slasher">
               <h3 className="font-sans font-bold text-lg md:text-xl">{tDisclaimer('copyrightNotice.title')}</h3>
             </div>
@@ -1324,7 +1933,7 @@ export default function Home() {
           </div>
 
           {/* Disclaimer Item 2 */}
-          <div className="mt-4">
+          <div className="mt-4 challenge-card stagger-2">
             <div className="bg-black text-white p-4 slasher">
               <h3 className="font-sans font-bold text-lg md:text-xl">{tDisclaimer('fanProject.title')}</h3>
             </div>
@@ -1336,7 +1945,7 @@ export default function Home() {
           </div>
 
           {/* Disclaimer Item 3 */}
-          <div className="mt-4">
+          <div className="mt-4 challenge-card stagger-3">
             <div className="bg-black text-white p-4 slasher">
               <h3 className="font-sans font-bold text-lg md:text-xl">{tDisclaimer('dataSources.title')}</h3>
             </div>
@@ -1348,7 +1957,7 @@ export default function Home() {
           </div>
 
           {/* Disclaimer Item 4 */}
-          <div className="mt-4">
+          <div className="mt-4 challenge-card stagger-4">
             <div className="bg-black text-white p-4 slasher">
               <h3 className="font-sans font-bold text-lg md:text-xl">{tDisclaimer('fairUse.title')}</h3>
             </div>
@@ -1363,7 +1972,7 @@ export default function Home() {
         {/* Privacy Policy Section - GDPR Compliant with 6 sections covering Articles 4, 12, 15-17, 20-21 */}
         {/* All section badges use bg-black with text-white for consistency */}
         <section id="privacy-policy" className="mt-12 md:mt-16 mb-8 bg-cream border-2 border-black p-6 md:p-12 slasher">
-          <div className="inline-block bg-black px-4 py-1 slasher border border-black mb-4">
+          <div className="inline-block bg-black px-4 py-1 slasher border border-black mb-4 challenge-badge">
             <span className="font-mono text-xs font-bold text-white uppercase tracking-widest">{t('privacyInfo')}</span>
           </div>
           <h2 className="font-sans font-bold text-4xl md:text-5xl lg:text-6xl text-black leading-[0.9] mb-8 uppercase">
@@ -1375,7 +1984,7 @@ export default function Home() {
           </p>
           
           {/* Policy Item 1 */}
-          <div>
+          <div className="challenge-card stagger-1">
             <div className="bg-black text-white p-4 slasher">
               <h3 className="font-sans font-bold text-lg md:text-xl">{tPrivacy('dataCollection.title')}</h3>
             </div>
@@ -1387,7 +1996,7 @@ export default function Home() {
           </div>
 
           {/* Policy Item 2 */}
-          <div className="mt-4">
+          <div className="mt-4 challenge-card stagger-2">
             <div className="bg-black text-white p-4 slasher">
               <h3 className="font-sans font-bold text-lg md:text-xl">{tPrivacy('cookies.title')}</h3>
             </div>
@@ -1399,7 +2008,7 @@ export default function Home() {
           </div>
 
           {/* Policy Item 3 */}
-          <div className="mt-4">
+          <div className="mt-4 challenge-card stagger-3">
             <div className="bg-black text-white p-4 slasher">
               <h3 className="font-sans font-bold text-lg md:text-xl">{tPrivacy('localStorage.title')}</h3>
             </div>
@@ -1411,7 +2020,7 @@ export default function Home() {
           </div>
 
           {/* Policy Item 4 */}
-          <div className="mt-4">
+          <div className="mt-4 challenge-card stagger-4">
             <div className="bg-black text-white p-4 slasher">
               <h3 className="font-sans font-bold text-lg md:text-xl">{tPrivacy('thirdParty.title')}</h3>
             </div>
@@ -1423,7 +2032,7 @@ export default function Home() {
           </div>
 
           {/* Policy Item 5 */}
-          <div className="mt-4">
+          <div className="mt-4 challenge-card stagger-5">
             <div className="bg-black text-white p-4 slasher">
               <h3 className="font-sans font-bold text-lg md:text-xl">{tPrivacy('yourRights.title')}</h3>
             </div>
@@ -1435,7 +2044,7 @@ export default function Home() {
           </div>
 
           {/* Policy Item 6 */}
-          <div className="mt-4">
+          <div className="mt-4 challenge-card stagger-6">
             <div className="bg-black text-white p-4 slasher">
               <h3 className="font-sans font-bold text-lg md:text-xl">{tPrivacy('updates.title')}</h3>
             </div>
@@ -1449,7 +2058,7 @@ export default function Home() {
 
         {/* FAQ Section */}
         <section id="faq" className="mt-12 md:mt-16 mb-8 bg-cream border-2 border-black p-6 md:p-12 slasher">
-            <div className="inline-block bg-black px-4 py-1 slasher border border-black mb-4">
+            <div className="inline-block bg-black px-4 py-1 slasher border border-black mb-4 challenge-badge">
               <span className="font-mono text-xs font-bold text-white uppercase tracking-widest">{t('helpDesk')}</span>
             </div>
             <h2 className="font-sans font-bold text-4xl md:text-5xl lg:text-6xl text-black leading-[0.9] mb-8 uppercase">
@@ -1457,7 +2066,7 @@ export default function Home() {
             </h2>
             <div className="space-y-0">
               {/* FAQ Item 1 */}
-              <div>
+              <div className="challenge-card stagger-1">
                 <div className="bg-black text-white p-4 slasher">
                   <h3 className="font-sans font-bold text-lg md:text-xl">
                     {tFaq('q1.question')}
@@ -1470,7 +2079,7 @@ export default function Home() {
                 </div>
               </div>
               {/* FAQ Item 2 */}
-              <div className="mt-4">
+              <div className="mt-4 challenge-card stagger-2">
                 <div className="bg-black text-white p-4 slasher">
                   <h3 className="font-sans font-bold text-lg md:text-xl">
                     {tFaq('q2.question')}
@@ -1483,7 +2092,7 @@ export default function Home() {
                 </div>
               </div>
               {/* FAQ Item 3 */}
-              <div className="mt-4">
+              <div className="mt-4 challenge-card stagger-3">
                 <div className="bg-black text-white p-4 slasher">
                   <h3 className="font-sans font-bold text-lg md:text-xl">
                     {tFaq('q3.question')}
@@ -1496,7 +2105,7 @@ export default function Home() {
                 </div>
               </div>
               {/* FAQ Item 4 */}
-              <div className="mt-4">
+              <div className="mt-4 challenge-card stagger-4">
                 <div className="bg-black text-white p-4 slasher">
                   <h3 className="font-sans font-bold text-lg md:text-xl">
                     {tFaq('q4.question')}
@@ -1509,7 +2118,7 @@ export default function Home() {
                 </div>
               </div>
               {/* FAQ Item 5 */}
-              <div className="mt-4">
+              <div className="mt-4 challenge-card stagger-5">
                 <div className="bg-black text-white p-4 slasher">
                   <h3 className="font-sans font-bold text-lg md:text-xl">
                     {tFaq('q5.question')}
@@ -1532,6 +2141,7 @@ export default function Home() {
           onClose={() => setSharePokemon(null)}
         />
       )}
-    </main>
+      </main>
+    </>
   );
 }

@@ -1,9 +1,29 @@
 {
   "metadata": {
-    "title": "ランダムポケモンジェネレーター | チームを作ろう (第1-9世代)",
-    "description": "ランダムなポケモンチームを即座に生成。ナズロック、スカーレット・バイオレット、全世代対応の究極のチームビルダー。タイプ、地方、レア度でフィルタリング。",
-    "pokedexTitle": "ポケモン図鑑 - 完全データベース | 全1025種",
-    "pokedexDescription": "第1-9世代の全1025種のポケモンを閲覧。タイプ、ステータス、特性、スプライト付きの完全な図鑑。"
+    "title": "ランダムポケモンジェネレーター | ナズロックツール & チームビルダー [2025]",
+    "description": "ランダムポケモンチームを瞬時生成！ナズロック、ソウルリンク、チャレンジラン用の無料ツール。1025種以上のポケモンをタイプ、世代、レア度でフィルター。スカーレット・バイオレット対応！",
+    "pokedexTitle": "ポケモン図鑑 | 全1025種のステータス・タイプ・特性",
+    "pokedexDescription": "第1-9世代の全1025種のポケモンデータベース。タイプ検索、ステータス、特性、進化、HDスプライト付き。スカーレット・バイオレット対応！",
+    "pokemonDetailTitle": "{name} - ステータス・タイプ・特性・進化 | 図鑑",
+    "pokemonDetailDescription": "{name}の完全ガイド：種族値、タイプ相性、特性、進化チェーン、わざセット。公式アートワーク付き。"
+  },
+  "footer": {
+    "brandName": "ランダムポケモンジェネレーター",
+    "tagline": "アドバンストチームビルディングプロトコル v1.0",
+    "systemOnline": "システムオンライン",
+    "navigation": "ナビゲーション",
+    "generator": "ジェネレーター",
+    "pokedexDatabase": "ポケモン図鑑",
+    "legal": "法的情報",
+    "aboutUs": "紹介",
+    "privacyPolicy": "プライバシーポリシー",
+    "disclaimer": "免責事項",
+    "communication": "コミュニケーション",
+    "connect": "コネクト",
+    "notice": "お知らせ",
+    "copyrightNotice": "ポケモンは © 1995-2025 Nintendo / Creatures Inc. / GAME FREAK inc. TM、® およびキャラクター名は任天堂の商標です。このツールは任天堂、株式会社ポケモン、またはその関連会社とは提携、承認、またはスポンサーされていません。",
+    "designedBy": "デザイン：",
+    "notAffiliated": "任天堂とは無関係です"
   },
   "home": {
     "title": "ランダムポケモンジェネレーター",
@@ -68,8 +88,8 @@
       "content": "Googleアナリティクスを通じて、ページビュー、セッション時間、一般的な位置情報（国レベルのみ）を含む最小限の匿名使用データを収集しています。個人を特定する情報は収集していません。"
     },
     "cookies": {
-      "title": "Cookie",
-      "content": "サイト機能のための必須Cookieとパフォーマンス監視のための分析Cookieを使用しています。ブラウザの設定でいつでもCookieを無効にできます。"
+      "title": "クッキー",
+      "content": "サイト機能のための必須クッキーとパフォーマンス監視のための分析クッキーを使用しています。ブラウザの設定でいつでもクッキーを無効にできます。"
     },
     "localStorage": {
       "title": "ローカルストレージ",
@@ -121,7 +141,12 @@
     "viewDetails": "詳細を見る",
     "backToGenerator": "ジェネレーターに戻る",
     "indexOnline": "インデックス：オンライン",
-    "loading": "ポケモンの詳細を読み込み中..."
+    "loading": "ポケモンの詳細を読み込み中...",
+    "filters": "フィルター",
+    "advancedFilters": "詳細フィルター",
+    "clearAll": "すべてクリア",
+    "sortBy": "並び替え",
+    "activeFilters": "有効なフィルター"
   },
   "pokemon": {
     "visualData": "ビジュアルデータ",
@@ -144,15 +169,34 @@
     "totalBaseStats": "種族値合計",
     "noEntry": "説明がありません。",
     "share": "シェア",
-    "explorePokedex": "図鑑を見る"
+    "explorePokedex": "図鑑を見る",
+    "randomPokemon": "ランダムポケモン",
+    "generateAnother": "もう一度生成",
+    "loading": "読み込み中...",
+    "generating": "生成中...",
+    "baseFormCanEvolve": "基本形態、進化可能",
+    "finalEvolvedForm": "これが最終進化形態です。",
+    "compact": "小型",
+    "mediumSized": "中型",
+    "large": "大型",
+    "generationLabel": "第{num}世代"
   },
   "stats": {
-    "hp": "HP",
+    "hp": "たいりょく",
     "attack": "こうげき",
     "defense": "ぼうぎょ",
     "specialAttack": "とくこう",
     "specialDefense": "とくぼう",
     "speed": "すばやさ"
+  },
+  "battleRoles": {
+    "hp": "耐久力と持久力",
+    "attack": "物理攻撃",
+    "defense": "物理防御",
+    "special-attack": "特殊攻撃",
+    "special-defense": "特殊防御",
+    "speed": "先制攻撃",
+    "versatile": "万能型プレイ"
   },
   "types": {
     "normal": "ノーマル",
@@ -175,6 +219,8 @@
     "fairy": "フェアリー"
   },
   "filters": {
+    "typeLabel": "タイプでフィルタリング",
+    "generationLabel": "世代でフィルタリング",
     "type": "タイプ",
     "generation": "世代",
     "allTypes": "すべてのタイプ",
@@ -195,6 +241,13 @@
     "resetFilters": "フィルターをリセット",
     "advancedFilters": "詳細フィルター",
     "closeFilters": "フィルターを閉じる",
+    "selectAll": "すべて選択",
+    "deselectAll": "すべて解除",
+    "any": "すべて",
+    "all": "すべて",
+    "both": "両方",
+    "nameOnly": "名前",
+    "spriteOnly": "スプライト",
     "gen1": "第1世代 (カントー)",
     "gen2": "第2世代 (ジョウト)",
     "gen3": "第3世代 (ホウエン)",
@@ -203,7 +256,168 @@
     "gen6": "第6世代 (カロス)",
     "gen7": "第7世代 (アローラ)",
     "gen8": "第8世代 (ガラル)",
-    "gen9": "第9世代 (パルデア)"
+    "gen9": "第9世代 (パルデア)",
+    "regions": {
+      "kanto": "カントー",
+      "stadiumRentals": "スタジアムレンタル",
+      "johto": "ジョウト",
+      "stadium2Rentals": "スタジアム2レンタル",
+      "hoenn": "ホウエン",
+      "sinnoh": "シンオウ",
+      "sinnohPlatinum": "シンオウ (プラチナ)",
+      "unova": "イッシュ",
+      "unovaB2W2": "イッシュ (B2W2)",
+      "kalos": "カロス",
+      "alola": "アローラ",
+      "alolaUSUM": "アローラ (USUM)",
+      "galar": "ガラル",
+      "hisui": "ヒスイ",
+      "paldea": "パルデア",
+      "kitakami": "キタカミ",
+      "blueberryAcademy": "ブルーベリー学園",
+      "lumioseCity": "ミアレシティ"
+    },
+    "legendaryOptions": {
+      "subLegendary": "準伝説",
+      "legendary": "伝説",
+      "mythical": "幻",
+      "paradox": "パラドックス",
+      "ultraBeast": "ウルトラビースト"
+    },
+    "evolutionStages": {
+      "unevolved": "未進化",
+      "evolvedOnce": "1段階進化",
+      "evolvedTwice": "2段階進化"
+    },
+    "fullyEvolvedOptions": {
+      "notFullyEvolved": "最終進化ではない",
+      "fullyEvolved": "最終進化"
+    },
+    "genderOptions": {
+      "male": "オス",
+      "female": "メス",
+      "genderless": "性別なし"
+    },
+    "displayFormats": {
+      "nameOnly": "名前のみ",
+      "spriteOnly": "スプライトのみ",
+      "both": "名前とスプライト両方"
+    },
+    "formOptions": {
+      "alternateForms": "別フォルム",
+      "megaEvolutions": "メガシンカ",
+      "gigantamaxForms": "キョダイマックス"
+    },
+    "natures": {
+      "adamant": "いじっぱり",
+      "bold": "ずぶとい",
+      "brave": "ゆうかん",
+      "calm": "おだやか",
+      "careful": "しんちょう",
+      "gentle": "おとなしい",
+      "hasty": "せっかち",
+      "hardy": "がんばりや",
+      "impish": "わんぱく",
+      "jolly": "ようき",
+      "lax": "のうてんき",
+      "lonely": "さみしがり",
+      "mild": "おっとり",
+      "modest": "ひかえめ",
+      "naive": "むじゃき",
+      "naughty": "やんちゃ",
+      "quiet": "れいせい",
+      "quirky": "きまぐれ",
+      "rash": "うっかりや",
+      "relaxed": "のんき",
+      "sassy": "なまいき",
+      "timid": "おくびょう",
+      "bashful": "てれや",
+      "docile": "すなお",
+      "serious": "まじめ"
+    },
+    "modeLabel": "モード",
+    "challengeModes": {
+      "monoType": "単タイプチーム",
+      "noDuplicateLines": "重複進化系統なし",
+      "nuzlockeSafe": "ナズロックセーフ",
+      "startersOnly": "御三家のみ"
+    },
+    "challengeModeDescriptions": {
+      "monoType": "すべてのポケモンが少なくとも1つのタイプを共有",
+      "noDuplicateLines": "同じ進化系統のポケモンなし",
+      "nuzlockeSafe": "伝説・幻のポケモンを除外",
+      "startersOnly": "御三家ポケモンとその進化形のみ"
+    },
+    "gameFilters": {
+      "label": "ゲーム",
+      "any": "すべてのゲーム",
+      "redBlue": "赤・緑",
+      "yellow": "ピカチュウ",
+      "goldSilver": "金・銀",
+      "crystal": "クリスタル",
+      "rubySapphire": "ルビー・サファイア",
+      "emerald": "エメラルド",
+      "fireRedLeafGreen": "ファイアレッド・リーフグリーン",
+      "diamondPearl": "ダイヤモンド・パール",
+      "platinum": "プラチナ",
+      "heartGoldSoulSilver": "ハートゴールド・ソウルシルバー",
+      "blackWhite": "ブラック・ホワイト",
+      "black2White2": "ブラック2・ホワイト2",
+      "xY": "X・Y",
+      "omegarubyAlphasapphire": "オメガルビー・アルファサファイア",
+      "sunMoon": "サン・ムーン",
+      "ultraSunUltraMoon": "ウルトラサン・ウルトラムーン",
+      "letsGo": "Let's Go! ピカチュウ・イーブイ",
+      "swordShield": "ソード・シールド",
+      "brilliantDiamondShiningPearl": "ブリリアントダイヤモンド・シャイニングパール",
+      "legendsArceus": "LEGENDS アルセウス",
+      "scarletViolet": "スカーレット・バイオレット"
+    }
+  },
+  "challengeIdeas": {
+    "badge": "チャレンジアイデア",
+    "title": "このチームで挑戦してみよう",
+    "subtitle": "これらのチャレンジモードでスキルを試そう",
+    "hardcoreNuzlocke": {
+      "badge": "高難度",
+      "title": "ハードコアナズロック",
+      "description": "バトル中アイテム禁止、ジムごとにレベルキャップ、セットモードのみ。ポケモンが倒れたら永久にお別れ。"
+    },
+    "soulLink": {
+      "badge": "協力",
+      "title": "ソウルリンク",
+      "description": "友達とパートナーに！あなたのポケモンと友達のポケモンがリンク—片方が倒れたら両方お別れ。"
+    },
+    "typeLocke": {
+      "badge": "タイプ",
+      "title": "タイプロック",
+      "description": "単一タイプのポケモンのみ使用。このチームの主要タイプでモノタイプランに挑戦！"
+    },
+    "randomMoves": {
+      "badge": "ランダム",
+      "title": "ランダム技セット",
+      "description": "各ポケモンは覚える技からランダムに選ばれた4つの技のみ使用可能。"
+    },
+    "noEvolutions": {
+      "badge": "基本",
+      "title": "進化禁止",
+      "description": "どのポケモンも進化させずにゲームクリア。基本形態の戦略をテスト！"
+    },
+    "itemless": {
+      "badge": "純粋",
+      "title": "アイテムなしラン",
+      "description": "持ち物禁止。純粋なスキルと戦略のみ。"
+    },
+    "speedrun": {
+      "badge": "速度",
+      "title": "スピードランチャレンジ",
+      "description": "このチームだけでできるだけ早くゲームをクリアしよう。"
+    },
+    "egglocke": {
+      "badge": "タマゴ",
+      "title": "エッグロック準備",
+      "description": "このチームをタマゴプールとして使用—友達とこれらのポケモンが入ったタマゴを交換しよう。"
+    }
   },
   "common": {
     "loading": "読み込み中...",
@@ -235,73 +449,122 @@
     "relatedPokemon": "関連するポケモンについて知りたいですか？こちらをチェック"
   },
   "cardShowcase": {
-    "badge": "新機能",
-    "title": "エクスポート",
-    "subtitle": "トレーディングカード",
+    "newFeature": "新機能",
+    "export": "エクスポート",
+    "tradingCards": "トレーディングカード",
     "description": "生成されたポケモンを高解像度のコレクターカードに変換。ナズロックの遭遇やドリームチームをSNSでシェアするのに最適です。",
     "hdDownload": "HDダウンロード",
-    "instantShare": "即時シェア",
-    "generatedBy": "RandomPokemon.coで生成"
+    "instantShare": "即時シェア"
   },
   "seoContent": {
-    "protocol": "プロトコル V1.0",
-    "advanced": "アドバンスト",
-    "pokemonGenerator": "ポケモンジェネレーター",
-    "advancedDesc1": "インターネット上で最も包括的なランダムポケモンジェネレーターへようこそ。当プロトコルは、オリジナルの赤・青（第1世代）から最新のポケモン スカーレット・バイオレット（第9世代）まで、すべての世代のポケモンゲームに対応しており、今後発売予定のポケモンレジェンズ Z-Aにも対応準備ができています。",
-    "advancedDesc2": "1,025種以上のユニークなポケモンにアクセスでき、チーム構築、チャレンジラン、対戦準備のための比類なきツールをトレーナーに提供します。サイバーパンク風のインターフェースは、機能性とスピードに完全に焦点を当てた洗練された実用的な体験を保証します。",
-    "advancedDesc3": "データベースは継続的に更新され、新しいポケモンフォーム、地域バリエーション（アローラ、ガラル、ヒスイ、パルデアフォーム）、パラドックスポケモン、特別なイベント配布が含まれます。",
-    "userManual": "ユーザーマニュアル",
-    "operating": "操作",
-    "instructions": "説明",
-    "step01": "ステップ 01",
-    "setTeamSize": "チームサイズを設定",
-    "step01Desc": "「チーム」ドロップダウンを使用して、フル対戦チームまたはソロチャレンジラン用に1〜6匹のポケモンを選択します。",
-    "step02": "ステップ 02",
-    "selectRegion": "地方を選択",
-    "step02Desc": "原産地でフィルタリング—カントー、ジョウト、ホウエン、シンオウ、イッシュ、カロス、アローラ、ガラル、ヒスイ、またはパルデア。",
-    "step03": "ステップ 03",
-    "applyFilters": "フィルターを適用",
-    "step03Desc": "18種類のポケモンタイプから1つ以上を選択して結果を絞り込みます。単一タイプチャレンジに最適です。",
-    "step04": "ステップ 04",
-    "setRarity": "レア度を設定",
-    "step04Desc": "チャレンジルールに基づいて、伝説、幻、パラドックス、ウルトラビーストのポケモンを切り替えます。",
-    "step05": "ステップ 05",
-    "generateTeam": "チームを生成",
-    "step05Desc": "光るボタンを押すと、条件に一致するポケモンが即座に表示されます。",
-    "step06": "ステップ 06",
-    "exploreData": "データを探索",
-    "step06Desc": "任意のポケモンの「データ」をクリックして、詳細なステータス、特性、追加情報を表示します。",
-    "challengeMode": "チャレンジモード",
-    "nuzlocke": "ナズロック",
-    "utilities": "ユーティリティ",
-    "nuzlockeDesc": "ランダムポケモンジェネレーターは、ナズロックコミュニティにとって欠かせないツールとなっています。スターター選択肢の事前決定、エンカウンターテーブルのシミュレーション、倒れたチームメンバーの代替ポケモンの生成に使用できます。",
-    "supportedFormats": "対応チャレンジフォーマット",
-    "classicNuzlocke": "クラシックナズロック",
-    "classicNuzlockeDesc": "ROMハックやファンゲーム用のランダムスターター3匹やルートエンカウンターをシミュレートします。",
-    "soulLink": "ソウルリンクチャレンジ",
-    "soulLinkDesc": "同期ナズロックランを実行する2人のプレイヤー用のペアチームを生成します。",
-    "draftLeagues": "ドラフトリーグ",
-    "draftLeaguesDesc": "対戦ポケモンドラフトリーグやトーナメント用のランダムドラフトプールを作成します。",
-    "randomizerSeeds": "ランダマイザーシード",
-    "randomizerSeedsDesc": "ランダム化されたROMプレイスルーを開始する前に、潜在的なチーム構成をプレビューします。",
-    "wonderlocke": "ワンダーロック準備",
-    "wonderlockeDesc": "ワンダートレードベースのチャレンジラン用の期待値を生成します。",
-    "systemSpecs": "システム仕様",
-    "core": "コア",
-    "capabilities": "機能",
-    "typeFiltering": "タイプフィルタリングシステム",
-    "typeFilteringDesc": "18種類のポケモンタイプでフィルタリング。複数のタイプを選択してデュアルタイプポケモンを含めるか、単一タイプチャレンジ用に1つのタイプに集中できます。",
-    "legendaryToggle": "伝説・レア度トグル",
-    "legendaryToggleDesc": "詳細なレア度コントロールで微調整。伝説、幻、パラドックスポケモン、ウルトラビーストを含めるか除外します。",
-    "spriteArtwork": "スプライト＆アートワークモード",
-    "spriteArtworkDesc": "ピクセルアート用の「スプライトのみ」、ミニマル表示用の「名前のみ」、または高解像度アートワークと詳細情報を含む「両方」を選択します。",
-    "completePokedex": "完全なポケモン図鑑データベース",
-    "completePokedexDesc": "全世代の全1025種のポケモンの詳細なステータス、タイプ、特性、図鑑説明を含む包括的なポケモン図鑑データベースにアクセスできます。",
-    "benchmarks": "ベンチマーク",
-    "whyChoose": "なぜ選ぶべきか",
-    "thisTool": "このツール？",
-    "whyChooseDesc1": "他のランダムポケモンジェネレーターとは異なり、当プロトコルはパフォーマンスと精度を最優先に構築されています。データベースは検証済みのポケモンAPIソースから直接取得し、すべての情報—タイプ、スプライト、図鑑番号—が正確で最新であることを保証します。",
-    "whyChooseDesc2": "ミニマリストなサイバーパンクデザイン哲学は、ゼロブロート、ゼロ不要アニメーション、ゼロ無駄な時間を意味します。ジェネレーターはデスクトップコンピューター、タブレット、モバイルデバイスで完璧に動作します。",
-    "whyChooseDesc3": "チーム構築のニーズにランダムポケモンジェネレーターを信頼する何千ものトレーナーに参加してください。カジュアルファンからハードコアナズロッカーまで、当ツールはスピード、信頼性、スタイルでポケモンコミュニティ全体にサービスを提供します。"
+    "protocol": {
+      "badge": "プロトコル V1.0",
+      "title": "アドバンスト ポケモンジェネレーター",
+      "subtitle": "ランダムポケモン選択のための究極のパートナー",
+      "paragraph1": "バランスの取れたチーム構築、新しいお気に入りの探索、または次のゲームに幸運の要素を追加する場合でも、当ジェネレーターは次のポケモンパートナーを簡単に発見できます。",
+      "paragraph2": "ナズロックチャレンジ、ソウルリンクトーナメント、または単にユニークなチーム構成を実験して楽しむためにご使用ください。"
+    },
+    "instructions": {
+      "badge": "使い方",
+      "title": "ランダムポケモンジェネレーターの使用方法",
+      "subtitle": "これらの簡単なステップに従ってランダムポケモンチームを生成",
+      "stepLabel": "ステップ",
+      "step1": {
+        "title": "ステップ1: チームサイズを選択",
+        "description": "生成するポケモンの数を選択—フルチームの場合は1から6まで。素早い決定のために単一のポケモンを選ぶこともできます。"
+      },
+      "step2": {
+        "title": "ステップ2: フィルターを適用（オプション）",
+        "description": "ポケモンタイプ、世代、または伝説ステータスでフィルタリングして選択を絞り込みます。特定のチャレンジに合わせたカスタムチームを取得できます。"
+      },
+      "step3": {
+        "title": "ステップ3: チームを生成",
+        "description": "生成ボタンを押してランダムポケモンが表示されるのを見てください。各ポケモンにはタイプ、特性、基本ステータスなどの詳細情報が付属します。"
+      },
+      "step4": {
+        "title": "ステップ4: 各ポケモンについて学ぶ",
+        "description": "生成されたポケモンをクリックして、技、進化ラインなどの詳細情報を確認します。"
+      },
+      "step5": {
+        "title": "ステップ5: 再生成または保存",
+        "description": "結果に満足していませんか？単純に再生成してください。または後で参照できるようにチームを保存します。"
+      },
+      "step6": {
+        "title": "ステップ6: チームを共有",
+        "description": "SNSや直接リンクで生成されたチームを友達と共有しましょう。"
+      }
+    },
+    "nuzlocke": {
+      "badge": "ナズロックユーティリティ",
+      "title": "ポケモンナズロックチャレンジツール",
+      "subtitle": "ランダムポケモンジェネレーターでナズロックゲーム体験を強化",
+      "intro": "ナズロックランはポケモンゲームを楽しむ最もスリリングな方法の一つです。バトルに実際の結果を追加するルールで、すべての決定が重要になります。当ジェネレーターがお手伝いします：",
+      "challenge1": {
+        "title": "ソウルリンクチャレンジ",
+        "description": "協力チャレンジのためにランダム生成されたポケモンをパートナーとペアにします。"
+      },
+      "challenge2": {
+        "title": "ワンダーロックチャレンジ",
+        "description": "完全にランダムな選択でサプライズトレードの出会いをシミュレートします。"
+      },
+      "challenge3": {
+        "title": "モノタイプチャレンジ",
+        "description": "最も困難なモノタイプランのために単一タイプのチームを生成します。"
+      },
+      "challenge4": {
+        "title": "スターター選択",
+        "description": "スターターを決められませんか？ジェネレーターに最初のパートナーを選ばせましょう。"
+      },
+      "challenge5": {
+        "title": "ランダマイザーラン",
+        "description": "予測不可能なチーム計画のためにROMランダマイザーと組み合わせます。"
+      }
+    },
+    "capabilities": {
+      "badge": "コア機能",
+      "title": "ランダムジェネレーター機能",
+      "subtitle": "当ポケモンジェネレーターのユニークな機能を発見",
+      "feature1": {
+        "title": "完全なポケモン図鑑",
+        "description": "すべてのリージョンフォームとバリエーションを含む1000匹以上のポケモンにアクセス。"
+      },
+      "feature2": {
+        "title": "スマートフィルタリング",
+        "description": "タイプ、世代、レア度などの高度なフィルター。"
+      },
+      "feature3": {
+        "title": "詳細情報",
+        "description": "各ポケモンのステータス、技、特性、進化ラインの包括的な情報。"
+      },
+      "feature4": {
+        "title": "ソーシャル共有",
+        "description": "生成されたチームをSNSプラットフォームに簡単に共有したり、画像として保存できます。"
+      }
+    },
+    "whyChoose": {
+      "badge": "なぜこのツールを選ぶべきか？",
+      "title": "最高のオンラインランダムポケモンジェネレーター",
+      "subtitle": "トレーナーが当ランダムポケモンジェネレーターを信頼する理由",
+      "paragraph1": "カジュアルプレイヤーとハードコアスピードランナーの両方を念頭に置いてこのジェネレーターを作成しました。競技プレイスルーのためのバランスの取れたチームを探している場合でも、単にランダムな楽しみを求めている場合でも、適切なツールがあります。",
+      "paragraph2": "当ジェネレーターは最新のポケモンデータで定期的に更新され、すべてのデバイスでシームレスな体験を提供します。"
+    }
+  },
+  "common": {
+    "loading": "読み込み中...",
+    "error": "エラーが発生しました",
+    "retry": "再試行",
+    "back": "戻る",
+    "backToHome": "ホームに戻る",
+    "close": "閉じる",
+    "share": "共有",
+    "copy": "コピー",
+    "copied": "コピーしました！",
+    "download": "ダウンロード",
+    "pokemon": "ポケモン",
+    "language": "言語",
+    "noImage": "画像なし",
+    "status": "ステータス",
+    "go": "GO",
+    "search": "検索..."
   }
 }

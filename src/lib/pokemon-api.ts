@@ -121,7 +121,8 @@ export async function fetchPokemonSpecies(
 ): Promise<PokemonSpeciesResponse | null> {
   try {
     const response = await fetch(
-      `https://pokeapi.co/api/v2/pokemon-species/${idOrName}`
+      `https://pokeapi.co/api/v2/pokemon-species/${idOrName}`,
+      { cache: 'force-cache' }
     );
     
     if (!response.ok) {

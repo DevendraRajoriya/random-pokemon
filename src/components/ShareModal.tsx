@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { X, Download, Copy, Check, Twitter, Facebook, Link } from "lucide-react";
-import html2canvas from "html2canvas";
 
 interface PokemonType {
   type: {
@@ -467,10 +466,14 @@ export default function ShareModal({ pokemon, onClose }: ShareModalProps) {
   const speed = getStat("speed");
 
   // Generate image from the GHOST CARD (hidden HD version)
+  // Dynamically import html2canvas to reduce initial bundle (~200KB saved)
   const generateImage = async (): Promise<HTMLCanvasElement | null> => {
     const element = document.getElementById("download-card-target");
     if (!element) return null;
 
+    // Dynamic import - only loads when user clicks download/copy
+    const html2canvas = (await import("html2canvas")).default;
+    
     const canvas = await html2canvas(element, {
       scale: 2, // Increase scale for sharpness and better color accuracy
       useCORS: true,

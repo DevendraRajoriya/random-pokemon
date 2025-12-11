@@ -1,10 +1,12 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import { locales, Locale } from "@/i18n/routing";
+import { locales, Locale, pokeApiLanguageMap } from "@/i18n/routing";
 import PokemonDetailClient from "./PokemonDetailClient";
+import { pokemonList, TOTAL_POKEMON } from "@/data/pokemon";
 
 // ============ TYPES ============
+// Raw API response types
 interface PokemonType {
   type: {
     name: string;
@@ -21,6 +23,7 @@ interface PokemonStat {
 interface PokemonAbility {
   ability: {
     name: string;
+    localizedName?: string;
   };
 }
 
@@ -30,12 +33,9 @@ interface Pokemon {
   height: number;
   weight: number;
   sprites: {
-    front_default: string;
-    front_shiny: string;
     other: {
       "official-artwork": {
         front_default: string;
-        front_shiny: string;
       };
     };
   };
@@ -61,6 +61,13 @@ interface Genera {
   };
 }
 
+interface NameEntry {
+  name: string;
+  language: {
+    name: string;
+  };
+}
+
 interface EvolutionChainLink {
   species: { name: string; url: string };
   evolves_to: EvolutionChainLink[];
@@ -71,6 +78,7 @@ interface EvolutionChain {
 }
 
 interface PokemonSpecies {
+  names: NameEntry[];
   flavor_text_entries: FlavorTextEntry[];
   genera: Genera[];
   generation: {
@@ -84,14 +92,51 @@ interface PokemonSpecies {
   };
 }
 
+// ============ SANITIZED DATA INTERFACE ============
+// This is the "PokemonPageData" - only includes what we need for the page
+// Keeping the payload small for optimal performance
+export interface EvolutionMember {
+  id: number;
+  name: string;
+  localizedName: string;
+  image: string;
+}
+
+export interface SanitizedStat {
+  name: string;
+  value: number;
+}
+
+export interface PokemonPageData {
+  id: number;
+  name: string; // English name (for URLs)
+  localizedName: string; // Localized name for display
+  image: string; // Official artwork URL
+  types: string[]; // Array of type names (English keys for translation lookup)
+  height: number; // In meters
+  weight: number; // In kg
+  description: string; // Localized flavor text
+  genus: string; // Localized classification (e.g., "Seed Pokémon")
+  generation: string; // e.g., "Generation 1"
+  generationNumber: number;
+  habitat: string | null;
+  stats: SanitizedStat[];
+  totalStats: number;
+  abilities: string[];
+  evolutionChain: EvolutionMember[];
+}
+
+// Legacy export for backward compatibility
 export interface PokemonWithSpecies extends Pokemon {
+  localizedName: string;
   species: {
     flavorText: string;
     genus: string;
     generation: string;
     generationNumber: number;
     habitat: string | null;
-    evolutionChain: string[]; // Array of Pokemon names in evolution chain
+    evolutionChain: string[];
+    evolutionChainLocalized: { name: string; localizedName: string }[];
   };
 }
 
@@ -105,16 +150,70 @@ function extractEvolutionChain(chain: EvolutionChainLink): string[] {
   return names;
 }
 
-// Total number of Pokemon (Gen 1-9)
-const TOTAL_POKEMON = 1025;
-
-async function getPokemon(name: string): Promise<PokemonWithSpecies | null> {
+// Fetch localized name for a Pokemon ability
+async function getLocalizedAbilityName(abilityName: string, locale: Locale): Promise<string> {
   try {
+    const res = await fetch(`https://pokeapi.co/api/v2/ability/${abilityName}`, { 
+      cache: 'force-cache',
+      next: { revalidate: 86400 } 
+    });
+    if (!res.ok) return abilityName.replace(/-/g, ' ');
+    
+    const ability = await res.json();
+    const pokeApiLang = pokeApiLanguageMap[locale];
+    
+    // Find the localized name
+    const localizedEntry = ability.names?.find((n: { language: { name: string }, name: string }) => n.language.name === pokeApiLang);
+    if (localizedEntry) return localizedEntry.name;
+    
+    // Fallback to English
+    const englishEntry = ability.names?.find((n: { language: { name: string }, name: string }) => n.language.name === 'en');
+    if (englishEntry) return englishEntry.name;
+    
+    // Final fallback: format the ability name
+    return abilityName.replace(/-/g, ' ');
+  } catch {
+    return abilityName.replace(/-/g, ' ');
+  }
+}
+
+// Fetch localized name for a Pokemon species
+async function getLocalizedPokemonName(speciesName: string, locale: Locale): Promise<string> {
+  try {
+    const res = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${speciesName}`, { 
+      cache: 'force-cache',
+      next: { revalidate: 86400 } 
+    });
+    if (!res.ok) return speciesName.charAt(0).toUpperCase() + speciesName.slice(1);
+    
+    const species: PokemonSpecies = await res.json();
+    const pokeApiLang = pokeApiLanguageMap[locale];
+    
+    // Find the localized name
+    const localizedEntry = species.names.find(n => n.language.name === pokeApiLang);
+    if (localizedEntry) return localizedEntry.name;
+    
+    // Fallback to English
+    const englishEntry = species.names.find(n => n.language.name === 'en');
+    if (englishEntry) return englishEntry.name;
+    
+    // Final fallback: capitalize the species name
+    return speciesName.charAt(0).toUpperCase() + speciesName.slice(1);
+  } catch {
+    return speciesName.charAt(0).toUpperCase() + speciesName.slice(1);
+  }
+}
+
+async function getPokemon(name: string, locale: Locale): Promise<PokemonWithSpecies | null> {
+  try {
+    const pokeApiLang = pokeApiLanguageMap[locale];
+    
     // Fetch Pokemon data and Species data in parallel
-    // Using force-cache for optimal build performance (data rarely changes)
+    // Using cache: 'force-cache' prevents API rate limiting during rebuilds
+    // Next.js will use disk cache instead of hitting PokeAPI 5000+ times
     const [pokemonRes, speciesRes] = await Promise.all([
-      fetch(`https://pokeapi.co/api/v2/pokemon/${name}`, { cache: 'force-cache' }),
-      fetch(`https://pokeapi.co/api/v2/pokemon-species/${name}`, { cache: 'force-cache' }),
+      fetch(`https://pokeapi.co/api/v2/pokemon/${name}`, { cache: 'force-cache', next: { revalidate: 86400 } }),
+      fetch(`https://pokeapi.co/api/v2/pokemon-species/${name}`, { cache: 'force-cache', next: { revalidate: 86400 } }),
     ]);
 
     if (!pokemonRes.ok) return null;
@@ -129,24 +228,45 @@ async function getPokemon(name: string): Promise<PokemonWithSpecies | null> {
       generationNumber: 1,
       habitat: null as string | null,
       evolutionChain: [] as string[],
+      evolutionChainLocalized: [] as { name: string; localizedName: string }[],
     };
+    
+    let localizedName = pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1);
 
     if (speciesRes.ok) {
       const species: PokemonSpecies = await speciesRes.json();
       
-      // Extract English flavor text (clean up newlines/form feeds)
+      // Get localized Pokemon name
+      const localizedNameEntry = species.names.find(n => n.language.name === pokeApiLang);
+      if (localizedNameEntry) {
+        localizedName = localizedNameEntry.name;
+      } else {
+        // Fallback to English name
+        const englishNameEntry = species.names.find(n => n.language.name === 'en');
+        if (englishNameEntry) localizedName = englishNameEntry.name;
+      }
+      
+      // Extract localized flavor text (clean up newlines/form feeds)
+      const localizedFlavorEntry = species.flavor_text_entries.find(
+        (entry) => entry.language.name === pokeApiLang
+      );
+      // Fallback to English if localized not found
       const englishFlavorEntry = species.flavor_text_entries.find(
         (entry) => entry.language.name === "en"
       );
-      const flavorText = englishFlavorEntry
-        ? englishFlavorEntry.flavor_text.replace(/[\n\f\r]/g, " ").replace(/\s+/g, " ").trim()
+      const flavorEntry = localizedFlavorEntry || englishFlavorEntry;
+      const flavorText = flavorEntry
+        ? flavorEntry.flavor_text.replace(/[\n\f\r]/g, " ").replace(/\s+/g, " ").trim()
         : "";
 
-      // Extract English genus (e.g., "Seed Pokemon")
+      // Extract localized genus (e.g., "Seed Pokemon")
+      const localizedGenus = species.genera.find(
+        (g) => g.language.name === pokeApiLang
+      );
       const englishGenus = species.genera.find(
         (g) => g.language.name === "en"
       );
-      const genus = englishGenus ? englishGenus.genus : "Pokemon";
+      const genus = localizedGenus?.genus || englishGenus?.genus || "Pokemon";
 
       // Parse generation (e.g., "generation-vi" -> "Generation 6")
       const genMatch = species.generation.name.match(/generation-(\w+)/);
@@ -160,25 +280,55 @@ async function getPokemon(name: string): Promise<PokemonWithSpecies | null> {
       // Extract habitat
       const habitat = species.habitat ? species.habitat.name : null;
 
-      // Fetch evolution chain
+      // Fetch evolution chain with localized names
       let evolutionChain: string[] = [];
+      let evolutionChainLocalized: { name: string; localizedName: string }[] = [];
+      
       if (species.evolution_chain?.url) {
         try {
-          const evoRes = await fetch(species.evolution_chain.url, { cache: 'force-cache' });
+          const evoRes = await fetch(species.evolution_chain.url, { cache: 'force-cache', next: { revalidate: 86400 } });
           if (evoRes.ok) {
             const evoData: EvolutionChain = await evoRes.json();
             evolutionChain = extractEvolutionChain(evoData.chain);
+            
+            // Fetch localized names for all evolution chain members
+            evolutionChainLocalized = await Promise.all(
+              evolutionChain.map(async (evoName) => ({
+                name: evoName,
+                localizedName: await getLocalizedPokemonName(evoName, locale),
+              }))
+            );
           }
         } catch {
           // Evolution chain fetch failed, continue without it
         }
       }
 
-      speciesData = { flavorText, genus, generation, generationNumber, habitat, evolutionChain };
+      speciesData = { 
+        flavorText, 
+        genus, 
+        generation, 
+        generationNumber, 
+        habitat, 
+        evolutionChain,
+        evolutionChainLocalized,
+      };
     }
+
+    // Fetch localized ability names
+    const abilitiesWithLocalizedNames = await Promise.all(
+      pokemon.abilities.map(async (abilityInfo) => ({
+        ability: {
+          name: abilityInfo.ability.name,
+          localizedName: await getLocalizedAbilityName(abilityInfo.ability.name, locale),
+        },
+      }))
+    );
 
     return {
       ...pokemon,
+      abilities: abilitiesWithLocalizedNames,
+      localizedName,
       species: speciesData,
     };
   } catch (error) {
@@ -192,56 +342,29 @@ type Props = {
   params: Promise<{ name: string; locale: Locale }>;
 };
 
-// Generate static params for ALL 1025+ Pokemon across all locales
-// This is crucial for SEO - we pre-render every Pokemon page at build time
+// ============ STATIC SITE GENERATION ============
+// Generate static params for ALL 1025 Pokémon across all locales
+// This is the "Library Architecture" pattern - pre-build everything for instant loads
 export async function generateStaticParams() {
-  try {
-    // Fetch the complete Pokemon list from PokeAPI
-    const response = await fetch(
-      `https://pokeapi.co/api/v2/pokemon?limit=${TOTAL_POKEMON}`,
-      { cache: 'force-cache' }
-    );
-    
-    if (!response.ok) {
-      console.error('Failed to fetch Pokemon list for static generation');
-      // Fallback to popular Pokemon if API fails
-      const fallbackPokemon = [
-        'pikachu', 'charizard', 'mewtwo', 'eevee', 'gengar', 'dragonite',
-        'bulbasaur', 'charmander', 'squirtle', 'lucario', 'garchomp'
-      ];
-      return locales.flatMap(locale => 
-        fallbackPokemon.map(name => ({ locale, name }))
-      );
+  const params: { locale: string; name: string }[] = [];
+  
+  // Generate params for all locale + pokemon combinations (1025 × number of locales)
+  for (const locale of locales) {
+    for (const pokemon of pokemonList) {
+      params.push({ locale, name: pokemon.name });
     }
-
-    const data = await response.json();
-    const allPokemonNames: string[] = data.results.map(
-      (pokemon: { name: string }) => pokemon.name
-    );
-
-    // Generate params for all locale + pokemon combinations
-    // This creates ~7000+ static pages (1025 Pokemon × 7 locales)
-    const params: { locale: string; name: string }[] = [];
-    
-    for (const locale of locales) {
-      for (const name of allPokemonNames) {
-        params.push({ locale, name });
-      }
-    }
-
-    console.log(`📦 Generating ${params.length} static Pokemon pages...`);
-    return params;
-  } catch (error) {
-    console.error('Error in generateStaticParams:', error);
-    // Return minimal fallback
-    return locales.map(locale => ({ locale, name: 'pikachu' }));
   }
+
+  console.log(`[SSG] Generating ${params.length} static pages (${TOTAL_POKEMON} Pokémon × ${locales.length} locales)`);
+  return params;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { name, locale } = await params;
-  const pokemon = await getPokemon(name);
+  const pokemon = await getPokemon(name, locale);
   const t = await getTranslations({ locale, namespace: 'pokemon' });
+  const tTypes = await getTranslations({ locale, namespace: 'types' });
+  const tMeta = await getTranslations({ locale, namespace: 'metadata' });
 
   if (!pokemon) {
     return {
@@ -250,18 +373,29 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
-  const formattedName = pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1);
-  const types = pokemon.types.map((t) => t.type.name).join("/");
-  const typesCapitalized = types.charAt(0).toUpperCase() + types.slice(1);
+  // Use localized name for display
+  const displayName = pokemon.localizedName;
+  
+  // Get localized types
+  const typeKeys = pokemon.types.map((t) => t.type.name);
+  const localizedTypes = typeKeys.map(typeKey => {
+    try {
+      return tTypes(typeKey as any);
+    } catch {
+      return typeKey.charAt(0).toUpperCase() + typeKey.slice(1);
+    }
+  });
+  const typesDisplay = localizedTypes.join("/");
+  
   const totalStats = pokemon.stats.reduce((sum, stat) => sum + stat.base_stat, 0);
   
-  // Create unique, compelling meta description
+  // Create unique, compelling meta description using localized content
   const hasEvolutions = pokemon.species.evolutionChain.length > 1;
-  const evolutionInfo = hasEvolutions 
-    ? ` Part of the ${pokemon.species.evolutionChain[0].charAt(0).toUpperCase() + pokemon.species.evolutionChain[0].slice(1)} evolution line.`
+  const evolutionInfo = hasEvolutions && pokemon.species.evolutionChainLocalized.length > 0
+    ? ` ${pokemon.species.evolutionChainLocalized[0].localizedName}`
     : "";
   
-  const uniqueDescription = `${formattedName} (#${pokemon.id}) is a ${typesCapitalized}-type ${pokemon.species.genus} from ${pokemon.species.generation}. Base stats total: ${totalStats}. Height: ${(pokemon.height / 10).toFixed(1)}m, Weight: ${(pokemon.weight / 10).toFixed(1)}kg.${evolutionInfo}`;
+  const uniqueDescription = `${displayName} (#${pokemon.id}) - ${typesDisplay} | ${pokemon.species.genus} | ${pokemon.species.generation}. ${t('totalBaseStats')}: ${totalStats}. ${t('height')}: ${(pokemon.height / 10).toFixed(1)}m, ${t('weight')}: ${(pokemon.weight / 10).toFixed(1)}kg.${evolutionInfo ? ` ${t('evolutionChain')}: ${evolutionInfo}` : ""}`;
 
   // Generate hreflang alternates for all locales
   const languages: Record<string, string> = {};
@@ -273,14 +407,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   languages['x-default'] = `https://www.randompokemon.co/pokemon/${pokemon.name.toLowerCase()}`;
 
   return {
-    title: `${formattedName} (#${pokemon.id}) - Stats, Evolution & Type | Pokemon Database`,
+    title: `${displayName} (#${pokemon.id}) - ${typesDisplay} | Pokemon Database`,
     description: uniqueDescription,
     keywords: [
-      formattedName.toLowerCase(),
-      `${formattedName.toLowerCase()} stats`,
-      `${formattedName.toLowerCase()} evolution`,
-      `${formattedName.toLowerCase()} type`,
-      ...pokemon.types.map(t => `${t.type.name} type pokemon`),
+      displayName.toLowerCase(),
+      `${displayName.toLowerCase()} stats`,
+      `${displayName.toLowerCase()} evolution`,
+      `${displayName.toLowerCase()} type`,
+      ...localizedTypes.map(type => type.toLowerCase()),
       pokemon.species.genus.toLowerCase(),
       pokemon.species.generation.toLowerCase(),
     ],
@@ -291,7 +425,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       languages,
     },
     openGraph: {
-      title: `${formattedName} (#${pokemon.id}) - ${typesCapitalized} Type | Pokemon Database`,
+      title: `${displayName} (#${pokemon.id}) - ${typesDisplay} | Pokemon Database`,
       description: uniqueDescription,
       url: `https://www.randompokemon.co/pokemon/${pokemon.name.toLowerCase()}`,
       images: [
@@ -299,7 +433,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
           url: pokemon.sprites.other["official-artwork"].front_default,
           width: 475,
           height: 475,
-          alt: `${formattedName} official artwork - ${typesCapitalized} type Pokemon`,
+          alt: `${displayName} - ${typesDisplay}`,
         },
       ],
       locale: locale,
@@ -307,7 +441,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     twitter: {
       card: "summary_large_image",
-      title: `${formattedName} (#${pokemon.id}) | Pokemon Database`,
+      title: `${displayName} (#${pokemon.id}) | Pokemon Database`,
       description: uniqueDescription,
       images: [pokemon.sprites.other["official-artwork"].front_default],
     },
@@ -317,11 +451,25 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 // ============ PAGE COMPONENT ============
 export default async function PokemonDetailPage({ params }: Props) {
   const { name, locale } = await params;
-  const pokemon = await getPokemon(name);
+  const pokemon = await getPokemon(name, locale);
 
   if (!pokemon) {
     notFound();
   }
 
-  return <PokemonDetailClient pokemon={pokemon} />;
+  // Lazy load RelatedPokemon component
+  const RelatedPokemon = (await import("./RelatedPokemon")).default;
+
+  return (
+    <>
+      <PokemonDetailClient pokemon={pokemon} locale={locale} />
+      
+      {/* Internal linking section for SEO */}
+      <RelatedPokemon 
+        currentPokemonId={pokemon.id} 
+        types={pokemon.types.map(t => t.type.name)} 
+        locale={locale} 
+      />
+    </>
+  );
 }
