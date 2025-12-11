@@ -21,16 +21,13 @@ jobs:
         with:
           node-version: '18'
           cache: 'npm'
-          cache-dependency-path: 'random-pokemon/package-lock.json'
 
       # Step 3: Install dependencies
       - name: 📚 Install dependencies
-        working-directory: ./random-pokemon
         run: npm ci
 
-      # Step 4: Build Next.js (all 7,175 pages)
+      # Step 4: Build Next.js (all 7,378 pages)
       - name: 🏗️ Build Next.js site
-        working-directory: ./random-pokemon
         run: npm run build
         env:
           NODE_OPTIONS: '--max-old-space-size=8192'
@@ -43,4 +40,3 @@ jobs:
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
           heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
           heroku_email: ${{ secrets.HEROKU_EMAIL }}
-          appdir: 'random-pokemon'
